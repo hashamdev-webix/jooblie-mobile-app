@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
 import 'core/app_theme_provider.dart';
 import 'core/utils/responsive.dart';
-import 'views/login_screen.dart';
+import 'views/splash_screen.dart';
 
 
 void main() {
@@ -33,7 +33,7 @@ class JooblieApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
-          home: const LoginScreen(),
+          home: const SplashScreen(),
         );
       },
     );
