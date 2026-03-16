@@ -39,13 +39,13 @@ class SignupScreen extends StatelessWidget {
         ),
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: Responsive.w(4)),
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: Responsive.w(4)),
             child: FadeSlideUp(
               duration: const Duration(milliseconds: 800),
               yOffset: 30.0,
               child: Container(
                 width: cardWidth,
-                padding: const EdgeInsets.all(32.0),
+                padding: const EdgeInsets.all(25.0),
                 decoration: BoxDecoration(
                   color: theme.cardColor,
                   border: Border.all(
