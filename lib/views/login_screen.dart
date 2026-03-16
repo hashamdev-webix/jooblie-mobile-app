@@ -15,57 +15,56 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Utilize Responsive bounds
-    final cardWidth = Responsive.isTablet || Responsive.isDesktop 
-        ? Responsive.w(50) // 50% width on tablet/desktop
-        : Responsive.w(90); // 90% width on mobile
-    
+    final cardWidth = Responsive.isTablet || Responsive.isDesktop
+        ? Responsive.w(50)
+        : Responsive.w(90);
+
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar:AppBarWidget(title: 'Jooblie',
-      backGroundColor: Color(0xffFFFFFF),
-        showLeadingIcon: false,
-
-
-
-
-      ) ,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: isDark ? AppColors.darkGradientBackground : AppColors.lightGradientBackground,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: const AppBarWidget(
+          title: 'Jooblie',
+          backGroundColor: Color(0xffFFFFFF),
+          showLeadingIcon: false,
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            // padding: EdgeInsets.all(Responsive.w(4)), // 4% screen width padding
-            child: Column(
-              children: [
-                // SizedBox(height: Responsive.h(2)),
-
-                FadeSlideUp(
-                  duration: const Duration(milliseconds: 800),
-                  yOffset: 30.0,
-                  child: Container(
-                    width: cardWidth,
-                    padding: const EdgeInsets.all(32.0),
-                    decoration: BoxDecoration(
-                      color: theme.cardColor,
-                      border: Border.all(
-                        color:theme.brightness == Brightness.dark ? Colors.black12: Colors.grey.shade100,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-
-
-                        isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
-
-
-                      ],
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: isDark
+                ? AppColors.darkGradientBackground
+                : AppColors.lightGradientBackground,
+          ),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                vertical: 24.0,
+                horizontal: Responsive.w(4),
+              ),
+              child: FadeSlideUp(
+                duration: const Duration(milliseconds: 800),
+                yOffset: 30.0,
+                child: Container(
+                  width: cardWidth,
+                  padding: const EdgeInsets.all(32.0),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    border: Border.all(
+                      color: theme.brightness == Brightness.dark
+                          ? Colors.black12
+                          : Colors.grey.shade100,
                     ),
-                    child: ChangeNotifierProvider(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      isDark
+                          ? AppColors.shadowCardDark
+                          : AppColors.shadowCardLight,
+                    ],
+                  ),
+                  child: ChangeNotifierProvider(
                     create: (_) => LoginViewModel(),
                     child: Consumer<LoginViewModel>(
                       builder: (context, viewModel, child) {
@@ -74,7 +73,6 @@ class LoginScreen extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Logo / Icon
                               Container(
                                 width: 64,
                                 height: 64,
@@ -88,9 +86,7 @@ class LoginScreen extends StatelessWidget {
                                   size: 32,
                                 ),
                               ),
-                              24.h, // Utilizing Sized extensions
-
-                              // Title & Subtitle
+                              24.h,
                               Text(
                                 'Welcome Back',
                                 style: theme.textTheme.headlineMedium,
@@ -101,30 +97,28 @@ class LoginScreen extends StatelessWidget {
                                 style: theme.textTheme.bodyMedium,
                               ),
                               32.h,
-
-                              // Email Field
                               CustomTextField(
                                 label: 'Email',
                                 hintText: 'you@example.com',
                                 prefixIcon: Icons.mail_outline,
                                 keyboardType: TextInputType.emailAddress,
+                                textInputAction: TextInputAction.next,
                                 validator: viewModel.validateEmail,
-                                onSaved: (value) => viewModel.setEmail(value ?? ''),
+                                onSaved: (value) =>
+                                    viewModel.setEmail(value ?? ''),
                               ),
                               20.h,
-
-                              // Password Field
                               CustomTextField(
                                 label: 'Password',
                                 hintText: '••••••••',
                                 prefixIcon: Icons.lock_outline,
                                 isPassword: true,
+                                textInputAction: TextInputAction.done,
                                 validator: viewModel.validatePassword,
-                                onSaved: (value) => viewModel.setPassword(value ?? ''),
+                                onSaved: (value) =>
+                                    viewModel.setPassword(value ?? ''),
                               ),
                               32.h,
-
-                              // Login Button
                               PrimaryButton(
                                 text: 'Sign In',
                                 isLoading: viewModel.isLoading,
@@ -132,14 +126,14 @@ class LoginScreen extends StatelessWidget {
                                   final success = await viewModel.login();
                                   if (success && context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Login Successful!')),
+                                      const SnackBar(
+                                        content: Text('Login Successful!'),
+                                      ),
                                     );
                                   }
                                 },
                               ),
                               24.h,
-
-                              // Sign Up Link
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -161,7 +155,10 @@ class LoginScreen extends StatelessWidget {
                                       style: TextStyle(
                                         color: AppColors.lightPrimary,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: theme.textTheme.bodyMedium?.fontSize,
+                                        fontSize: theme
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.fontSize,
                                       ),
                                     ),
                                   ),
@@ -174,10 +171,9 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                          ),
-              ],
+              ),
             ),
-        ),
+          ),
         ),
       ),
     );
