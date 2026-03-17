@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../core/sized.dart';
@@ -29,11 +30,11 @@ class LoginScreen extends StatelessWidget {
       child: Scaffold(
 
         resizeToAvoidBottomInset: true,
-        // appBar: const AppBarWidget(
-        //   title: 'Jooblie',
-        //   backGroundColor: Color(0xffFFFFFF),
-        //   showLeadingIcon: false,
-        // ),
+        appBar: const AppBarWidget(
+          title: 'Jooblie',
+          backGroundColor: Color(0xffFFFFFF),
+          showLeadingIcon: false,
+        ),
         body: Stack(
           children: [
             Container(
@@ -68,6 +69,7 @@ class LoginScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
 
+                                // AppLogo(),
 
                                 FadeSlideUp(
                                   duration: const Duration(milliseconds: 800),
