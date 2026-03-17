@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jooblie_app/core/app_colors.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
 
 import '../core/sized.dart';
 
@@ -34,9 +35,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       scrolledUnderElevation: 0.0,
-      // backgroundColor: Colors.transparent,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1), // height of the line
+        preferredSize: const Size.fromHeight(1),
         child: Container(
           color: isDark
               ? Color(0xff20293C)
@@ -71,19 +71,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black87),
       title: Row(
         children: [
-          Container(
-            width: 40, // rectangle width
-            height: 34, // rectangle height
-            decoration: BoxDecoration(
-              gradient: AppColors.gradientPrimary,
-              borderRadius: BorderRadius.circular(8), // chhota radius → rectangle with rounded corners
-            ),
-            child: const Icon(
-              Icons.work_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
+          AppLogo(),
           10.w,
           Text(
             title,
@@ -101,3 +89,4 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size(double.infinity, 60);
 }
+

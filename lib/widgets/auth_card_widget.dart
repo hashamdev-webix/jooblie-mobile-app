@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/app_colors.dart';
-import 'package:jooblie_app/core/sized.dart';
-import 'package:jooblie_app/viewmodels/login_viewmodel.dart';
-import 'package:jooblie_app/views/signup_screen.dart';
-import 'package:jooblie_app/widgets/custom_text_field.dart';
-import 'package:jooblie_app/widgets/primary_button.dart';
-import 'package:provider/provider.dart';
 
 class AuthCardWidget extends StatelessWidget {
   const AuthCardWidget({

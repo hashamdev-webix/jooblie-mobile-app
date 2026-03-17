@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
 import 'core/app_theme_provider.dart';
 import 'core/utils/responsive.dart';
+import 'viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'views/splash_screen.dart';
 
 
@@ -11,6 +12,10 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppThemeProvider()),
+        ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
+        ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
+        ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
+        ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel())
       ],
       child: const JooblieApp(),
     ),
