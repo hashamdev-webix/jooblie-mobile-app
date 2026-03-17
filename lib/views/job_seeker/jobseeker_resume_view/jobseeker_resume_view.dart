@@ -1,9 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:jooblie_app/core/utils/my_slide_animation.dart';
 import 'package:jooblie_app/views/job_seeker/jobseeker_resume_view/widgets/current_resume_card_widget.dart';
 import 'package:jooblie_app/views/job_seeker/jobseeker_resume_view/widgets/resume_upload_card_widget.dart';
 import 'package:jooblie_app/widgets/heading_text_widget.dart';
-import 'package:jooblie_app/widgets/primary_button.dart';
 import 'package:jooblie_app/widgets/subtitle_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
@@ -31,8 +31,9 @@ class JobseekerResumeView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+              FadeInDown(
+                duration: const Duration(milliseconds: 500),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -49,13 +50,25 @@ class JobseekerResumeView extends StatelessWidget {
               20.h,
 
               // ── Upload Card ──
-              ResumeUploadCardWidget(theme: theme, isDark: isDark, vm: vm),
+              MySlideTransition(
+                child: ResumeUploadCardWidget(
+                  theme: theme,
+                  isDark: isDark,
+                  vm: vm,
+                ),
+              ),
 
               if (vm.currentResume != null) ...[
                 const SizedBox(height: 16),
 
                 // ── Current Resume Card ──
-                CurrentResumeCardWidget(theme: theme, isDark: isDark, vm: vm),
+                MySlideTransition(
+                  child: CurrentResumeCardWidget(
+                    theme: theme,
+                    isDark: isDark,
+                    vm: vm,
+                  ),
+                ),
               ],
             ],
           ),

@@ -120,19 +120,15 @@ class _AnimatedTabBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: List.generate(screens.length, (index) {
-        final isActive = index == currentIndex;
-        return AnimatedOpacity(
-          opacity: isActive ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-          child: IgnorePointer(
-            ignoring: !isActive,
-            child: screens[index],
-          ),
-        );
-      }),
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300),
+      transitionBuilder: (Widget child, Animation<double> animation) {
+        return FadeTransition(opacity: animation, child: child);
+      },
+      child: Container(
+        key: ValueKey<int>(currentIndex),
+        child: screens[currentIndex],
+      ),
     );
   }
 }

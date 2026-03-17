@@ -1,9 +1,12 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/utils/my_slide_animation.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/recommendation_card_widget.dart';
 import 'package:jooblie_app/widgets/heading_text_widget.dart';
 import 'package:jooblie_app/widgets/subtitle_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
+import '../../../core/sized.dart';
 import '../../../viewmodels/jobseeker_recommendations_viewmodel.dart';
 
 class JobseekerRecommendationsView extends StatelessWidget {
@@ -22,41 +25,50 @@ class JobseekerRecommendationsView extends StatelessWidget {
             : AppColors.lightGradientBackground,
       ),
       child: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    HeadingTextWidget(
-                      theme: theme,
-                      title: 'AI Recommendations ✨',
-                    ),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
 
-                    const SizedBox(height: 4),
-                    SubTitleWidget(
-                      theme: theme,
-                      subTitle: 'Jobs matched to your profile and preferences.',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => RecommendationCard(
-                    job: vm.recommendations[i],
+          children: [
+        FadeInDown(
+          duration: const Duration(milliseconds: 500),
+
+          child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HeadingTextWidget(
                     theme: theme,
-                    isDark: isDark,
+                    title: 'AI Recommendations ✨',
                   ),
-                  childCount: vm.recommendations.length,
-                ),
+
+                  const SizedBox(height: 4),
+                  SubTitleWidget(
+                    theme: theme,
+                    subTitle: 'Jobs matched to your profile and preferences.',
+                  ),
+                ],
               ),
             ),
+
+        20.h,
+        ...vm.recommendations.asMap().entries.map((entry) {
+          final idx = entry.key;
+          final app = entry.value;
+          return Column(
+            children: [
+              MySlideTransition(
+                delay: 100 * (idx + 1),
+                duration: 500,
+                child: RecommendationCard(
+                  job: vm.recommendations[idx],
+                  theme: theme,
+                  isDark: isDark,
+                ),
+              ),
+              12.h,
+            ],
+          );
+        }),
+
           ],
         ),
       ),

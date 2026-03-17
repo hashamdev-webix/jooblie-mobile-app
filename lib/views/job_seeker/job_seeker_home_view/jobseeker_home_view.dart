@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/utils/my_slide_animation.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_home_view/widgets/job_seeker_home_tile_widget.dart';
 import 'package:jooblie_app/widgets/heading_text_widget.dart';
 import 'package:jooblie_app/widgets/subtitle_widget.dart';
@@ -84,9 +85,9 @@ class JobseekerHomeView extends StatelessWidget {
                 final stat = entry.value;
                 return Column(
                   children: [
-                    FadeInUp(
-                      delay: Duration(milliseconds: 100 * (idx + 1)),
-                      duration: const Duration(milliseconds: 500),
+                    MySlideTransition(
+                      delay: 100 * (idx + 1),
+                      duration: 500,
                       child: StatCardWidget(
                         icon: _iconFor(stat.iconAsset),
                         value: '${stat.count}',
@@ -101,9 +102,11 @@ class JobseekerHomeView extends StatelessWidget {
 
               20.h,
 
-              FadeInLeft(
-                delay: const Duration(milliseconds: 500),
-                duration: const Duration(milliseconds: 400),
+              // FadeInLeft
+
+              MySlideTransition(
+                // delay: const Duration(milliseconds: 500),
+                // duration: const Duration(milliseconds: 400),
                 child: CardWithListTile(
                   theme: theme,
                   isDark: isDark,

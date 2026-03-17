@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/app_colors.dart';
+import '../../../../core/utils/my_slide_animation.dart';
 import '../../../../models/job_application_model.dart';
 
 class ApplicationCard extends StatelessWidget {
