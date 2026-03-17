@@ -34,6 +34,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppBar(
+
       scrolledUnderElevation: 0.0,
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
