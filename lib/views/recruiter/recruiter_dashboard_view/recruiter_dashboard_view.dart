@@ -6,6 +6,7 @@ import 'package:jooblie_app/widgets/subtitle_widget.dart';
 import 'package:provider/provider.dart';
 import '../../../core/sized.dart';
 import '../../../viewmodels/recruiter_dashboard_viewmodel.dart';
+import 'widgets/dashboard_aplicant_tile_widget.dart';
 import 'widgets/card_width_list_tile.dart';
 
 class RecruiterDashboardView extends StatelessWidget {
@@ -96,7 +97,10 @@ class RecruiterDashboardView extends StatelessWidget {
             child: CardWithListTile(
               theme: theme,
               isDark: isDark,
-              viewModel: recruiterVM,
+              title: 'Recent Applicants',
+              items: recruiterVM.recentApplicants,
+              itemBuilder: (context, item, index) =>
+                  DashboardApplicantTileWidget(applicant: item),
             ),
           ),
         ],
