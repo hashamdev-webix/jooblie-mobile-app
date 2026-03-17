@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_applications_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_profile_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_recommendations_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_resume_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
 import 'core/app_theme_provider.dart';
@@ -15,7 +20,12 @@ void main() {
         ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
-        ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel())
+        ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel()),
+        ChangeNotifierProvider(create: (_)=>JobseekerHomeViewModel()),
+        ChangeNotifierProvider(create: (_)=>JobseekerApplicationsViewModel()),
+        ChangeNotifierProvider(create: (_)=>JobseekerRecommendationsViewModel()),
+        ChangeNotifierProvider(create: (_)=>JobseekerResumeViewModel()),
+ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel())
       ],
       child: const JooblieApp(),
     ),
