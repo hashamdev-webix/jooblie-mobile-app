@@ -8,6 +8,7 @@ class AppColors {
       HSLColor.fromAHSL(1.0, h, s / 100, l / 100).toColor();
 
   // Root / Light Mode
+  static final Color primaryColor=Color(0xff3C84F6);
   static final Color lightBackground = _hsl(0, 0, 100);
   static final Color lightForeground = _hsl(222, 47, 11);
   static final Color lightCard = _hsl(0, 0, 100);
