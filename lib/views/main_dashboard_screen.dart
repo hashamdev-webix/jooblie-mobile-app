@@ -4,34 +4,11 @@ import 'recruiter/recruiter_dashboard_view/recruiter_dashboard_view.dart';
 import 'recruiter/recruiter_jobs_view/recruiter_jobs_view.dart';
 import 'recruiter/recruiter_post_job_view/recruiter_post_job_view.dart';
 import 'recruiter/recruiter_company_view.dart';
-
-// --- MOCK SCREENS for Job Seeker ---
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: isDark ? AppColors.darkGradientBackground : AppColors.lightGradientBackground,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.dashboard_outlined, size: 64, color: AppColors.lightPrimary),
-            const SizedBox(height: 16),
-            Text(title, style: theme.textTheme.headlineMedium),
-          ],
-        ),
-      ),
-    );
-  }
-}
+import 'job_seeker/job_seeker_home_view/jobseeker_home_view.dart';
+import 'job_seeker/job_seeker_applications_view/jobseeker_applications_view.dart';
+import 'job_seeker/job_seeker_recommendation_view/jobseeker_recommendations_view.dart';
+import 'job_seeker/jobseeker_resume_view/jobseeker_resume_view.dart';
+import 'job_seeker/job_seeker_profile_view/jobseeker_profile_view.dart';
 
 // ─── Tab Model ───────────────────────────────────────────────────────────────
 class _TabItem {
@@ -173,10 +150,11 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
   int _currentIndex = 0;
 
   static final List<Widget> _jobSeekerScreens = [
-    const _PlaceholderScreen(title: 'Jobs Listing'),
-    const _PlaceholderScreen(title: 'Companies'),
-    const _PlaceholderScreen(title: 'Pricing Plans'),
-    const _PlaceholderScreen(title: 'My Profile'),
+    const JobseekerHomeView(),
+    const JobseekerApplicationsView(),
+    const JobseekerRecommendationsView(),
+    const JobseekerResumeView(),
+    const JobseekerProfileView(),
   ];
 
   static final List<Widget> _recruiterScreens = [
@@ -187,9 +165,10 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
   ];
 
   static const _jobSeekerTabs = [
-    _TabItem(label: 'Jobs', selectedIcon: Icons.work_rounded, unselectedIcon: Icons.work_outline),
-    _TabItem(label: 'Companies', selectedIcon: Icons.business_rounded, unselectedIcon: Icons.business_outlined),
-    _TabItem(label: 'Pricing', selectedIcon: Icons.payment_rounded, unselectedIcon: Icons.payment_outlined),
+    _TabItem(label: 'Home', selectedIcon: Icons.home_rounded, unselectedIcon: Icons.home_outlined),
+    _TabItem(label: 'Applications', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
+    _TabItem(label: 'Matches', selectedIcon: Icons.auto_awesome_rounded, unselectedIcon: Icons.auto_awesome_outlined),
+    _TabItem(label: 'Resume', selectedIcon: Icons.description_rounded, unselectedIcon: Icons.description_outlined),
     _TabItem(label: 'Profile', selectedIcon: Icons.person_rounded, unselectedIcon: Icons.person_outline),
   ];
 
