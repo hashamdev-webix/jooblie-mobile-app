@@ -2,20 +2,22 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/core/sized.dart';
-import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
-import 'package:jooblie_app/views/recruiter/recruiter_dashboard_view/widgets/dashboard_aplicant_tile_widget.dart';
 
 class CardWithListTile extends StatelessWidget {
   const CardWithListTile({
     super.key,
     required this.theme,
     required this.isDark,
-    required this.viewModel,
+    required this.items,
+    required this.title,
+    required this.itemBuilder,
   });
 
   final ThemeData theme;
   final bool isDark;
-  final RecruiterDashboardViewModel viewModel;
+  final List items;
+  final String title;
+  final Widget Function(BuildContext, dynamic, int) itemBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +38,19 @@ class CardWithListTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Recent Applicants',
+            title,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           16.h,
-          ...viewModel.recentApplicants.asMap().entries.map((entry) {
+          ...items.asMap().entries.map((entry) {
             final idx = entry.key;
-            final applicant = entry.value;
+            final item = entry.value;
             return FadeInUp(
               delay: Duration(milliseconds: 550 + idx * 100),
               duration: const Duration(milliseconds: 400),
-              child: DashboardApplicantTileWidget(applicant: applicant),
+              child: itemBuilder(context, item, idx),
             );
           }),
         ],
