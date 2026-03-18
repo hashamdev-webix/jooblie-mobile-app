@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/utils/routes.dart';
+import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_applications_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_profile_viewmodel.dart';
@@ -32,6 +34,7 @@ ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel())
   );
 }
 
+
 class JooblieApp extends StatelessWidget {
   const JooblieApp({super.key});
 
@@ -48,7 +51,8 @@ class JooblieApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
-          home: const SplashScreen(),
+          initialRoute: RoutesName.splash,
+          onGenerateRoute: Routes.generateRoute,
         );
       },
     );
