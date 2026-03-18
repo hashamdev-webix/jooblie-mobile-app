@@ -3,6 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:jooblie_app/widgets/header_appbar_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:jooblie_app/core/app_colors.dart';
@@ -11,7 +12,17 @@ import 'package:jooblie_app/core/sized.dart';
 
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
+  final String title;
+  final String subTitle;
+  final String routeName;
+  final bool showLeadingIcon;
+
+  const SettingsView({super.key,  this.title="My Profile",this.subTitle="Edit your personal information",
+
+
+  this.routeName= RoutesName.profileView,
+    this.showLeadingIcon=true
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +31,9 @@ class SettingsView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      // appBar: AppBarWidget(title: "Setting",
+      // showAppLogo: false,
+      // ),
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark
@@ -29,9 +43,10 @@ class SettingsView extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
+              // AppBarWidget(title: "Setting"),
               HeaderAppBarWidget(theme: theme, isDark: isDark,
               blackTitle: "settings",
-          showLeadingIcon: true,
+          showLeadingIcon: showLeadingIcon,
           blueTitle: "",
                 showSetting: false,
               ),
@@ -48,10 +63,10 @@ class SettingsView extends StatelessWidget {
                       duration: const Duration(milliseconds: 400),
                       child: _SettingsTile(
                         icon: Icons.person_outline_rounded,
-                        title: 'My Profile',
-                        subtitle: 'Edit your personal information',
+                        title:title,
+                        subtitle: subTitle,
                         onTap: () {
-                          Navigator.pushNamed(context, RoutesName.profileView);
+                          Navigator.pushNamed(context,routeName);
                         },
                       ),
                     ),
