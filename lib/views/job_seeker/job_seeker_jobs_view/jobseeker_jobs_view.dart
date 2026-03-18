@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/app_colors.dart';
 import '../../../../viewmodels/job_seeker_jobs_viewmodel.dart';
 import '../../../core/sized.dart';
+import '../../../widgets/header_appbar_widget.dart';
 import '../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
 import 'widgets/job_card_widget.dart';
-import 'widgets/jobs_search_header.dart';
 
 class JobSeekerJobsView extends StatelessWidget {
   const JobSeekerJobsView({super.key});
@@ -31,41 +31,18 @@ class JobSeekerJobsView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header section with Browse Jobs title
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-                child: FadeInDown(
-                  duration: const Duration(milliseconds: 500),
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Browse ',
-                          style: theme.textTheme.headlineLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'Jobs',
-                          style: theme.textTheme.headlineLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.lightPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              HeaderAppBarWidget(
+                theme: theme,
+                isDark: isDark,
+                blackTitle: 'Browse ',
+                blueTitle: 'Jobs',
               ),
 
-              // Scrollable content
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                   children: [
                     // Search Header
-
                     FadeInUp(
                       duration: const Duration(milliseconds: 600),
                       child: Container(
@@ -74,15 +51,23 @@ class JobSeekerJobsView extends StatelessWidget {
                           color: isDark ? AppColors.darkCard : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                            color: isDark
+                                ? AppColors.darkBorder
+                                : AppColors.lightBorder,
                             width: 1,
                           ),
                         ),
                         child: Column(
                           children: [
                             CustomHomeSearchBar(
-                              onSearchTap: () => Navigator.pushNamed(context, RoutesName.search),
-                              onLocationTap: () => Navigator.pushNamed(context, RoutesName.search),
+                              onSearchTap: () => Navigator.pushNamed(
+                                context,
+                                RoutesName.search,
+                              ),
+                              onLocationTap: () => Navigator.pushNamed(
+                                context,
+                                RoutesName.search,
+                              ),
                             ),
                             10.h,
                             SizedBox(
@@ -90,15 +75,25 @@ class JobSeekerJobsView extends StatelessWidget {
                               height: 48,
                               child: OutlinedButton.icon(
                                 onPressed: () {},
-                                icon: const Icon(Icons.filter_list_rounded, size: 20),
+                                icon: const Icon(
+                                  Icons.filter_list_rounded,
+                                  size: 20,
+                                ),
                                 label: const Text(
                                   'Filters',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: isDark ? Colors.white70 : Colors.black54,
+                                  foregroundColor: isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
                                   side: BorderSide(
-                                    color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                                    color: isDark
+                                        ? AppColors.darkBorder
+                                        : AppColors.lightBorder,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -111,11 +106,6 @@ class JobSeekerJobsView extends StatelessWidget {
                       ),
                     ),
                     15.h,
-                    // FadeInUp(
-                    //   duration: const Duration(milliseconds: 600),
-                    //   child: const JobsSearchHeader(),
-                    // ),
-                    // const SizedBox(height: 24),
 
                     // Job Cards list
                     ...vm.jobs.asMap().entries.map((entry) {
@@ -142,7 +132,10 @@ class JobSeekerJobsView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         backgroundColor: AppColors.lightPrimary,
-        child: const Icon(Icons.chat_bubble_outline_rounded, color: Colors.white),
+        child: const Icon(
+          Icons.chat_bubble_outline_rounded,
+          color: Colors.white,
+        ),
       ),
     );
   }
