@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/my_slide_animation.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_home_view/widgets/job_seeker_home_tile_widget.dart';
+import 'package:jooblie_app/widgets/header_appbar_widget.dart';
 import 'package:jooblie_app/widgets/heading_text_widget.dart';
 import 'package:jooblie_app/widgets/subtitle_widget.dart';
 import 'package:provider/provider.dart';
@@ -58,80 +61,88 @@ class JobseekerHomeView extends StatelessWidget {
               : AppColors.lightGradientBackground,
         ),
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(15, 20, 15, 100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Header ──
-              FadeInDown(
-                duration: const Duration(milliseconds: 500),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              HeaderAppBarWidget(theme: theme, isDark: isDark, blackTitle: 'Job', blueTitle: 'lie'),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(15, 20, 15, 100),
                   children: [
-                    HeadingTextWidget(
-                      theme: theme,
-                      title: 'Welcome back, Jooblie! 👋',
-                    ),
-                    4.h,
-                    SubTitleWidget(
-                      subTitle: "Here's your job search overview.",
-                      theme: theme,
-                    ),
-                  ],
-                ),
-              ),
-              20.h,
-
-              // FadeInUp(
-              //   duration: const Duration(milliseconds: 600),
-              //   child: CustomHomeSearchBar(
-              //     onSearchTap: () => Navigator.pushNamed(context, RoutesName.search),
-              //     onLocationTap: () => Navigator.pushNamed(context, RoutesName.search),
-              //   ),
-              // ),
-              // 20.h,
-
-              // ── Stats Cards ──
-              ...vm.stats.asMap().entries.map((entry) {
-                final idx = entry.key;
-                final stat = entry.value;
-                return Column(
-                  children: [
-                    MySlideTransition(
-                      delay: 100 * (idx + 1),
-                      duration: 500,
-                      child: StatCardWidget(
-                        icon: _iconFor(stat.iconAsset),
-                        value: '${stat.count}',
-                        label: stat.label,
-                        change: stat.badge,
+                    // ── Header ──
+                    FadeInUp(
+                      duration: const Duration(milliseconds: 500),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          HeadingTextWidget(
+                            theme: theme,
+                            title: 'Welcome back, Jooblie! 👋',
+                          ),
+                          4.h,
+                          SubTitleWidget(
+                            subTitle: "Here's your job search overview.",
+                            theme: theme,
+                          ),
+                        ],
                       ),
                     ),
-                    12.h,
+                    20.h,
+                
+                    // FadeInUp(
+                    //   duration: const Duration(milliseconds: 600),
+                    //   child: CustomHomeSearchBar(
+                    //     onSearchTap: () => Navigator.pushNamed(context, RoutesName.search),
+                    //     onLocationTap: () => Navigator.pushNamed(context, RoutesName.search),
+                    //   ),
+                    // ),
+                    // 20.h,
+                
+                    // ── Stats Cards ──
+                    ...vm.stats.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final stat = entry.value;
+                      return Column(
+                        children: [
+                          MySlideTransition(
+                            delay: 100 * (idx + 1),
+                            duration: 500,
+                            child: StatCardWidget(
+                              icon: _iconFor(stat.iconAsset),
+                              value: '${stat.count}',
+                              label: stat.label,
+                              change: stat.badge,
+                            ),
+                          ),
+                          12.h,
+                        ],
+                      );
+                    }),
+                
+                    20.h,
+                
+                    // FadeInLeft
+                    MySlideTransition(
+                      // delay: const Duration(milliseconds: 500),
+                      // duration: const Duration(milliseconds: 400),
+                      child: CardWithListTile(
+                        theme: theme,
+                        isDark: isDark,
+                        title: 'Recent Applications',
+                        items: vm.recentApplications,
+                        itemBuilder: (context, dynamic item, idx) {
+                          final app = item as RecentApplicationModel;
+                          final color = _statusColor(app.status);
+                          return JobSeekerHomeApplicantTile(
+                            isDark: isDark,
+                            app: app,
+                            theme: theme,
+                            color: color,
+                          );
+                        },
+                      ),
+                    ),
                   ],
-                );
-              }),
-
-              20.h,
-
-              // FadeInLeft
-              MySlideTransition(
-                // delay: const Duration(milliseconds: 500),
-                // duration: const Duration(milliseconds: 400),
-                child: CardWithListTile(
-                  theme: theme,
-                  isDark: isDark,
-                  title: 'Recent Applications',
-                  items: vm.recentApplications,
-                  itemBuilder: (context, dynamic item, idx) {
-                    final app = item as RecentApplicationModel;
-                    final color = _statusColor(app.status);
-                    return JobSeekerHomeApplicantTile(
-                      isDark: isDark,
-                      app: app,
-                      theme: theme,
-                      color: color,
-                    );
-                  },
                 ),
               ),
             ],
@@ -141,3 +152,4 @@ class JobseekerHomeView extends StatelessWidget {
     );
   }
 }
+

@@ -4,6 +4,7 @@ import 'package:jooblie_app/core/sized.dart';
 import 'package:jooblie_app/core/utils/my_slide_animation.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_applications_view/widgets/application_card_widget.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_home_view/jobseeker_home_view.dart';
+import 'package:jooblie_app/widgets/header_appbar_widget.dart';
 import 'package:jooblie_app/widgets/heading_text_widget.dart';
 import 'package:jooblie_app/widgets/subtitle_widget.dart';
 import 'package:provider/provider.dart';
