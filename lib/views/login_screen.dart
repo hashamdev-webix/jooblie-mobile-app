@@ -7,11 +7,10 @@ import '../core/app_colors.dart';
 import '../core/sized.dart';
 import '../core/utils/responsive.dart';
 import '../viewmodels/login_viewmodel.dart';
+import '../core/utils/routes_name.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/fade_slide_up.dart';
-import 'signup_screen.dart';
-import 'main_dashboard_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -152,13 +151,10 @@ class LoginScreen extends StatelessWidget {
                                                   onPressed: () async {
                                                     final success = await viewModel.login();
                                                     if (success && context.mounted) {
-                                                      Navigator.of(context).pushReplacement(
-                                                        MaterialPageRoute(
-                                                          builder: (_) =>
-                                                          const MainDashboardScreen(
-                                                            isJobSeeker: true,
-                                                          ),
-                                                        ),
+                                                      Navigator.pushReplacementNamed(
+                                                        context,
+                                                        RoutesName.dashboard,
+                                                        arguments: {'isJobSeeker': true},
                                                       );
                                                     }
                                                   },
@@ -173,12 +169,9 @@ class LoginScreen extends StatelessWidget {
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
-                                                        Navigator.push(
+                                                        Navigator.pushNamed(
                                                           context,
-                                                          MaterialPageRoute(
-                                                            builder: (_) =>
-                                                            const SignupScreen(),
-                                                          ),
+                                                          RoutesName.signup,
                                                         );
                                                       },
                                                       child: Text(
