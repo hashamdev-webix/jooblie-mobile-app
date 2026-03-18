@@ -3,12 +3,12 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:jooblie_app/widgets/header_appbar_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/core/app_theme_provider.dart';
 import 'package:jooblie_app/core/sized.dart';
 
-import '../../core/utils/routes.dart';
 
 class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
@@ -20,97 +20,95 @@ class SettingsView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back_ios_new_rounded,
-        //       color: isDark ? Colors.white : Colors.black, size: 20),
-        //   onPressed: () => Navigator.pop(context),
-        // ),
-        title: Text(
-          'Settings',
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark
               ? AppColors.darkGradientBackground
               : AppColors.lightGradientBackground,
         ),
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          children: [
-            FadeInDown(
-              duration: const Duration(milliseconds: 400),
-              child: _SectionHeader(title: 'Account'),
-            ),
-            12.h,
-            FadeInUp(
-              duration: const Duration(milliseconds: 400),
-              child: _SettingsTile(
-                icon: Icons.person_outline_rounded,
-                title: 'My Profile',
-                subtitle: 'Edit your personal information',
-                onTap: () {
-                  Navigator.pushNamed(context, RoutesName.profileView);
-                },
+        child: SafeArea(
+          child: Column(
+            children: [
+              HeaderAppBarWidget(theme: theme, isDark: isDark,
+              blackTitle: "settings",
+          showLeadingIcon: true,
+          blueTitle: "",
+                showSetting: false,
               ),
-            ),
-            24.h,
-            FadeInDown(
-              delay: const Duration(milliseconds: 100),
-              duration: const Duration(milliseconds: 400),
-              child: _SectionHeader(title: 'Appearance'),
-            ),
-            12.h,
-            FadeInUp(
-              delay: const Duration(milliseconds: 100),
-              duration: const Duration(milliseconds: 400),
-              child: _SettingsTile(
-                icon: Icons.palette_outlined,
-                title: 'Theme',
-                subtitle: _getThemeName(context),
-                onTap: () => _showThemeBottomSheet(context),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  children: [
+                    FadeInDown(
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionHeader(title: 'Account'),
+                    ),
+                    12.h,
+                    FadeInUp(
+                      duration: const Duration(milliseconds: 400),
+                      child: _SettingsTile(
+                        icon: Icons.person_outline_rounded,
+                        title: 'My Profile',
+                        subtitle: 'Edit your personal information',
+                        onTap: () {
+                          Navigator.pushNamed(context, RoutesName.profileView);
+                        },
+                      ),
+                    ),
+                    24.h,
+                    FadeInDown(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionHeader(title: 'Appearance'),
+                    ),
+                    12.h,
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SettingsTile(
+                        icon: Icons.palette_outlined,
+                        title: 'Theme',
+                        subtitle: _getThemeName(context),
+                        onTap: () => _showThemeBottomSheet(context),
+                      ),
+                    ),
+                    24.h,
+                    FadeInDown(
+                      delay: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionHeader(title: 'About App'),
+                    ),
+                    12.h,
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 400),
+                      child: Column(
+                        children: [
+                          _SettingsTile(
+                            icon: Icons.privacy_tip_outlined,
+                            title: 'Privacy Policy',
+                            subtitle: 'Read our terms and privacy policy',
+                            onTap: () {
+                              // Navigate to logic
+                            },
+                          ),
+                          12.h,
+                          _SettingsTile(
+                            icon: Icons.share_outlined,
+                            title: 'Share App',
+                            subtitle: 'Share Jooblie with your friends',
+                            onTap: () {
+                              // Share logic
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            24.h,
-            FadeInDown(
-              delay: const Duration(milliseconds: 200),
-              duration: const Duration(milliseconds: 400),
-              child: _SectionHeader(title: 'About App'),
-            ),
-            12.h,
-            FadeInUp(
-              delay: const Duration(milliseconds: 200),
-              duration: const Duration(milliseconds: 400),
-              child: Column(
-                children: [
-                  _SettingsTile(
-                    icon: Icons.privacy_tip_outlined,
-                    title: 'Privacy Policy',
-                    subtitle: 'Read our terms and privacy policy',
-                    onTap: () {
-                      // Navigate to logic
-                    },
-                  ),
-                  12.h,
-                  _SettingsTile(
-                    icon: Icons.share_outlined,
-                    title: 'Share App',
-                    subtitle: 'Share Jooblie with your friends',
-                    onTap: () {
-                      // Share logic
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
