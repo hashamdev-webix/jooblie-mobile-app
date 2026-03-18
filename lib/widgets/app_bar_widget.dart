@@ -15,6 +15,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final Color textColor;
   final  PreferredSizeWidget? bottom;
   final SystemUiOverlayStyle? systemOverlayStyle;
+  final bool showAppLogo;
   const AppBarWidget({
     super.key,
     required this.title,
@@ -26,7 +27,8 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
     this.textColor = Colors.black,
     this.bottom,
-    this.systemOverlayStyle
+    this.systemOverlayStyle,
+    this.showAppLogo=true
   });
 
   @override
@@ -51,7 +53,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () => Navigator.pop(context),
         icon: Icon(
           Icons.arrow_back_ios_new_sharp,
-          color: leadingIconColor,
+          color: isDark ? Colors.white : Colors.black87,
         ),
         // color: AppColors.primary,
       )
@@ -72,7 +74,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black87),
       title: Row(
         children: [
-          AppLogo(),
+         showAppLogo ?  AppLogo():SizedBox.shrink(),
           10.w,
           Text(
             title,
