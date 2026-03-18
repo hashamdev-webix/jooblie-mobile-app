@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/sized.dart';
 import '../../../viewmodels/jobseeker_recommendations_viewmodel.dart';
+import '../../../widgets/header_appbar_widget.dart';
 
 class JobseekerRecommendationsView extends StatelessWidget {
   const JobseekerRecommendationsView();
@@ -25,50 +26,58 @@ class JobseekerRecommendationsView extends StatelessWidget {
             : AppColors.lightGradientBackground,
       ),
       child: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-
+        child: Column(
           children: [
-        FadeInDown(
-          duration: const Duration(milliseconds: 500),
+            HeaderAppBarWidget(theme: theme, isDark: isDark),
 
-          child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+
                 children: [
-                  HeadingTextWidget(
-                    theme: theme,
-                    title: 'AI Recommendations ✨',
+                  FadeInUp(
+                    duration: const Duration(milliseconds: 500),
+
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HeadingTextWidget(
+                          theme: theme,
+                          title: 'AI Recommendations ✨',
+                        ),
+
+                        const SizedBox(height: 4),
+                        SubTitleWidget(
+                          theme: theme,
+                          subTitle:
+                              'Jobs matched to your profile and preferences.',
+                        ),
+                      ],
+                    ),
                   ),
 
-                  const SizedBox(height: 4),
-                  SubTitleWidget(
-                    theme: theme,
-                    subTitle: 'Jobs matched to your profile and preferences.',
-                  ),
+                  20.h,
+                  ...vm.recommendations.asMap().entries.map((entry) {
+                    final idx = entry.key;
+                    final app = entry.value;
+                    return Column(
+                      children: [
+                        MySlideTransition(
+                          delay: 100 * (idx + 1),
+                          duration: 500,
+                          child: RecommendationCard(
+                            job: vm.recommendations[idx],
+                            theme: theme,
+                            isDark: isDark,
+                          ),
+                        ),
+                        12.h,
+                      ],
+                    );
+                  }),
                 ],
               ),
             ),
-
-        20.h,
-        ...vm.recommendations.asMap().entries.map((entry) {
-          final idx = entry.key;
-          final app = entry.value;
-          return Column(
-            children: [
-              MySlideTransition(
-                delay: 100 * (idx + 1),
-                duration: 500,
-                child: RecommendationCard(
-                  job: vm.recommendations[idx],
-                  theme: theme,
-                  isDark: isDark,
-                ),
-              ),
-              12.h,
-            ],
-          );
-        }),
-
           ],
         ),
       ),
