@@ -12,7 +12,6 @@ import 'core/app_theme_provider.dart';
 import 'core/utils/responsive.dart';
 import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
-import 'views/splash_screen.dart';
 
 
 void main() {
@@ -42,7 +41,6 @@ class JooblieApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize responsive utility
     Responsive.init(context);
 
     return Consumer<AppThemeProvider>(
