@@ -32,7 +32,7 @@ class JobseekerResumeView extends StatelessWidget {
             HeaderAppBarWidget(theme: theme, isDark: isDark),
             Expanded(
               child: ListView(
-                padding:AppPadding.dashBoardPadding,
+                padding: AppPadding.dashBoardPadding,
 
                 children: [
                   FadeInUp(

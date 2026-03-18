@@ -12,6 +12,7 @@ import 'core/app_theme.dart';
 import 'core/app_theme_provider.dart';
 import 'core/utils/responsive.dart';
 import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/onboarding_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
 
 
@@ -20,6 +21,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppThemeProvider()),
+        ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),

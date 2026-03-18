@@ -8,12 +8,16 @@ import 'package:jooblie_app/views/signup_screen.dart';
 import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/search_view.dart';
+import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RoutesName.splash:
-        return MaterialPageRoute(builder: (_) =>  SplashScreen());
+        return MaterialPageRoute(builder: (_) => SplashScreen());
+      
+      case RoutesName.onboarding:
+        return MaterialPageRoute(builder: (_) => const OnboardingView());
       
       case RoutesName.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());

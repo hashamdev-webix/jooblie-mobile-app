@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/views/main_dashboard_screen.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
+import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../core/sized.dart';
@@ -234,19 +235,24 @@ class SignupScreen extends StatelessWidget {
                                                     onTap: () {
                                                       Navigator.pop(context);
                                                     },
-                                                    child: Text(
-                                                      'Sign in',
-                                                      style: TextStyle(
-                                                        color: AppColors
-                                                            .lightPrimary,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: theme
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.fontSize,
-                                                      ),
-                                                    ),
+                                                      child:
+                                                      GradientStyleTextWidget(
+                                                        title: "Sign in",
+                                                        fontSize: 13,
+                                                      )
+                                                    // child: Text(
+                                                    //   'Sign in',
+                                                    //   style: TextStyle(
+                                                    //     color: AppColors
+                                                    //         .lightPrimary,
+                                                    //     fontWeight:
+                                                    //         FontWeight.w600,
+                                                    //     fontSize: theme
+                                                    //         .textTheme
+                                                    //         .bodyMedium
+                                                    //         ?.fontSize,
+                                                    //   ),
+                                                    // ),
                                                   ),
                                                 ],
                                               ),

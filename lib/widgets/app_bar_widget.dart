@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/widgets/app_logo_widget.dart';
+import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 
 import '../core/sized.dart';
+import '../views/onboarding/onboarding_view.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -75,13 +77,16 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         children: [
           showAppLogo ? AppLogo() : SizedBox.shrink(),
           10.w,
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-              color: isDark ? Colors.white : Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
+          GradientStyleTextWidget(title: title,
+          fontSize: 20,
           ),
+          // Text(
+          //   title,
+          //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          //     color: isDark ? Colors.white : Colors.black,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
         ],
       ),
       actions: action,

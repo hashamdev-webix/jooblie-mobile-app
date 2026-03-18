@@ -37,9 +37,9 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
 
     // Navigate to Login Screen after 3 seconds
-    Timer(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacementNamed(context, RoutesName.login);
+        Navigator.pushReplacementNamed(context, RoutesName.onboarding);
       }
     });
   }

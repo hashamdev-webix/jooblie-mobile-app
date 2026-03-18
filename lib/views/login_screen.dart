@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:jooblie_app/widgets/app_logo_widget.dart';
+import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../core/sized.dart';
@@ -27,7 +28,6 @@ class LoginScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-
         resizeToAvoidBottomInset: true,
         appBar: const AppBarWidget(
           title: 'Jooblie',
@@ -58,7 +58,7 @@ class LoginScreen extends StatelessWidget {
                     builder: (context, constraints) {
                       return SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.only(bottom: 10,top: 10),
+                        padding: EdgeInsets.only(bottom: 10, top: 10),
                         child: ConstrainedBox(
                           constraints: BoxConstraints(
                             minHeight: constraints.maxHeight,
@@ -67,9 +67,7 @@ class LoginScreen extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-
                                 // AppLogo(),
-
                                 FadeSlideUp(
                                   duration: const Duration(milliseconds: 800),
                                   yOffset: 30.0,
@@ -79,7 +77,8 @@ class LoginScreen extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       color: theme.cardColor,
                                       border: Border.all(
-                                        color: theme.brightness == Brightness.dark
+                                        color:
+                                            theme.brightness == Brightness.dark
                                             ? Colors.black12
                                             : Colors.grey.shade100,
                                       ),
@@ -103,8 +102,12 @@ class LoginScreen extends StatelessWidget {
                                                   width: 64,
                                                   height: 64,
                                                   decoration: BoxDecoration(
-                                                    gradient: AppColors.gradientPrimary,
-                                                    borderRadius: BorderRadius.circular(16),
+                                                    gradient: AppColors
+                                                        .gradientPrimary,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          16,
+                                                        ),
                                                   ),
                                                   child: const Icon(
                                                     Icons.work_outline,
@@ -115,57 +118,76 @@ class LoginScreen extends StatelessWidget {
                                                 24.h,
                                                 Text(
                                                   'Welcome Back',
-                                                  style: theme.textTheme.headlineMedium,
+                                                  style: theme
+                                                      .textTheme
+                                                      .headlineMedium,
                                                 ),
                                                 8.h,
                                                 Text(
                                                   'Sign in to your Jooblie account',
-                                                  style: theme.textTheme.bodyMedium,
+                                                  style: theme
+                                                      .textTheme
+                                                      .bodyMedium,
                                                 ),
                                                 32.h,
                                                 CustomTextField(
                                                   label: 'Email',
                                                   hintText: 'you@example.com',
-                                                  prefixIcon: Icons.mail_outline,
-                                                  keyboardType: TextInputType.emailAddress,
-                                                  textInputAction: TextInputAction.next,
-                                                  validator: viewModel.validateEmail,
-                                                  onSaved: (value) =>
-                                                      viewModel.setEmail(value ?? ''),
+                                                  prefixIcon:
+                                                      Icons.mail_outline,
+                                                  keyboardType: TextInputType
+                                                      .emailAddress,
+                                                  textInputAction:
+                                                      TextInputAction.next,
+                                                  validator:
+                                                      viewModel.validateEmail,
+                                                  onSaved: (value) => viewModel
+                                                      .setEmail(value ?? ''),
                                                 ),
                                                 20.h,
                                                 CustomTextField(
                                                   label: 'Password',
                                                   hintText: '••••••••',
-                                                  prefixIcon: Icons.lock_outline,
+                                                  prefixIcon:
+                                                      Icons.lock_outline,
                                                   isPassword: true,
-                                                  textInputAction: TextInputAction.done,
-                                                  validator: viewModel.validatePassword,
-                                                  onSaved: (value) =>
-                                                      viewModel.setPassword(value ?? ''),
+                                                  textInputAction:
+                                                      TextInputAction.done,
+                                                  validator: viewModel
+                                                      .validatePassword,
+                                                  onSaved: (value) => viewModel
+                                                      .setPassword(value ?? ''),
                                                 ),
                                                 32.h,
                                                 PrimaryButton(
                                                   text: 'Sign In',
-                                                  isLoading: viewModel.isLoading,
+                                                  isLoading:
+                                                      viewModel.isLoading,
                                                   onPressed: () async {
-                                                    final success = await viewModel.login();
-                                                    if (success && context.mounted) {
+                                                    final success =
+                                                        await viewModel.login();
+                                                    if (success &&
+                                                        context.mounted) {
                                                       Navigator.pushReplacementNamed(
                                                         context,
                                                         RoutesName.dashboard,
-                                                        arguments: {'isJobSeeker': true},
+                                                        arguments: {
+                                                          'isJobSeeker': true,
+                                                        },
                                                       );
                                                     }
                                                   },
                                                 ),
                                                 24.h,
                                                 Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: [
                                                     Text(
                                                       "Don't have an account? ",
-                                                      style: theme.textTheme.bodyMedium,
+                                                      style: theme
+                                                          .textTheme
+                                                          .bodyMedium,
                                                     ),
                                                     GestureDetector(
                                                       onTap: () {
@@ -174,15 +196,20 @@ class LoginScreen extends StatelessWidget {
                                                           RoutesName.signup,
                                                         );
                                                       },
-                                                      child: Text(
-                                                        'Sign up',
-                                                        style: TextStyle(
-                                                          color: AppColors.lightPrimary,
-                                                          fontWeight: FontWeight.w600,
-                                                          fontSize: theme
-                                                              .textTheme.bodyMedium?.fontSize,
-                                                        ),
-                                                      ),
+                                                      child:
+                                                          GradientStyleTextWidget(
+                                                            title: "Sign Up",
+                                                            fontSize: 13,
+                                                          ),
+                                                      // child: Text(
+                                                      //   'Sign up',
+                                                      //   style: TextStyle(
+                                                      //     color: AppColors.lightPrimary,
+                                                      //     fontWeight: FontWeight.w600,
+                                                      //     fontSize: theme
+                                                      //         .textTheme.bodyMedium?.fontSize,
+                                                      //   ),
+                                                      // ),
                                                     ),
                                                   ],
                                                 ),
@@ -206,7 +233,6 @@ class LoginScreen extends StatelessWidget {
             ),
           ],
         ),
-
       ),
     );
   }
