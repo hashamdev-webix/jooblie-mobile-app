@@ -21,3 +21,9 @@ extension SizedExtension on num {
   SizedBox get resH => SizedBox(height: Responsive.h(toDouble()));
   SizedBox get resW => SizedBox(width: Responsive.w(toDouble()));
 }
+
+class AppPadding{
+
+  static EdgeInsetsGeometry dashBoardPadding= const EdgeInsets.fromLTRB(20, 5, 20, 100);
+
+}
