@@ -6,4 +6,5 @@ class RoutesName {
   static const String settings = 'settings_view';
   static const String profileView='profile_view';
   static const String search = 'search_view';
+  static const String companyView = 'company_view';
 }
