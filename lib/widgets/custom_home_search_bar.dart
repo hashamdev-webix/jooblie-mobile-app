@@ -51,13 +51,13 @@ class CustomHomeSearchBar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   children: [
-                    const Icon(Icons.search, size: 22, color: Colors.black87),
+                     Icon(Icons.search, size: 22, color:isDark ? Colors.white70 : Colors.black87),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         searchHint,
-                        style: const TextStyle(
-                          color: Colors.black54,
+                        style:  TextStyle(
+                          color:isDark ? Colors.white70 : Colors.black54,
                           fontSize: 16,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -86,13 +86,13 @@ class CustomHomeSearchBar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   children: [
-                    const Icon(Icons.location_on_outlined, size: 22, color: Colors.black87),
+                     Icon(Icons.location_on_outlined, size: 22, color:isDark ? Colors.white70 : Colors.black87),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         locationHint,
-                        style: const TextStyle(
-                          color: Colors.black54,
+                        style:  TextStyle(
+                          color:isDark ? Colors.white70 : Colors.black54,
                           fontSize: 16,
                           overflow: TextOverflow.ellipsis,
                         ),
