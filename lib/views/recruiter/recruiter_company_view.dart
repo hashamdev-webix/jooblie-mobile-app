@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:jooblie_app/views/settings/settings_view.dart';
 import '../../core/app_colors.dart';
 import '../../core/sized.dart';
 import '../../viewmodels/recruiter_dashboard_viewmodel.dart';
@@ -60,6 +61,30 @@ class RecruiterCompanyView extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 56, 20, 120),
             children: [
+              // ── Settings Icon ──
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FadeInRight(
+                    duration: const Duration(milliseconds: 500),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.settings_outlined,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsView(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
               // Company Header with animation
               FadeInDown(
                 duration: const Duration(milliseconds: 500),
