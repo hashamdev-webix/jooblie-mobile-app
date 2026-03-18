@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import '../core/app_colors.dart';
+import '../core/utils/routes_name.dart';
 import 'recruiter/recruiter_dashboard_view/recruiter_dashboard_view.dart';
 import 'recruiter/recruiter_jobs_view/recruiter_jobs_view.dart';
 import 'recruiter/recruiter_post_job_view/recruiter_post_job_view.dart';
@@ -159,7 +160,13 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     const RecruiterDashboardView(),
     const RecruiterJobsView(),
     const RecruiterPostJobView(),
-    const RecruiterCompanyView(),
+     SettingsView(
+      title: "Company Profile",
+      subTitle: "Edit your company information",
+      routeName: RoutesName.companyView,
+       showLeadingIcon: false,
+    )
+    // const RecruiterCompanyView(),
   ];
 
   static const _jobSeekerTabs = [
@@ -175,7 +182,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     _TabItem(label: 'Dashboard', selectedIcon: Icons.dashboard_rounded, unselectedIcon: Icons.dashboard_outlined),
     _TabItem(label: 'My Jobs', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
     _TabItem(label: 'Post Job', selectedIcon: Icons.add_box_rounded, unselectedIcon: Icons.add_box_outlined),
-    _TabItem(label: 'Company', selectedIcon: Icons.business_center_rounded, unselectedIcon: Icons.business_center_outlined),
+    _TabItem(label: 'Setting', selectedIcon: Icons.settings, unselectedIcon: Icons.settings_outlined),
   ];
 
   @override
