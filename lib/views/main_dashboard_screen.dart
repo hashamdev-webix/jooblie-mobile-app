@@ -153,7 +153,6 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     const JobseekerApplicationsView(),
     const JobseekerRecommendationsView(),
     const JobseekerResumeView(),
-    const SettingsView(),
   ];
 
   static final List<Widget> _recruiterScreens = [
@@ -169,7 +168,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     _TabItem(label: 'Applications', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
     _TabItem(label: 'Matches', selectedIcon: Icons.auto_awesome_rounded, unselectedIcon: Icons.auto_awesome_outlined),
     _TabItem(label: 'Resume', selectedIcon: Icons.description_rounded, unselectedIcon: Icons.description_outlined),
-    _TabItem(label: 'Setting', selectedIcon: Icons.settings, unselectedIcon: Icons.settings_outlined),
+    // _TabItem(label: 'Setting', selectedIcon: Icons.settings, unselectedIcon: Icons.settings_outlined),
   ];
 
   static const _recruiterTabs = [
