@@ -9,6 +9,8 @@ import '../../../core/app_colors.dart';
 import '../../../core/sized.dart';
 import '../../../models/home_stats_model.dart';
 import '../../../viewmodels/jobseeker_home_viewmodel.dart';
+import 'package:jooblie_app/widgets/custom_home_search_bar.dart';
+import '../../../core/utils/routes_name.dart';
 import '../../recruiter/recruiter_dashboard_view/widgets/stat_card_widget.dart';
 import '../../recruiter/recruiter_dashboard_view/widgets/card_width_list_tile.dart';
 
@@ -79,6 +81,15 @@ class JobseekerHomeView extends StatelessWidget {
               ),
               20.h,
 
+              // FadeInUp(
+              //   duration: const Duration(milliseconds: 600),
+              //   child: CustomHomeSearchBar(
+              //     onSearchTap: () => Navigator.pushNamed(context, RoutesName.search),
+              //     onLocationTap: () => Navigator.pushNamed(context, RoutesName.search),
+              //   ),
+              // ),
+              // 20.h,
+
               // ── Stats Cards ──
               ...vm.stats.asMap().entries.map((entry) {
                 final idx = entry.key;
@@ -103,7 +114,6 @@ class JobseekerHomeView extends StatelessWidget {
               20.h,
 
               // FadeInLeft
-
               MySlideTransition(
                 // delay: const Duration(milliseconds: 500),
                 // duration: const Duration(milliseconds: 400),

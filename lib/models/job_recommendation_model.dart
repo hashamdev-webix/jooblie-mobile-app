@@ -4,6 +4,12 @@ class JobRecommendationModel {
   final String location;
   final String salaryRange;
   final int matchPercent;
+  final String postedTime;
+  final String jobType;
+  final List<String> tags;
+  final String description;
+  final List<String> requirements;
+  final List<String> benefits;
 
   const JobRecommendationModel({
     required this.title,
@@ -11,5 +17,11 @@ class JobRecommendationModel {
     required this.location,
     required this.salaryRange,
     required this.matchPercent,
+    required this.postedTime,
+    required this.jobType,
+    required this.tags,
+    required this.description,
+    required this.requirements,
+    required this.benefits,
   });
 }

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'core/app_theme.dart';
 import 'core/app_theme_provider.dart';
 import 'core/utils/responsive.dart';
+import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'views/splash_screen.dart';
 
@@ -27,7 +28,8 @@ void main() {
         ChangeNotifierProvider(create: (_)=>JobseekerApplicationsViewModel()),
         ChangeNotifierProvider(create: (_)=>JobseekerRecommendationsViewModel()),
         ChangeNotifierProvider(create: (_)=>JobseekerResumeViewModel()),
-ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel())
+        ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel()),
+        ChangeNotifierProvider(create: (_)=>JobSeekerJobsViewModel()),
       ],
       child: const JooblieApp(),
     ),
