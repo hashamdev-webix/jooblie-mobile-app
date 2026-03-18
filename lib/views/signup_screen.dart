@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/views/main_dashboard_screen.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:provider/provider.dart';
 import '../core/app_colors.dart';
 import '../core/sized.dart';
 import '../core/utils/responsive.dart';
 import '../viewmodels/signup_viewmodel.dart';
+import '../core/utils/routes_name.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/segmented_control.dart';
 import '../widgets/fade_slide_up.dart';
-import 'main_dashboard_screen.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -206,7 +207,7 @@ class SignupScreen extends StatelessWidget {
                                                   if (success &&
                                                       context.mounted) {
                                                     Navigator.of(
-                                                      context,
+                                                      context, 
                                                     ).pushReplacement(
                                                       MaterialPageRoute(
                                                         builder: (_) =>
