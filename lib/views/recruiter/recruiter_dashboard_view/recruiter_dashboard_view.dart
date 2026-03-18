@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/views/recruiter/recruiter_dashboard_view/widgets/stat_card_widget.dart';
+import 'package:jooblie_app/widgets/header_appbar_widget.dart';
 import 'package:jooblie_app/widgets/heading_text_widget.dart';
 import 'package:jooblie_app/widgets/subtitle_widget.dart';
 import 'package:provider/provider.dart';
@@ -45,65 +46,82 @@ class RecruiterDashboardView extends StatelessWidget {
     ];
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 56, 20, 100),
-        children: [
-          FadeInDown(
-            duration: const Duration(milliseconds: 500),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HeadingTextWidget(theme: theme, title: "Recruiter Dashboard"),
-                4.h,
-                SubTitleWidget(
-                  subTitle: 'Manage your hiring pipeline efficiently.',
-                  theme: theme,
-                ),
-              ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            HeaderAppBarWidget(theme: theme, isDark: isDark,
+            showSetting: false,
+              showProfileIcon: true,
+              showLeadingIcon: false,
             ),
-          ),
-          24.h,
-          ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: statsList.length,
-            itemBuilder: (context, index) {
-              final stat = statsList[index];
 
-              return Column(
+            Expanded(
+              child: ListView(
+                padding:AppPadding.dashBoardPadding,
                 children: [
                   FadeInUp(
-                    delay: Duration(milliseconds: 100 * (index + 1)),
                     duration: const Duration(milliseconds: 500),
-                    child: StatCardWidget(
-                      icon: stat["icon"] as IconData,
-                      value: stat["value"] as String,
-                      label: stat["label"] as String,
-                      change: stat["change"] as String,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HeadingTextWidget(
+                          theme: theme,
+                          title: "Recruiter Dashboard",
+                        ),
+                        4.h,
+                        SubTitleWidget(
+                          subTitle: 'Manage your hiring pipeline efficiently.',
+                          theme: theme,
+                        ),
+                      ],
                     ),
                   ),
-                  12.h,
+                  24.h,
+                  ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: statsList.length,
+                    itemBuilder: (context, index) {
+                      final stat = statsList[index];
+
+                      return Column(
+                        children: [
+                          FadeInUp(
+                            delay: Duration(milliseconds: 100 * (index + 1)),
+                            duration: const Duration(milliseconds: 500),
+                            child: StatCardWidget(
+                              icon: stat["icon"] as IconData,
+                              value: stat["value"] as String,
+                              label: stat["label"] as String,
+                              change: stat["change"] as String,
+                            ),
+                          ),
+                          12.h,
+                        ],
+                      );
+                    },
+                  ),
+
+                  20.h,
+
+                  FadeInLeft(
+                    delay: const Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 400),
+                    child: CardWithListTile(
+                      theme: theme,
+                      isDark: isDark,
+                      title: 'Recent Applicants',
+                      items: recruiterVM.recentApplicants,
+                      itemBuilder: (context, item, index) =>
+                          DashboardApplicantTileWidget(applicant: item),
+                    ),
+                  ),
                 ],
-              );
-            },
-          ),
-
-          20.h,
-
-          FadeInLeft(
-            delay: const Duration(milliseconds: 500),
-            duration: const Duration(milliseconds: 400),
-            child: CardWithListTile(
-              theme: theme,
-              isDark: isDark,
-              title: 'Recent Applicants',
-              items: recruiterVM.recentApplicants,
-              itemBuilder: (context, item, index) =>
-                  DashboardApplicantTileWidget(applicant: item),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
