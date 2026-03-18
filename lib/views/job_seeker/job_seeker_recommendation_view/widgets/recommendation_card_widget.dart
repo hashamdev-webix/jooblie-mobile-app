@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/models/job_recommendation_model.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
 import 'dart:math' as math;
 import '../../../../core/app_colors.dart';
 
@@ -16,8 +17,12 @@ class RecommendationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+    return GestureDetector(
+      onTap: () {
+        JobDetailsBottomSheet.show(context, job);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -100,7 +105,7 @@ class RecommendationCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
 
