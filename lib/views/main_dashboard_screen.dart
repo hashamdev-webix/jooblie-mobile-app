@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/views/settings/settings_view.dart';
 import '../core/app_colors.dart';
 import 'recruiter/recruiter_dashboard_view/recruiter_dashboard_view.dart';
 import 'recruiter/recruiter_jobs_view/recruiter_jobs_view.dart';
@@ -150,7 +151,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     const JobseekerApplicationsView(),
     const JobseekerRecommendationsView(),
     const JobseekerResumeView(),
-    const JobseekerProfileView(),
+    const SettingsView(),
   ];
 
   static final List<Widget> _recruiterScreens = [
@@ -165,7 +166,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     _TabItem(label: 'Applications', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
     _TabItem(label: 'Matches', selectedIcon: Icons.auto_awesome_rounded, unselectedIcon: Icons.auto_awesome_outlined),
     _TabItem(label: 'Resume', selectedIcon: Icons.description_rounded, unselectedIcon: Icons.description_outlined),
-    _TabItem(label: 'Profile', selectedIcon: Icons.person_rounded, unselectedIcon: Icons.person_outline),
+    _TabItem(label: 'Setting', selectedIcon: Icons.settings, unselectedIcon: Icons.settings_outlined),
   ];
 
   static const _recruiterTabs = [
