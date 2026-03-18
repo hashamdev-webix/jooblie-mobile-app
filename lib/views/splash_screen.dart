@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
+
 import '../core/app_colors.dart';
-import 'login_screen.dart';
+import '../core/utils/routes_name.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,17 +39,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Navigate to Login Screen after 3 seconds
     Timer(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const LoginScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 800),
-          ),
-        );
+        Navigator.pushReplacementNamed(context, RoutesName.login);
       }
     });
   }
