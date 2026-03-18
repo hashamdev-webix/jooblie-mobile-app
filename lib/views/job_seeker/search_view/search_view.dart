@@ -77,7 +77,7 @@ class _SearchViewState extends State<SearchView> {
                 autofocus: true,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                 decoration: InputDecoration(
-                  prefixIcon: const Icon(Icons.search, size: 24, color: Colors.black87),
+                  prefixIcon:  Icon(Icons.search, size: 24, color:isDark ? Colors.white70 : Colors.black87),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15),
                 ),
@@ -164,7 +164,7 @@ class _SearchHistoryItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          const Icon(Icons.history, color: Colors.black54),
+           Icon(Icons.history, color:isDark ? Colors.white70 : Colors.black54),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
