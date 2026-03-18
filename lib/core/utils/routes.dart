@@ -3,6 +3,7 @@ import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_profile_view/jobseeker_profile_view.dart';
 import 'package:jooblie_app/views/login_screen.dart';
 import 'package:jooblie_app/views/main_dashboard_screen.dart';
+import 'package:jooblie_app/views/recruiter/recruiter_company_view.dart';
 import 'package:jooblie_app/views/signup_screen.dart';
 import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
@@ -34,6 +35,8 @@ class Routes {
       case RoutesName.search:
         return MaterialPageRoute(builder: (_) => const SearchView());
 
+      case RoutesName.companyView:
+        return MaterialPageRoute(builder: (_)=>RecruiterCompanyView());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
