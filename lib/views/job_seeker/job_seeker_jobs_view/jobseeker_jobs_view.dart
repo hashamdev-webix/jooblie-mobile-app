@@ -21,13 +21,13 @@ class JobSeekerJobsView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: isDark
-              ? AppColors.darkGradientBackground
-              : AppColors.lightGradientBackground,
-        ),
-        child: SafeArea(
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: isDark
+                ? AppColors.darkGradientBackground
+                : AppColors.lightGradientBackground,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -40,7 +40,7 @@ class JobSeekerJobsView extends StatelessWidget {
 
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                  padding: AppPadding.dashBoardPadding,
                   children: [
                     // Search Header
                     FadeInUp(

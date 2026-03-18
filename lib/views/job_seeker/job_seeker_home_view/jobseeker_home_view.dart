@@ -54,20 +54,20 @@ class JobseekerHomeView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: isDark
-              ? AppColors.darkGradientBackground
-              : AppColors.lightGradientBackground,
-        ),
-        child: SafeArea(
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: isDark
+                ? AppColors.darkGradientBackground
+                : AppColors.lightGradientBackground,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               HeaderAppBarWidget(theme: theme, isDark: isDark, blackTitle: 'Job', blueTitle: 'lie'),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(15, 20, 15, 100),
+                  padding: AppPadding.dashBoardPadding,
                   children: [
                     // ── Header ──
                     FadeInUp(
@@ -88,7 +88,7 @@ class JobseekerHomeView extends StatelessWidget {
                       ),
                     ),
                     20.h,
-                
+        
                     // FadeInUp(
                     //   duration: const Duration(milliseconds: 600),
                     //   child: CustomHomeSearchBar(
@@ -97,7 +97,7 @@ class JobseekerHomeView extends StatelessWidget {
                     //   ),
                     // ),
                     // 20.h,
-                
+        
                     // ── Stats Cards ──
                     ...vm.stats.asMap().entries.map((entry) {
                       final idx = entry.key;
@@ -118,9 +118,9 @@ class JobseekerHomeView extends StatelessWidget {
                         ],
                       );
                     }),
-                
+        
                     20.h,
-                
+        
                     // FadeInLeft
                     MySlideTransition(
                       // delay: const Duration(milliseconds: 500),

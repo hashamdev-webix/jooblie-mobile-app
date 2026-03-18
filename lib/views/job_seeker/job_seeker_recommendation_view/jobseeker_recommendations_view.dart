@@ -32,7 +32,7 @@ class JobseekerRecommendationsView extends StatelessWidget {
 
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                padding: AppPadding.dashBoardPadding,
 
                 children: [
                   FadeInUp(

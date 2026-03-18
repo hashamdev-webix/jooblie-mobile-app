@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import '../core/app_colors.dart';
 import '../core/utils/routes_name.dart';
@@ -171,7 +172,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
 
   static const _jobSeekerTabs = [
     _TabItem(label: 'Home', selectedIcon: Icons.home_rounded, unselectedIcon: Icons.home_outlined),
-    _TabItem(label: 'Jobs', selectedIcon: Icons.work_rounded, unselectedIcon: Icons.work_outlined),
+    _TabItem(label: 'Jobs', selectedIcon: Icons.work, unselectedIcon: Icons.work_outline),
     _TabItem(label: 'Applications', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
     _TabItem(label: 'Matches', selectedIcon: Icons.auto_awesome_rounded, unselectedIcon: Icons.auto_awesome_outlined),
     _TabItem(label: 'Resume', selectedIcon: Icons.description_rounded, unselectedIcon: Icons.description_outlined),

@@ -24,6 +24,6 @@ extension SizedExtension on num {
 
 class AppPadding{
 
-  static EdgeInsetsGeometry dashBoardPadding= const EdgeInsets.fromLTRB(20, 5, 20, 100);
+  static EdgeInsetsGeometry dashBoardPadding= const EdgeInsets.fromLTRB(15, 5, 15, 100);
 
 }

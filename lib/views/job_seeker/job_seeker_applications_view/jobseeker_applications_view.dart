@@ -20,31 +20,35 @@ class JobseekerApplicationsView extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: isDark
-            ? AppColors.darkGradientBackground
-            : AppColors.lightGradientBackground,
-      ),
-      child: SafeArea(
+    return SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? AppColors.darkGradientBackground
+              : AppColors.lightGradientBackground,
+        ),
         child: Column(
           children: [
             HeaderAppBarWidget(theme: theme, isDark: isDark),
 
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                padding: AppPadding.dashBoardPadding,
                 children: [
                   FadeInUp(
                     duration: const Duration(milliseconds: 500),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        HeadingTextWidget(theme: theme, title: "My Applications"),
+                        HeadingTextWidget(
+                          theme: theme,
+                          title: "My Applications",
+                        ),
                         4.h,
                         SubTitleWidget(
                           theme: theme,
-                          subTitle: "Track all your job applications in one place.",
+                          subTitle:
+                              "Track all your job applications in one place.",
                         ),
                       ],
                     ),

@@ -6,7 +6,6 @@ import '../core/app_colors.dart';
 import '../core/sized.dart';
 import '../core/utils/responsive.dart';
 import '../viewmodels/signup_viewmodel.dart';
-import '../core/utils/routes_name.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/primary_button.dart';
 import '../widgets/segmented_control.dart';
@@ -27,7 +26,7 @@ class SignupScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBarWidget(title: "",showAppLogo: false),
         // appBar: const AppBarWidget(title: "Jooblie", showLeadingIcon: false),
         body: Stack(
           children: [

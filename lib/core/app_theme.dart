@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
@@ -7,22 +8,48 @@ class AppTheme {
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: AppColors.lightPrimary,
-      scaffoldBackgroundColor: Colors.transparent, 
+      scaffoldBackgroundColor: Colors.transparent,
       cardColor: AppColors.lightCard,
-      
-      // Update typography to Space Grotesk for display and Inter for body
-      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme).copyWith(
-        displayLarge: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.bold),
-        displayMedium: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.bold),
-        displaySmall: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.bold),
-        headlineLarge: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.bold),
-        headlineMedium: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.w700),
-        headlineSmall: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.w600),
-        titleLarge: GoogleFonts.spaceGrotesk(color: AppColors.lightForeground, fontWeight: FontWeight.w600),
-        bodyLarge: GoogleFonts.inter(color: AppColors.lightForeground),
-        bodyMedium: GoogleFonts.inter(color: AppColors.lightMutedForeground),
-        labelLarge: GoogleFonts.inter(color: AppColors.lightForeground, fontWeight: FontWeight.w600),
-      ),
+
+      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme)
+          .copyWith(
+            displayLarge: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            displayMedium: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            displaySmall: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            headlineLarge: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            headlineMedium: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.w700,
+            ),
+            headlineSmall: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.w600,
+            ),
+            titleLarge: GoogleFonts.spaceGrotesk(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.w600,
+            ),
+            bodyLarge: GoogleFonts.inter(color: AppColors.lightForeground),
+            bodyMedium: GoogleFonts.inter(
+              color: AppColors.lightMutedForeground,
+            ),
+            labelLarge: GoogleFonts.inter(
+              color: AppColors.lightForeground,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
       colorScheme: ColorScheme.light(
         primary: AppColors.lightPrimary,
         secondary: AppColors.lightSecondary,
@@ -32,7 +59,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.lightMuted,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.lightBorder),
@@ -48,6 +78,22 @@ class AppTheme {
         hintStyle: GoogleFonts.inter(color: AppColors.lightMutedForeground),
         prefixIconColor: AppColors.lightMutedForeground,
       ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black87),
+        titleTextStyle: const TextStyle(
+          color: Colors.black87,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+      ),
     );
   }
 
@@ -57,20 +103,44 @@ class AppTheme {
       primaryColor: AppColors.darkPrimary,
       scaffoldBackgroundColor: Colors.transparent,
       cardColor: AppColors.darkCard,
-      
-      // Update typography to Space Grotesk for display and Inter for body
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).copyWith(
-        displayLarge: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.bold),
-        displayMedium: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.bold),
-        displaySmall: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.bold),
-        headlineLarge: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.bold),
-        headlineMedium: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.w700),
-        headlineSmall: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.w600),
-        titleLarge: GoogleFonts.spaceGrotesk(color: AppColors.darkForeground, fontWeight: FontWeight.w600),
-        bodyLarge: GoogleFonts.inter(color: AppColors.darkForeground),
-        bodyMedium: GoogleFonts.inter(color: AppColors.darkMutedForeground),
-        labelLarge: GoogleFonts.inter(color: AppColors.darkForeground, fontWeight: FontWeight.w600),
-      ),
+
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
+          .copyWith(
+            displayLarge: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            displayMedium: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            displaySmall: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            headlineLarge: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.bold,
+            ),
+            headlineMedium: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.w700,
+            ),
+            headlineSmall: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.w600,
+            ),
+            titleLarge: GoogleFonts.spaceGrotesk(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.w600,
+            ),
+            bodyLarge: GoogleFonts.inter(color: AppColors.darkForeground),
+            bodyMedium: GoogleFonts.inter(color: AppColors.darkMutedForeground),
+            labelLarge: GoogleFonts.inter(
+              color: AppColors.darkForeground,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
       colorScheme: ColorScheme.dark(
         primary: AppColors.darkPrimary,
         secondary: AppColors.darkSecondary,
@@ -80,7 +150,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.darkInput,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.darkBorder),
@@ -95,6 +168,22 @@ class AppTheme {
         ),
         hintStyle: GoogleFonts.inter(color: AppColors.darkMutedForeground),
         prefixIconColor: AppColors.darkMutedForeground,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
       ),
     );
   }

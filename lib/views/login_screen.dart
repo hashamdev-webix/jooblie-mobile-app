@@ -154,7 +154,7 @@ class LoginScreen extends StatelessWidget {
                                                       Navigator.pushReplacementNamed(
                                                         context,
                                                         RoutesName.dashboard,
-                                                        arguments: {'isJobSeeker': false},
+                                                        arguments: {'isJobSeeker': true},
                                                       );
                                                     }
                                                   },

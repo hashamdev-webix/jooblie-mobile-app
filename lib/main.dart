@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jooblie_app/core/utils/routes.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_applications_viewmodel.dart';
@@ -45,14 +46,25 @@ class JooblieApp extends StatelessWidget {
 
     return Consumer<AppThemeProvider>(
       builder: (context, themeProvider, child) {
-        return MaterialApp(
-          title: 'Jooblie',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeProvider.themeMode,
-          initialRoute: RoutesName.splash,
-          onGenerateRoute: Routes.generateRoute,
+        final isDark = themeProvider.themeMode == ThemeMode.dark || 
+                      (themeProvider.themeMode == ThemeMode.system && 
+                       MediaQuery.of(context).platformBrightness == Brightness.dark);
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+            statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+          ),
+          child: MaterialApp(
+            title: 'Jooblie',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+            initialRoute: RoutesName.splash,
+            onGenerateRoute: Routes.generateRoute,
+          ),
         );
       },
     );

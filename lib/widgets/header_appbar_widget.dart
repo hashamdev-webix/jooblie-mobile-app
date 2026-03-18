@@ -23,7 +23,7 @@ class HeaderAppBarWidget extends StatelessWidget {
     this.blueTitle = "lie",
     this.showSetting = true,
     this.showLeadingIcon = false,
-    this.showProfileIcon=false
+    this.showProfileIcon = false,
   });
 
   @override
@@ -40,9 +40,7 @@ class HeaderAppBarWidget extends StatelessWidget {
             if (showLeadingIcon)
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios,
-                ),
+                icon: Icon(Icons.arrow_back_ios),
               ),
             Expanded(
               child: RichText(
@@ -76,16 +74,17 @@ class HeaderAppBarWidget extends StatelessWidget {
                   )
                 : SizedBox.shrink(),
             if (showProfileIcon)
-            IconButton(
-              style: IconButton.styleFrom(
-                backgroundColor: AppColors.primaryColor.withValues(alpha: 0.1)
+              IconButton(
+                style: IconButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor.withValues(
+                    alpha: 0.1,
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, RoutesName.companyView);
+                },
+                icon: Icon(Bootstrap.person, color: AppColors.primaryColor),
               ),
-              onPressed: () {
-                Navigator.pushNamed(context, RoutesName.companyView);
-              },
-              icon: Icon(Bootstrap.person,color: AppColors.primaryColor),
-            )
-
           ],
         ),
       ),
