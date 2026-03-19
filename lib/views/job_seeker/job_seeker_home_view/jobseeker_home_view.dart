@@ -112,6 +112,9 @@ class JobseekerHomeView extends StatelessWidget {
                               value: '${stat.count}',
                               label: stat.label,
                               change: stat.badge,
+                              onTap: stat.label == 'Saved Jobs' 
+                                  ? () => Navigator.pushNamed(context, RoutesName.favorites)
+                                  : null,
                             ),
                           ),
                           12.h,
