@@ -4,6 +4,7 @@ import '../models/job_recommendation_model.dart';
 class JobSeekerJobsViewModel extends ChangeNotifier {
   final List<JobRecommendationModel> _jobs = [
     JobRecommendationModel(
+      id: 'job_001',
       title: 'Senior React Developer',
       company: 'TechCorp',
       location: 'Remote',
@@ -17,6 +18,7 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
       matchPercent: 95,
     ),
      JobRecommendationModel(
+      id: 'job_002',
       title: 'Product Designer',
       company: 'DesignHub',
       location: 'New York, NY',
@@ -30,6 +32,7 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
       matchPercent: 88,
     ),
      JobRecommendationModel(
+      id: 'job_003',
       title: 'Flutter Developer',
       company: 'AppWorks',
       location: 'Lahore',
