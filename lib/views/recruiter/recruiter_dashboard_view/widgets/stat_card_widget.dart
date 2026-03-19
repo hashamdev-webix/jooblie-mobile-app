@@ -7,15 +7,19 @@ class StatCardWidget extends StatelessWidget {
   final String value;
   final String label;
   final String change;
+  final VoidCallback? onTap;
 
-  const StatCardWidget({super.key, required this.icon, required this.value, required this.label, required this.change});
+  const StatCardWidget({super.key, required this.icon, required this.value, required this.label, required this.change, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Container(
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -38,6 +42,7 @@ class StatCardWidget extends StatelessWidget {
           4.h,
           Text(label, style: theme.textTheme.bodySmall?.copyWith(color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground)),
         ],
+      ),
       ),
     );
   }
