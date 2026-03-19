@@ -9,9 +9,22 @@ import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/search_view.dart';
 import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
+import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    // Handle dynamic job routes from deep links
+    if (settings.name != null && settings.name!.startsWith('/job/')) {
+      final jobId = settings.name!.split('/').last;
+      // For now, we return a scaffold that handles the job detail lookup.
+      // In a real app, you'd navigate to a JobDetailsView.
+      debugPrint('Deep Link for Job ID: $jobId');
+      // For this demo, we can just return the dashboard or a dedicated view.
+      return MaterialPageRoute(
+        builder: (_) => MainDashboardScreen(isJobSeeker: true, initialJobId: jobId),
+      );
+    }
+
     switch (settings.name) {
       case RoutesName.splash:
         return MaterialPageRoute(builder: (_) => SplashScreen());
@@ -38,6 +51,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const JobseekerProfileView());
       case RoutesName.search:
         return MaterialPageRoute(builder: (_) => const SearchView());
+      case RoutesName.favorites:
+        return MaterialPageRoute(builder: (_) => const FavoritesView());
 
       case RoutesName.companyView:
         return MaterialPageRoute(builder: (_)=>RecruiterCompanyView());
