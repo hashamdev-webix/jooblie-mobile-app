@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:jooblie_app/models/job_recommendation_model.dart';
+import 'package:provider/provider.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
+import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_recommendations_viewmodel.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
 import '../core/app_colors.dart';
 import '../core/utils/routes_name.dart';
 import 'recruiter/recruiter_dashboard_view/recruiter_dashboard_view.dart';
@@ -140,7 +145,8 @@ class _AnimatedTabBody extends StatelessWidget {
 // ─── Main Dashboard Screen ────────────────────────────────────────────────────
 class MainDashboardScreen extends StatefulWidget {
   final bool isJobSeeker;
-  const MainDashboardScreen({super.key, required this.isJobSeeker});
+  final String? initialJobId;
+  const MainDashboardScreen({super.key, required this.isJobSeeker, this.initialJobId});
 
   @override
   State<MainDashboardScreen> createState() => _MainDashboardScreenState();
@@ -148,6 +154,33 @@ class MainDashboardScreen extends StatefulWidget {
 
 class _MainDashboardScreenState extends State<MainDashboardScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialJobId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _handleInitialJob(widget.initialJobId!);
+      });
+    }
+  }
+
+  void _handleInitialJob(String jobId) {
+    final jobsVM = Provider.of<JobSeekerJobsViewModel>(context, listen: false);
+    final recVM = Provider.of<JobseekerRecommendationsViewModel>(context, listen: false);
+
+    // Combine all available job lists to search for the ID
+    final allJobs = [...jobsVM.jobs, ...recVM.recommendations];
+    
+    final job = allJobs.cast<JobRecommendationModel?>().firstWhere(
+      (j) => j?.id == jobId,
+      orElse: () => null,
+    );
+
+    if (job != null) {
+      JobDetailsBottomSheet.show(context, job);
+    }
+  }
 
   static final List<Widget> _jobSeekerScreens = [
     const JobseekerHomeView(),
@@ -192,13 +225,22 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     final screens = widget.isJobSeeker ? _jobSeekerScreens : _recruiterScreens;
     final tabs = widget.isJobSeeker ? _jobSeekerTabs : _recruiterTabs;
 
-    return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
-      body: _AnimatedTabBody(currentIndex: _currentIndex, screens: screens),
-      bottomNavigationBar: _PremiumBottomNav(
-        currentIndex: _currentIndex,
-        items: tabs,
-        onTap: (index) => setState(() => _currentIndex = index),
+    return PopScope(
+      canPop: _currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        setState(() {
+          _currentIndex = 0;
+        });
+      },
+      child: Scaffold(
+        backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+        body: _AnimatedTabBody(currentIndex: _currentIndex, screens: screens),
+        bottomNavigationBar: _PremiumBottomNav(
+          currentIndex: _currentIndex,
+          items: tabs,
+          onTap: (index) => setState(() => _currentIndex = index),
+        ),
       ),
     );
   }
