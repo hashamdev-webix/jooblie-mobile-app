@@ -4,6 +4,7 @@ import '../models/job_recommendation_model.dart';
 class JobseekerRecommendationsViewModel extends ChangeNotifier {
   final List<JobRecommendationModel> recommendations = const [
     JobRecommendationModel(
+      id: 'rec_001',
       title: 'Senior React Developer',
       company: 'TechCorp',
       location: 'Remote',
@@ -30,6 +31,7 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       ],
     ),
     JobRecommendationModel(
+      id: 'rec_002',
       title: 'Full Stack Engineer',
       company: 'DataFlow',
       location: 'Austin, TX',
@@ -43,6 +45,7 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       benefits: ['Health insurance', 'Equity', 'Flexible hours'],
     ),
     JobRecommendationModel(
+      id: 'rec_003',
       title: 'Frontend Architect',
       company: 'CloudNine',
       location: 'Remote',
@@ -56,6 +59,7 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       benefits: ['Fully remote', 'Top tier compensation', 'Quarterly retreats'],
     ),
     JobRecommendationModel(
+      id: 'rec_004',
       title: 'Product Designer',
       company: 'DesignHub',
       location: 'New York',
@@ -69,6 +73,7 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       benefits: ['Health, Vision, Dental', 'Commuter benefits'],
     ),
     JobRecommendationModel(
+      id: 'rec_005',
       title: 'Flutter Developer',
       company: 'MobileFirst',
       location: 'Remote',
