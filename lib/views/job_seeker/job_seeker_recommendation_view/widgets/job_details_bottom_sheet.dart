@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/services/deep_link_service.dart';
+import '../../../../viewmodels/favorites_viewmodel.dart';
 import '../../../../models/job_recommendation_model.dart';
 import '../../../../core/app_colors.dart';
 
@@ -176,12 +179,26 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Action Buttons
-                Row(
-                  children: [
-                    _IconBtn(icon: Icons.favorite_border, isDark: isDark),
-                    const SizedBox(width: 12),
-                    _IconBtn(icon: Icons.share_outlined, isDark: isDark),
-                  ],
+                Consumer<FavoritesViewModel>(
+                  builder: (context, favViewModel, child) {
+                    final isFavorite = favViewModel.isFavorite(job.id);
+                    return Row(
+                      children: [
+                        _IconBtn(
+                          icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                          isDark: isDark,
+                          iconColor: isFavorite ? Colors.red : null,
+                          onTap: () => favViewModel.toggleFavorite(job),
+                        ),
+                        const SizedBox(width: 12),
+                        _IconBtn(
+                          icon: Icons.share_outlined,
+                          isDark: isDark,
+                          onTap: () => DeepLinkService.shareJob(job.title, job.id),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
 
@@ -275,28 +292,33 @@ class JobDetailsBottomSheet extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: isDark ? Colors.white : Colors.black87,
-                        side: BorderSide(
-                          color: isDark ? Colors.white24 : Colors.black26,
+                  Consumer<FavoritesViewModel>(
+                    builder: (context, favViewModel, child) {
+                      final isSaved = favViewModel.isFavorite(job.id);
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: OutlinedButton(
+                          onPressed: () => favViewModel.toggleFavorite(job),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: isDark ? Colors.white : Colors.black87,
+                            side: BorderSide(
+                              color: isDark ? Colors.white24 : Colors.black26,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            isSaved ? 'Job Saved' : 'Save Job',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text(
-                        'Save Job',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -311,23 +333,33 @@ class JobDetailsBottomSheet extends StatelessWidget {
 class _IconBtn extends StatelessWidget {
   final IconData icon;
   final bool isDark;
+  final Color? iconColor;
+  final VoidCallback onTap;
 
-  const _IconBtn({required this.icon, required this.isDark});
+  const _IconBtn({
+    required this.icon,
+    required this.isDark,
+    this.iconColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 45,
-      height: 45,
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
-      ),
-      child: Icon(
-        icon,
-        color: isDark ? Colors.white70 : Colors.black87,
-        size: 22,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 45,
+        height: 45,
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+        ),
+        child: Icon(
+          icon,
+          color: iconColor ?? (isDark ? Colors.white70 : Colors.black87),
+          size: 22,
+        ),
       ),
     );
   }
