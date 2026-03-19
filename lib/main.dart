@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jooblie_app/core/services/deep_link_service.dart';
 import 'package:jooblie_app/core/utils/routes.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_applications_viewmodel.dart';
@@ -13,6 +14,7 @@ import 'core/app_theme_provider.dart';
 import 'core/utils/responsive.dart';
 import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/onboarding_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
 
 
@@ -22,6 +24,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AppThemeProvider()),
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
+        ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
@@ -45,6 +48,7 @@ class JooblieApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Responsive.init(context);
+    DeepLinkService().initDeepLinks(context);
 
     return Consumer<AppThemeProvider>(
       builder: (context, themeProvider, child) {
