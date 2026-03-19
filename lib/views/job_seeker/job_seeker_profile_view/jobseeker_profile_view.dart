@@ -4,6 +4,7 @@ import 'package:jooblie_app/views/job_seeker/job_seeker_profile_view/widgets/pro
 import 'package:jooblie_app/views/job_seeker/job_seeker_profile_view/widgets/profile_form_card_widget.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:provider/provider.dart';
+import '../../../core/utils/routes_name.dart';
 import '../../../core/app_colors.dart';
 import '../../../viewmodels/jobseeker_profile_viewmodel.dart';
 
@@ -48,6 +49,27 @@ class JobseekerProfileView extends StatelessWidget {
                     theme: theme,
                     isDark: isDark,
                     jobSeekerProfileViewModel: jobSeekerViewModel,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // ── Favorites Tile ──
+                MySlideTransition(
+                  delay: 200,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight],
+                      border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.favorite, color: AppColors.lightPrimary),
+                      title: const Text('My Favorites'),
+                      subtitle: const Text('View all your saved jobs'),
+                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                      onTap: () => Navigator.pushNamed(context, RoutesName.favorites),
+                    ),
                   ),
                 ),
               ],
