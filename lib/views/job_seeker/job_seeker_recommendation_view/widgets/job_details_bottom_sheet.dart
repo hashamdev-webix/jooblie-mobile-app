@@ -191,10 +191,18 @@ class JobDetailsBottomSheet extends StatelessWidget {
                           onTap: () => favViewModel.toggleFavorite(job),
                         ),
                         const SizedBox(width: 12),
-                        _IconBtn(
-                          icon: Icons.share_outlined,
-                          isDark: isDark,
-                          onTap: () => DeepLinkService.shareJob(job.title, job.id),
+                        Builder(
+                          builder: (btnCtx) {
+                            return _IconBtn(
+                              icon: Icons.share_outlined,
+                              isDark: isDark,
+                              onTap: () {
+                                final box = btnCtx.findRenderObject() as RenderBox?;
+                                final rect = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+                                DeepLinkService.shareJob(job.title, job.id, sharePositionOrigin: rect);
+                              },
+                            );
+                          },
                         ),
                       ],
                     );

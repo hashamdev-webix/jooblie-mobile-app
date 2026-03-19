@@ -28,11 +28,12 @@ class DeepLinkService {
     return 'https://jooblie.app/job/$jobId';
   }
 
-  static Future<void> shareJob(String title, String jobId) async {
+  static Future<void> shareJob(String title, String jobId, {Rect? sharePositionOrigin}) async {
     final link = generateJobLink(jobId);
     await Share.share(
       'Check out this job on Jooblie: $title\n$link',
       subject: 'Job Opportunity on Jooblie',
+      sharePositionOrigin: sharePositionOrigin,
     );
   }
 }
