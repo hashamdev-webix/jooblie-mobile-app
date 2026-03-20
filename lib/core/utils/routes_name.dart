@@ -8,6 +8,8 @@ class RoutesName {
   static const String profileView='profile_view';
   static const String search = 'search_view';
   static const String locationSearch = 'location_search_view';
+  static const String recruiterPostJob = 'recruiterPostJob';
+  static const String forgotPassword = 'forgotPassword';
   static const String favorites = 'favorites_screen';
   static const String companyView = 'company_view';
 }
