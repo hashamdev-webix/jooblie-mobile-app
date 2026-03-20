@@ -1,5 +1,9 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/app_colors.dart';
+import 'package:jooblie_app/core/sized.dart';
+import 'package:provider/provider.dart';
+import '../../../../viewmodels/job_seeker_jobs_viewmodel.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -9,32 +13,38 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  final TextEditingController _searchController = TextEditingController();
+  late TextEditingController _searchController;
   bool _hasError = false;
 
-  final List<String> _recentSearches = [
-    'Flutter developer',
-    'Flutter developer',
-    'dubizzle labs',
-  ];
-
   final List<String> _suggestedSearches = [
-    'part time',
-    'hiring immediately',
-    'full time',
+    'flutter developer',
+    'flutter',
+    'flutter internship',
+    'flutter developer internship',
+    'flutter developer remote',
+    'flutter intern',
+    'flutter remote',
+    'flutter app developer',
+    'flutter developer junior',
   ];
 
-  void _onSearch() {
-    if (_searchController.text.trim().isEmpty) {
-      setState(() {
-        _hasError = true;
-      });
-    } else {
-      setState(() {
-        _hasError = false;
-      });
-      // Handle actual search logic here
-    }
+  @override
+  void initState() {
+    super.initState();
+    final vm = context.read<JobSeekerJobsViewModel>();
+    _searchController = TextEditingController(text: vm.filters.search ?? '');
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchSelected(String query) {
+    final vm = context.read<JobSeekerJobsViewModel>();
+    vm.setSearch(query.isEmpty ? null : query);
+    Navigator.pop(context);
   }
 
   @override
@@ -63,13 +73,14 @@ class _SearchViewState extends State<SearchView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            10.h,
             // Search Input
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: _hasError ? AppColors.lightError : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
-                  width: 1.5,
+                  color: (isDark ? AppColors.darkPrimary : AppColors.lightPrimary),
+                  width: 2.0,
                 ),
               ),
               child: TextField(
@@ -77,19 +88,30 @@ class _SearchViewState extends State<SearchView> {
                 autofocus: true,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                 decoration: InputDecoration(
-                  prefixIcon:  Icon(Icons.search, size: 24, color:isDark ? Colors.white70 : Colors.black87),
+                  prefixIcon: Icon(Icons.search, size: 24, color: isDark ? Colors.white70 : Colors.black87),
+                  suffixIcon: _searchController.text.isNotEmpty 
+                    ? IconButton(
+                        icon: const Icon(Icons.close, size: 20),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {});
+                        },
+                      )
+                    : null,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                  hintText: 'Job title, keywords, or company',
                 ),
-                onSubmitted: (_) => _onSearch(),
+                onChanged: (_) => setState(() {}),
+                onSubmitted: (val) => _onSearchSelected(val),
               ),
             ),
             if (_hasError) ...[
-              const SizedBox(height: 8),
+              8.h,
               Row(
                 children: [
-                   Icon(Icons.error_rounded, color: AppColors.lightError, size: 20),
-                  const SizedBox(width: 8),
+                  Icon(Icons.error_rounded, color: AppColors.lightError, size: 20),
+                  8.w,
                   Text(
                     'Add a valid search term.',
                     style: TextStyle(color: AppColors.lightError, fontSize: 13),
@@ -98,101 +120,23 @@ class _SearchViewState extends State<SearchView> {
               ),
             ],
 
-            const SizedBox(height: 24),
-
-            // Recent Searches Section
-            ..._recentSearches.map((search) => _SearchHistoryItem(
-              title: search,
-              location: 'Lahore', // Placeholder
-              isDark: isDark,
-              onDelete: () {
-                setState(() {
-                  _recentSearches.remove(search);
-                });
-              },
-            )),
-
-            const SizedBox(height: 12),
-            Center(
-              child: TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'More recent searches',
-                  style: TextStyle(
-                    color: Color(0xff00509A), // Indeed blue
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
+            25.h,
 
             // Suggested Searches
-            ..._suggestedSearches.map((suggestion) => ListTile(
-              leading: const Icon(Icons.search),
-              title: Text(suggestion),
-              contentPadding: EdgeInsets.zero,
-              onTap: () {
-                _searchController.text = suggestion;
-                _onSearch();
-              },
+            ..._suggestedSearches.where((s) => s.toLowerCase().contains(_searchController.text.toLowerCase())).map((suggestion) => FadeInUp(
+              duration: const Duration(milliseconds: 300),
+              child: ListTile(
+                leading: Icon(Icons.search, color: isDark ? Colors.white54 : Colors.black45),
+                title: Text(
+                  suggestion,
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                ),
+                contentPadding: EdgeInsets.zero,
+                onTap: () => _onSearchSelected(suggestion),
+              ),
             )),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _SearchHistoryItem extends StatelessWidget {
-  final String title;
-  final String location;
-  final bool isDark;
-  final VoidCallback onDelete;
-
-  const _SearchHistoryItem({
-    required this.title,
-    required this.location,
-    required this.isDark,
-    required this.onDelete,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-           Icon(Icons.history, color:isDark ? Colors.white70 : Colors.black54),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-                ),
-                Text(
-                  '0 new in $location',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? Colors.white54 : Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, size: 20, color: Colors.black45),
-            onPressed: onDelete,
-          ),
-        ],
       ),
     );
   }
