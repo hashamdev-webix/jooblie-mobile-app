@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/core/app_theme_provider.dart';
 import 'package:jooblie_app/core/sized.dart';
+import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class SettingsView extends StatelessWidget {
@@ -119,6 +121,37 @@ class SettingsView extends StatelessWidget {
                         ],
                       ),
                     ),
+                    24.h,
+                    FadeInDown(
+                      delay: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionHeader(title: 'Account Actions'),
+                    ),
+                    12.h,
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SettingsTile(
+                        icon: Icons.logout_outlined,
+                        title: 'Logout',
+                        subtitle: 'Sign out of your account securely',
+                        onTap: () async {
+                          final authVM = Provider.of<AuthViewModel>(context, listen: false);
+                          await authVM.signOut();
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.remove('is_job_seeker');
+                          
+                          if (context.mounted) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              RoutesName.login,
+                              (route) => false,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    24.h,
                   ],
                 ),
               ),
