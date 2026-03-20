@@ -5,6 +5,8 @@ import 'package:jooblie_app/views/job_seeker/job_seeker_profile_view/widgets/ski
 
 import '../../../../viewmodels/jobseeker_profile_viewmodel.dart';
 import '../../../../widgets/primary_button.dart';
+import '../../../../core/utils/custom_easyloading.dart';
+import '../../../../core/utils/custom_flushbar.dart';
 
 class ProfileFormCardWidget extends StatelessWidget {
   const ProfileFormCardWidget({
@@ -136,17 +138,23 @@ class ProfileFormCardWidget extends StatelessWidget {
             icon: Icons.save_outlined,
 
             onPressed: () async {
-              await jobSeekerProfileViewModel.saveChanges();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Profile saved successfully!'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
+              CustomEasyLoading.show(context, message: 'Saving Profile...');
+              final success = await jobSeekerProfileViewModel.saveChanges();
+              CustomEasyLoading.dismiss();
+              
+              if (context.mounted && success) {
+                CustomFlushbar.showSuccess(
+                  context: context, 
+                  message: 'Profile saved successfully!',
+                );
+              } else if (context.mounted) {
+                CustomFlushbar.showError(
+                  context: context, 
+                  message: 'Failed to save profile. Please try again.',
                 );
               }
             },
-            isLoading: jobSeekerProfileViewModel.isSaving,
+            isLoading: false,
           ),
         ],
       ),
