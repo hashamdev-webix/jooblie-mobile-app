@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../core/app_colors.dart';
 import '../core/utils/routes_name.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,10 +38,40 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to Login Screen after 3 seconds
-    Future.delayed(const Duration(seconds: 3), () {
+    // Navigate after 3 seconds with session and onboarding logic
+    Future.delayed(const Duration(seconds: 3), () async {
+      final prefs = await SharedPreferences.getInstance();
+      
+      final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+      if (!hasSeenOnboarding) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, RoutesName.onboarding);
+        }
+        return;
+      }
+
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        final user = session.user;
+        // Verify email is confirmed if required by your Supabase setup.
+        // It's normally filled via checking emailConfirmedAt
+        if (user.emailConfirmedAt != null) {
+          final userType = user.userMetadata?['role'];
+          final isJobSeeker = userType != null 
+              ? (userType == 'job_seeker')
+              : (prefs.getBool('is_job_seeker') ?? true);
+              
+          if (mounted) {
+            Navigator.pushReplacementNamed(context, RoutesName.dashboard, arguments: {
+              'isJobSeeker': isJobSeeker,
+            });
+          }
+          return;
+        }
+      }
+
       if (mounted) {
-        Navigator.pushReplacementNamed(context, RoutesName.onboarding);
+        Navigator.pushReplacementNamed(context, RoutesName.login);
       }
     });
   }
