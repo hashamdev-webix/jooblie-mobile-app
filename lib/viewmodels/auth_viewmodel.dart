@@ -90,4 +90,22 @@ class AuthViewModel extends ChangeNotifier {
       _setLoading(false);
     }
   }
+
+  Future<String?> resetPassword(String email) async {
+    _setLoading(true);
+    _setError(null);
+    try {
+      await _authRepository.resetPassword(email);
+      _setLoading(false);
+      return null;
+    } on AuthException catch (e) {
+      _setError(e.message);
+      _setLoading(false);
+      return e.message;
+    } catch (e) {
+      _setError(e.toString());
+      _setLoading(false);
+      return e.toString();
+    }
+  }
 }
