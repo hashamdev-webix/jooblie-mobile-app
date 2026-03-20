@@ -1,91 +1,223 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/job_post_model.dart';
+import '../models/create_job_request_model.dart';
+
+import '../models/recruiter_stats_model.dart';
 
 class RecruiterDashboardViewModel extends ChangeNotifier {
-  // --- Stat Cards Data ---
-  final int activeJobs = 8;
-  final String activeJobsChange = '+2 this month';
-  final int totalApplicants = 246;
-  final String totalApplicantsChange = '+34 this week';
-  final String jobViews = '1.2K';
-  final String jobViewsChange = '+18% this month';
-  final String hireRate = '24%';
-  final String hireRateChange = '+5% improvement';
+  bool isLoading = false;
+  String? error;
 
-  // --- Recent Applicants ---
-  final List<RecentApplicant> recentApplicants = const [
-    RecentApplicant(
-      name: 'Alice Johnson',
-      role: 'Senior React Developer',
-      avatarInitial: 'A',
-    ),
-    RecentApplicant(
-      name: 'Mark Stevens',
-      role: 'Product Designer',
-      avatarInitial: 'M',
-    ),
-    RecentApplicant(
-      name: 'Sara Lin',
-      role: 'Data Scientist',
-      avatarInitial: 'S',
-    ),
-    RecentApplicant(
-      name: 'James Park',
-      role: 'Backend Engineer',
-      avatarInitial: 'J',
-    ),
-  ];
+  // Stats
+  int activeJobs = 0;
+  int totalApplicants = 0;
+  int jobViews = 0;
+  double hireRate = 0.0;
+  List<JobPerformance> topJobs = [];
+  List<RecentApplicant> recentApplicants = [];
+
+  RecruiterDashboardViewModel() {
+    fetchStats();
+  }
+
+  Future<void> fetchStats() async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) {
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      // Fetch all jobs for this recruiter
+      final jobsResponse = await Supabase.instance.client
+          .from('jobs')
+          .select()
+          .eq('recruiter_id', userId);
+
+      final List<dynamic> allJobs = jobsResponse as List<dynamic>;
+
+      // Active jobs count
+      activeJobs = allJobs.where((j) => j['status'] == 'active').length;
+
+      // Total applicants & views across all jobs
+      totalApplicants = allJobs.fold<int>(0, (sum, j) => sum + ((j['applicants'] ?? 0) as int));
+      jobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
+
+      // Hire rate: (hired / total applicants) * 100 — using a "hired" field if it exists, else 0
+      final totalHired = allJobs.fold<int>(0, (sum, j) => sum + ((j['hired'] ?? 0) as int));
+      hireRate = totalApplicants > 0 ? (totalHired / totalApplicants) * 100 : 0.0;
+
+      // Top jobs sorted by applicants desc
+      topJobs = allJobs
+          .map((j) => JobPerformance.fromJson(j))
+          .toList()
+        ..sort((a, b) => b.applicants.compareTo(a.applicants));
+      if (topJobs.length > 5) topJobs = topJobs.sublist(0, 5);
+
+      // Recent applicants: fetch from applications table joining profile info
+      try {
+        final applicantsResponse = await Supabase.instance.client
+            .from('applications')
+            .select('job_id, jobs!inner(recruiter_id), profiles(full_name, job_title)')
+            .eq('jobs.recruiter_id', userId)
+            .order('created_at', ascending: false)
+            .limit(5);
+
+        final List<dynamic> appList = applicantsResponse as List<dynamic>;
+        recentApplicants = appList.map((a) {
+          final profile = a['profiles'] as Map<String, dynamic>?;
+          return RecentApplicant.fromJson(profile ?? {});
+        }).toList();
+      } catch (_) {
+        // applications table may not exist yet — silently ignore
+        recentApplicants = [];
+      }
+    } catch (e) {
+      debugPrint('Error fetching recruiter stats: $e');
+      error = 'Failed to load stats.';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }
 
 class RecruiterJobsViewModel extends ChangeNotifier {
-  final List<JobPost> jobs = const [
-    JobPost(
-      id: '1',
-      title: 'Senior React Developer',
-      postedDate: 'Feb 10',
-      applicants: 42,
-      views: 230,
-      status: JobStatus.active,
-    ),
-    JobPost(
-      id: '2',
-      title: 'Product Designer',
-      postedDate: 'Feb 8',
-      applicants: 28,
-      views: 180,
-      status: JobStatus.active,
-    ),
-    JobPost(
-      id: '3',
-      title: 'Data Scientist',
-      postedDate: 'Feb 5',
-      applicants: 35,
-      views: 195,
-      status: JobStatus.paused,
-    ),
-    JobPost(
-      id: '4',
-      title: 'Backend Engineer',
-      postedDate: 'Jan 28',
-      applicants: 19,
-      views: 140,
-      status: JobStatus.closed,
-    ),
-  ];
+  List<JobPost> jobs = [];
+  bool isLoading = false;
+  bool isFetchingMore = false;
+  bool hasMore = true;
+  int _page = 0;
+  final int _limit = 10;
+  String currentFilter = 'all'; // all, active, expired, draft
 
-  void deleteJob(String id) {
-    // Stub for delete
-    notifyListeners();
+  RecruiterJobsViewModel() {
+    fetchJobs(refresh: true);
+  }
+
+  void setFilter(String status) {
+    if (currentFilter != status) {
+      currentFilter = status;
+      fetchJobs(refresh: true);
+    }
+  }
+
+  Future<void> fetchJobs({bool refresh = false}) async {
+    if (refresh) {
+      _page = 0;
+      jobs.clear();
+      hasMore = true;
+      isLoading = true;
+      notifyListeners();
+    } else {
+      if (!hasMore || isFetchingMore) return;
+      isFetchingMore = true;
+      notifyListeners();
+    }
+
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId == null) {
+        isLoading = false;
+        isFetchingMore = false;
+        notifyListeners();
+        return;
+      }
+
+      var query = Supabase.instance.client
+          .from('jobs')
+          .select()
+          .eq('recruiter_id', userId);
+
+      if (currentFilter != 'all') {
+        query = query.eq('status', currentFilter);
+      }
+
+      final response = await query
+          .order('created_at', ascending: false)
+          .range(_page * _limit, (_page + 1) * _limit - 1);
+
+      final List<dynamic> data = response as List<dynamic>;
+      final newJobs = data.map((json) => JobPost.fromJson(json)).toList();
+
+      if (newJobs.length < _limit) {
+        hasMore = false;
+      }
+
+      jobs.addAll(newJobs);
+      _page++;
+    } catch (e) {
+      debugPrint('Error fetching jobs: $e');
+    } finally {
+      isLoading = false;
+      isFetchingMore = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteJob(String id) async {
+    try {
+      await Supabase.instance.client.from('jobs').delete().eq('id', id);
+      jobs.removeWhere((job) => job.id == id);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting job: $e');
+    }
+  }
+
+  Future<void> updateJobStatus(String id, String status) async {
+    try {
+      await Supabase.instance.client
+          .from('jobs')
+          .update({'status': status})
+          .eq('id', id);
+      final idx = jobs.indexWhere((j) => j.id == id);
+      if (idx != -1) {
+        final old = jobs[idx];
+        jobs[idx] = JobPost.fromJson({
+          'id': old.id,
+          'title': old.title,
+          'company_name': old.companyName,
+          'location': old.location,
+          'job_type': old.jobType,
+          'experience': old.experience,
+          'salary_min': old.salaryMin,
+          'salary_max': old.salaryMax,
+          'salary_currency': old.salaryCurrency,
+          'description': old.description,
+          'requirements': old.requirements,
+          'skills': old.skills,
+          'created_at': old.postedDate.toIso8601String(),
+          'applicants': old.applicants,
+          'views': old.views,
+          'status': status,
+        });
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error updating job status: $e');
+    }
   }
 }
 
 class RecruiterPostJobViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  String? editingJobId;
+
   String jobTitle = '';
+  String companyName = '';
   String location = '';
-  String salaryRange = '';
+  String salaryMin = '';
+  String salaryMax = '';
+  String salaryCurrency = 'USD';
+  String requirements = '';
   String jobType = 'Full-time';
   String experienceLevel = 'Junior';
   String description = '';
@@ -117,15 +249,82 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void loadJobForEditing(JobPost job) {
+    editingJobId = job.id;
+    jobTitle = job.title;
+    companyName = job.companyName ?? '';
+    location = job.location ?? '';
+    salaryMin = job.salaryMin ?? '';
+    salaryMax = job.salaryMax ?? '';
+    salaryCurrency = job.salaryCurrency ?? 'USD';
+    requirements = job.requirements ?? '';
+    jobType = job.jobType ?? 'Full-time';
+    experienceLevel = job.experience ?? 'Junior';
+    description = job.description ?? '';
+    skills = job.skills.join(', ');
+    notifyListeners();
+  }
+
   Future<bool> publishJob() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
       isLoading = true;
       notifyListeners();
-      await Future.delayed(const Duration(seconds: 2));
-      isLoading = false;
-      notifyListeners();
-      return true;
+      
+      try {
+        final List<String> skillsList = skills
+            .split(',')
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty)
+            .toList();
+
+        final request = CreateJobRequest(
+          title: jobTitle,
+          companyName: companyName,
+          description: description,
+          requirements: requirements,
+          location: location,
+          jobType: jobType,
+          skills: skillsList,
+          experience: experienceLevel,
+          salaryMin: salaryMin.isNotEmpty ? salaryMin : null,
+          salaryMax: salaryMax.isNotEmpty ? salaryMax : null,
+          salaryCurrency: salaryCurrency.isNotEmpty ? salaryCurrency : null,
+          expiresAt: DateTime.now().add(const Duration(days: 30)),
+        );
+
+        final userId = Supabase.instance.client.auth.currentUser?.id;
+        final jobData = request.toJson();
+        if (userId != null) {
+          jobData['recruiter_id'] = userId;
+        }
+
+        if (editingJobId != null) {
+          await Supabase.instance.client.from('jobs').update(jobData).eq('id', editingJobId!);
+        } else {
+          await Supabase.instance.client.from('jobs').insert(jobData);
+        }
+        
+        editingJobId = null;
+        jobTitle = '';
+        companyName = '';
+        location = '';
+        salaryMin = '';
+        salaryMax = '';
+        requirements = '';
+        description = '';
+        skills = '';
+        formKey.currentState?.reset();
+
+        isLoading = false;
+        notifyListeners();
+        return true;
+      } catch (e) {
+        debugPrint('Error publishing job: $e');
+        isLoading = false;
+        notifyListeners();
+        return false;
+      }
     }
     return false;
   }
