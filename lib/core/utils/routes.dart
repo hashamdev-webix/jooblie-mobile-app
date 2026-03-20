@@ -8,6 +8,7 @@ import 'package:jooblie_app/views/signup_screen.dart';
 import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/search_view.dart';
+import 'package:jooblie_app/views/forgot_password_screen.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/location_search_view.dart';
 import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
@@ -59,6 +60,9 @@ class Routes {
 
       case RoutesName.companyView:
         return MaterialPageRoute(builder: (_)=>RecruiterCompanyView());
+      case RoutesName.forgotPassword:
+        return MaterialPageRoute(
+            builder: (BuildContext context) => const ForgotPasswordScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
