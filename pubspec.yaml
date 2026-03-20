@@ -18,8 +18,14 @@ dependencies:
   animate_do: ^3.3.4
   icons_plus: ^5.0.0
   supercharged: ^2.1.1
-  app_links: ^7.0.0
+  app_links: ^6.3.0
   share_plus: ^10.1.4
+  supabase_flutter: ^2.12.0
+  flutter_dotenv: ^6.0.0
+  another_flushbar: ^1.12.32
+  fluttertoast: ^9.0.0
+  shared_preferences: ^2.5.4
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:
@@ -34,3 +40,4 @@ flutter:
 
   assets:
     - assets/images/onboarding/
+    - .env
