@@ -66,7 +66,7 @@ class JobseekerRecommendationsView extends StatelessWidget {
                           delay: 100 * (idx + 1),
                           duration: 500,
                           child: RecommendationCard(
-                            job: vm.recommendations[idx],
+                            job: app,
                             theme: theme,
                             isDark: isDark,
                           ),
