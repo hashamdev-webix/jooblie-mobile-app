@@ -5,6 +5,7 @@ class JobseekerProfileModel {
   final String jobTitle;
   final String bio;
   final List<String> skills;
+  final String? avatarUrl;
 
   const JobseekerProfileModel({
     required this.fullName,
@@ -13,6 +14,7 @@ class JobseekerProfileModel {
     required this.jobTitle,
     required this.bio,
     required this.skills,
+    this.avatarUrl,
   });
 
   JobseekerProfileModel copyWith({
@@ -22,6 +24,7 @@ class JobseekerProfileModel {
     String? jobTitle,
     String? bio,
     List<String>? skills,
+    String? avatarUrl,
   }) {
     return JobseekerProfileModel(
       fullName: fullName ?? this.fullName,
@@ -30,6 +33,7 @@ class JobseekerProfileModel {
       jobTitle: jobTitle ?? this.jobTitle,
       bio: bio ?? this.bio,
       skills: skills ?? this.skills,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
     );
   }
 }
