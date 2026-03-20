@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
 import '../../../core/utils/routes_name.dart';
 import '../../../viewmodels/onboarding_viewmodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -51,12 +52,16 @@ class _OnboardingViewState extends State<OnboardingView> {
                     vertical: 10,
                   ),
                   child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        RoutesName.login,
-                        (route) => false,
-                      );
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('has_seen_onboarding', true);
+                      if (context.mounted) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          RoutesName.login,
+                          (route) => false,
+                        );
+                      }
                     },
                     child: GradientStyleTextWidget(title: 'Skip'),
                   ),
@@ -170,13 +175,17 @@ class _OnboardingViewState extends State<OnboardingView> {
 
                       child: PrimaryButton(
                         text: viewModel.isLastPage ? 'Get Started' : 'Next',
-                        onPressed: () {
+                        onPressed: () async {
                           if (viewModel.isLastPage) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              RoutesName.login,
-                              (route) => false,
-                            );
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setBool('has_seen_onboarding', true);
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                RoutesName.login,
+                                (route) => false,
+                              );
+                            }
                           } else {
                             _pageController.nextPage(
                               duration: const Duration(milliseconds: 500),
