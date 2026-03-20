@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:jooblie_app/services/supabase_service.dart';
+import 'package:jooblie_app/repositories/auth_repository.dart';
+import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:jooblie_app/core/services/deep_link_service.dart';
 import 'package:jooblie_app/core/utils/routes.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
@@ -18,10 +24,21 @@ import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
 
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
+  );
+
+  final supabaseService = SupabaseService();
+  final authRepository = AuthRepository(supabaseService);
+
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
         ChangeNotifierProvider(create: (_) => AppThemeProvider()),
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
@@ -70,6 +87,7 @@ class JooblieApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             initialRoute: RoutesName.splash,
             onGenerateRoute: Routes.generateRoute,
+            builder: EasyLoading.init(),
           ),
         );
       },
