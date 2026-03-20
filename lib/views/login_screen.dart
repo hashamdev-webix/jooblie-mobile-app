@@ -160,7 +160,27 @@ class LoginScreen extends StatelessWidget {
                                                   onSaved: (value) => viewModel
                                                       .setPassword(value ?? ''),
                                                 ),
-                                                32.h,
+                                                8.h,
+                                                Align(
+                                                  alignment: Alignment.centerRight,
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pushNamed(
+                                                        context,
+                                                        RoutesName.forgotPassword,
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      'Forgot Password?',
+                                                      style: TextStyle(
+                                                        color: AppColors.lightPrimary,
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                24.h,
                                                 PrimaryButton(
                                                   text: 'Sign In',
                                                   isLoading:
