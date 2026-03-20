@@ -3,6 +3,11 @@ import 'package:jooblie_app/views/main_dashboard_screen.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:jooblie_app/core/utils/custom_flushbar.dart';
 import '../core/app_colors.dart';
 import '../core/sized.dart';
 import '../core/utils/responsive.dart';
@@ -27,7 +32,7 @@ class SignupScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBarWidget(title: "",showAppLogo: false),
+        appBar: AppBarWidget(title: "", showAppLogo: false),
         // appBar: const AppBarWidget(title: "Jooblie", showLeadingIcon: false),
         body: Stack(
           children: [
@@ -83,7 +88,12 @@ class SignupScreen extends StatelessWidget {
                                     ],
                                   ),
                                   child: ChangeNotifierProvider(
-                                    create: (_) => SignupViewModel(),
+                                    create: (ctx) => SignupViewModel(
+                                      authViewModel: Provider.of<AuthViewModel>(
+                                        ctx,
+                                        listen: false,
+                                      ),
+                                    ),
                                     child: Consumer<SignupViewModel>(
                                       builder: (context, viewModel, child) {
                                         return Form(
@@ -201,21 +211,54 @@ class SignupScreen extends StatelessWidget {
                                                 text: 'Create Account',
                                                 isLoading: viewModel.isLoading,
                                                 onPressed: () async {
-                                                  final success =
-                                                      await viewModel
-                                                          .register();
-                                                  if (success &&
+                                                  final result = await viewModel
+                                                      .register();
+                                                  if (result == null &&
                                                       context.mounted) {
-                                                    Navigator.of(
-                                                      context, 
-                                                    ).pushReplacement(
-                                                      MaterialPageRoute(
-                                                        builder: (_) =>
-                                                            MainDashboardScreen(
-                                                              isJobSeeker: true,
-                                                              // isJobSeeker: viewModel.isJobSeeker,
-                                                            ),
-                                                      ),
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Account created successfully!",
+                                                    );
+                                                    final prefs =
+                                                        await SharedPreferences.getInstance();
+                                                    final isJobSeeker =
+                                                        prefs.getBool(
+                                                          'is_job_seeker',
+                                                        ) ??
+                                                        true;
+
+                                                    if (context.mounted) {
+                                                      Navigator.of(
+                                                        context,
+                                                      ).pushReplacement(
+                                                        MaterialPageRoute(
+                                                          builder: (_) =>
+                                                              MainDashboardScreen(
+                                                                isJobSeeker:
+                                                                    isJobSeeker,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  } else if (result ==
+                                                          'verify_email' &&
+                                                      context.mounted) {
+                                                    CustomFlushbar.showSuccess(
+                                                      context: context,
+                                                      message:
+                                                          "Verification email sent! Please check your inbox 📩",
+                                                    );
+                                                    Navigator.pushNamedAndRemoveUntil(
+                                                      context,
+                                                      RoutesName.login,
+                                                      (route) => false,
+                                                    );
+                                                  } else if (context.mounted) {
+                                                    CustomFlushbar.showError(
+                                                      context: context,
+                                                      message:
+                                                          result ??
+                                                          'Signup failed',
                                                     );
                                                   }
                                                 },
@@ -235,11 +278,11 @@ class SignupScreen extends StatelessWidget {
                                                     onTap: () {
                                                       Navigator.pop(context);
                                                     },
-                                                      child:
-                                                      GradientStyleTextWidget(
-                                                        title: "Sign in",
-                                                        fontSize: 13,
-                                                      )
+                                                    child:
+                                                        GradientStyleTextWidget(
+                                                          title: "Sign in",
+                                                          fontSize: 13,
+                                                        ),
                                                     // child: Text(
                                                     //   'Sign in',
                                                     //   style: TextStyle(
