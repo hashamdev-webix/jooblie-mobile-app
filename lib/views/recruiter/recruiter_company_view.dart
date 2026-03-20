@@ -4,10 +4,11 @@ import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:jooblie_app/widgets/header_appbar_widget.dart';
 import 'package:jooblie_app/widgets/primary_button.dart';
 import 'package:provider/provider.dart';
-import 'package:jooblie_app/views/settings/settings_view.dart';
 import '../../core/app_colors.dart';
 import '../../core/sized.dart';
 import '../../viewmodels/recruiter_dashboard_viewmodel.dart';
+import '../../core/utils/custom_easyloading.dart';
+import '../../core/utils/custom_flushbar.dart';
 
 class RecruiterCompanyView extends StatelessWidget {
   const RecruiterCompanyView({super.key});
@@ -73,7 +74,6 @@ class RecruiterCompanyView extends StatelessWidget {
             ),
             child: Column(
               children: [
-                HeaderAppBarWidget(theme: theme, isDark: isDark),
 
                 Expanded(
                   child: Form(
@@ -140,6 +140,32 @@ class RecruiterCompanyView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                _FieldLabel('Full Name'),
+                                8.h,
+                                TextFormField(
+                                  initialValue: vm.fullName,
+                                  readOnly: true,
+                                  decoration: _inputDecoration(
+                                    context,
+                                    'Your Name',
+                                    Icons.person_outline,
+                                  ),
+                                ),
+                                24.h,
+
+                                _FieldLabel('Email Address'),
+                                8.h,
+                                TextFormField(
+                                  initialValue: vm.email,
+                                  readOnly: true,
+                                  decoration: _inputDecoration(
+                                    context,
+                                    'your@email.com',
+                                    Icons.mail_outline,
+                                  ),
+                                ),
+                                24.h,
+                                
                                 _FieldLabel('Company Name'),
                                 8.h,
                                 TextFormField(
@@ -276,12 +302,18 @@ class RecruiterCompanyView extends StatelessWidget {
                             onPressed: vm.isLoading
                                 ? null
                                 : () async {
+                                    CustomEasyLoading.show(context, message: 'Saving Company Profile...');
                                     final success = await vm.saveChanges();
-                                    if (success && context.mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Company info saved!'),
-                                        ),
+                                    CustomEasyLoading.dismiss();
+                                    if (context.mounted && success) {
+                                      CustomFlushbar.showSuccess(
+                                        context: context,
+                                        message: 'Company profile saved successfully!',
+                                      );
+                                    } else if (context.mounted) {
+                                      CustomFlushbar.showError(
+                                        context: context,
+                                        message: 'Failed to save profile. Please try again.',
                                       );
                                     }
                                   },
