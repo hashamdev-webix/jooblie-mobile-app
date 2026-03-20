@@ -8,6 +8,7 @@ import 'package:jooblie_app/views/signup_screen.dart';
 import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/search_view.dart';
+import 'package:jooblie_app/views/job_seeker/search_view/location_search_view.dart';
 import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
 
@@ -51,6 +52,8 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const JobseekerProfileView());
       case RoutesName.search:
         return MaterialPageRoute(builder: (_) => const SearchView());
+      case RoutesName.locationSearch:
+        return MaterialPageRoute(builder: (_) => const LocationSearchView());
       case RoutesName.favorites:
         return MaterialPageRoute(builder: (_) => const FavoritesView());
 
