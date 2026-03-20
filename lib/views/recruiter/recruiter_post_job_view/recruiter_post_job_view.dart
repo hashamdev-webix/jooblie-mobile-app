@@ -116,6 +116,7 @@ class RecruiterPostJobView extends StatelessWidget {
                             RecruiterPostJobFormField(
                               label: 'Job Title',
                               child: TextFormField(
+                                initialValue: vm.jobTitle.isNotEmpty ? vm.jobTitle : null,
                                 decoration: _inputDecoration(
                                   context,
                                   'e.g. Senior React Developer',
@@ -130,8 +131,26 @@ class RecruiterPostJobView extends StatelessWidget {
                             ),
                             24.h,
                             RecruiterPostJobFormField(
+                              label: 'Company Name',
+                              child: TextFormField(
+                                initialValue: vm.companyName.isNotEmpty ? vm.companyName : null,
+                                decoration: _inputDecoration(
+                                  context,
+                                  'e.g. TechCorp Inc.',
+                                  Icons.business_outlined,
+                                ),
+                                textInputAction: TextInputAction.next,
+                                onSaved: (v) => vm.companyName = v ?? '',
+                                validator: (v) => (v == null || v.isEmpty)
+                                    ? 'Required'
+                                    : null,
+                              ),
+                            ),
+                            24.h,
+                            RecruiterPostJobFormField(
                               label: 'Location',
                               child: TextFormField(
+                                initialValue: vm.location.isNotEmpty ? vm.location : null,
                                 decoration: _inputDecoration(
                                   context,
                                   'Remote, City, etc.',
@@ -142,17 +161,40 @@ class RecruiterPostJobView extends StatelessWidget {
                               ),
                             ),
                             24.h,
-                            RecruiterPostJobFormField(
-                              label: 'Salary Range',
-                              child: TextFormField(
-                                decoration: _inputDecoration(
-                                  context,
-                                  '\$100K - \$150K',
-                                  Icons.attach_money_outlined,
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: RecruiterPostJobFormField(
+                                    label: 'Min Salary',
+                                    child: TextFormField(
+                                      initialValue: vm.salaryMin.isNotEmpty ? vm.salaryMin : null,
+                                      decoration: _inputDecoration(
+                                        context,
+                                        '\$100K',
+                                        Icons.attach_money_outlined,
+                                      ),
+                                      textInputAction: TextInputAction.next,
+                                      onSaved: (v) => vm.salaryMin = v ?? '',
+                                    ),
+                                  ),
                                 ),
-                                textInputAction: TextInputAction.next,
-                                onSaved: (v) => vm.salaryRange = v ?? '',
-                              ),
+                                12.w,
+                                Expanded(
+                                  child: RecruiterPostJobFormField(
+                                    label: 'Max Salary',
+                                    child: TextFormField(
+                                      initialValue: vm.salaryMax.isNotEmpty ? vm.salaryMax : null,
+                                      decoration: _inputDecoration(
+                                        context,
+                                        '\$150K',
+                                        Icons.attach_money_outlined,
+                                      ),
+                                      textInputAction: TextInputAction.next,
+                                      onSaved: (v) => vm.salaryMax = v ?? '',
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             24.h,
                             RecruiterPostJobFormField(
@@ -182,6 +224,7 @@ class RecruiterPostJobView extends StatelessWidget {
                             RecruiterPostJobFormField(
                               label: 'Job Description',
                               child: TextFormField(
+                                initialValue: vm.description.isNotEmpty ? vm.description : null,
                                 decoration: _inputDecoration(
                                   context,
                                   "Describe the role, responsibilities, and what you're looking for...",
@@ -194,8 +237,24 @@ class RecruiterPostJobView extends StatelessWidget {
                             ),
                             24.h,
                             RecruiterPostJobFormField(
+                              label: 'Requirements',
+                              child: TextFormField(
+                                initialValue: vm.requirements.isNotEmpty ? vm.requirements : null,
+                                decoration: _inputDecoration(
+                                  context,
+                                  "List the key qualifications and requirements...",
+                                  null,
+                                ),
+                                maxLines: 5,
+                                textInputAction: TextInputAction.newline,
+                                onSaved: (v) => vm.requirements = v ?? '',
+                              ),
+                            ),
+                            24.h,
+                            RecruiterPostJobFormField(
                               label: 'Required Skills',
                               child: TextFormField(
+                                initialValue: vm.skills.isNotEmpty ? vm.skills : null,
                                 decoration: _inputDecoration(
                                   context,
                                   'React, TypeScript, Node.js (comma-separated)',
