@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/job_post_model.dart';
 
 class RecruiterDashboardViewModel extends ChangeNotifier {
@@ -143,13 +144,47 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
 class RecruiterCompanyViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  String companyName = 'Cross Code';
+  String companyName = '';
+  String fullName = '';
+  String email = '';
   String website = '';
   String companySize = '—';
   String location = '';
   String industry = '';
   String about = '';
   bool isLoading = false;
+
+  RecruiterCompanyViewModel() {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user != null) {
+      email = user.email ?? '';
+      final metadata = user.userMetadata;
+      if (metadata != null) {
+        final cName = metadata['company_name'];
+        if (cName != null && cName.toString().isNotEmpty) {
+          companyName = cName.toString();
+        }
+        final fName = metadata['full_name'];
+        if (fName != null && fName.toString().isNotEmpty) {
+          fullName = fName.toString();
+        }
+        final web = metadata['website'];
+        if (web != null && web.toString().isNotEmpty) website = web.toString();
+        
+        final size = metadata['company_size'];
+        if (size != null && size.toString().isNotEmpty) companySize = size.toString();
+        
+        final loc = metadata['location'];
+        if (loc != null && loc.toString().isNotEmpty) location = loc.toString();
+        
+        final ind = metadata['industry'];
+        if (ind != null && ind.toString().isNotEmpty) industry = ind.toString();
+        
+        final abt = metadata['about'];
+        if (abt != null && abt.toString().isNotEmpty) about = abt.toString();
+      }
+    }
+  }
 
   final List<String> companySizes = [
     '—',
@@ -170,10 +205,27 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
       formKey.currentState?.save();
       isLoading = true;
       notifyListeners();
-      await Future.delayed(const Duration(seconds: 1));
-      isLoading = false;
-      notifyListeners();
-      return true;
+      
+      try {
+        final Map<String, dynamic> metadata = {
+          'company_name': companyName,
+          'website': website,
+          'company_size': companySize,
+          'location': location,
+          'industry': industry,
+          'about': about,
+        };
+        await Supabase.instance.client.auth.updateUser(
+          UserAttributes(data: metadata),
+        );
+        isLoading = false;
+        notifyListeners();
+        return true;
+      } catch (e) {
+        isLoading = false;
+        notifyListeners();
+        return false;
+      }
     }
     return false;
   }
