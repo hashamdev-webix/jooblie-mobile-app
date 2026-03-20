@@ -60,6 +60,14 @@ class LoginViewModel extends ChangeNotifier {
       
       if (result == null && authViewModel.currentUser != null) {
          final userData = authViewModel.currentUser!.userMetadata;
+         final user = authViewModel.currentUser;
+         
+         debugPrint('--- User Login Data ---');
+         debugPrint('Email: ${user?.email}');
+         debugPrint('UID: ${user?.id}');
+         debugPrint('Metadata: $userData');
+         debugPrint('-----------------------');
+
          final userType = userData?['role'] ?? 'job_seeker';
          isJobSeeker = (userType == 'job_seeker');
          
