@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
-import 'package:jooblie_app/widgets/app_logo_widget.dart';
 import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jooblie_app/core/utils/custom_flushbar.dart';
 import '../core/app_colors.dart';
 import '../core/sized.dart';
 import '../core/utils/responsive.dart';
@@ -24,7 +26,6 @@ class LoginScreen extends StatelessWidget {
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
@@ -90,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                                       ],
                                     ),
                                     child: ChangeNotifierProvider(
-                                      create: (_) => LoginViewModel(),
+                                      create: (ctx) => LoginViewModel(authViewModel: Provider.of<AuthViewModel>(ctx, listen: false)),
                                       child: Consumer<LoginViewModel>(
                                         builder: (context, viewModel, child) {
                                           return Form(
@@ -146,6 +147,7 @@ class LoginScreen extends StatelessWidget {
                                                 ),
                                                 20.h,
                                                 CustomTextField(
+
                                                   label: 'Password',
                                                   hintText: '••••••••',
                                                   prefixIcon:
@@ -164,17 +166,26 @@ class LoginScreen extends StatelessWidget {
                                                   isLoading:
                                                       viewModel.isLoading,
                                                   onPressed: () async {
-                                                    final success =
+                                                    final result =
                                                         await viewModel.login();
-                                                    if (success &&
-                                                        context.mounted) {
-                                                      Navigator.pushReplacementNamed(
-                                                        context,
-                                                        RoutesName.dashboard,
-                                                        arguments: {
-                                                          'isJobSeeker': true,
-                                                        },
-                                                      );
+                                                      if (result == null &&
+                                                          context.mounted) {
+                                                        Fluttertoast.showToast(msg: "Login successful!");
+                                                        
+                                                        if (context.mounted) {
+                                                          Navigator.pushReplacementNamed(
+                                                            context,
+                                                            RoutesName.dashboard,
+                                                            arguments: {
+                                                              'isJobSeeker': viewModel.isJobSeeker,
+                                                            },
+                                                          );
+                                                        }
+                                                      } else if (context.mounted) {
+                                                        CustomFlushbar.showError(
+                                                          context: context, 
+                                                          message: result ?? 'Login failed',
+                                                        );
                                                     }
                                                   },
                                                 ),
