@@ -12,6 +12,7 @@ import 'package:jooblie_app/views/forgot_password_screen.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/location_search_view.dart';
 import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
+import 'package:jooblie_app/views/verify_email_screen.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -63,6 +64,16 @@ class Routes {
       case RoutesName.forgotPassword:
         return MaterialPageRoute(
             builder: (BuildContext context) => const ForgotPasswordScreen());
+            
+      case RoutesName.verifyEmail:
+        return MaterialPageRoute(
+          builder: (BuildContext context) {
+            final args = settings.arguments as Map<String, dynamic>?;
+            final email = args?['email'] ?? '';
+            return VerifyEmailScreen(email: email);
+          },
+        );
+        
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
