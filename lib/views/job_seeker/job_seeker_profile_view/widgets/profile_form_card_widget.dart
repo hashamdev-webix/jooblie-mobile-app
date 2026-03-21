@@ -141,15 +141,15 @@ class ProfileFormCardWidget extends StatelessWidget {
               CustomEasyLoading.show(context, message: 'Saving Profile...');
               final success = await jobSeekerProfileViewModel.saveChanges();
               CustomEasyLoading.dismiss();
-              
+
               if (context.mounted && success) {
                 CustomFlushbar.showSuccess(
-                  context: context, 
+                  context: context,
                   message: 'Profile saved successfully!',
                 );
               } else if (context.mounted) {
                 CustomFlushbar.showError(
-                  context: context, 
+                  context: context,
                   message: 'Failed to save profile. Please try again.',
                 );
               }

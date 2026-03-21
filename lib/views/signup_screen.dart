@@ -250,8 +250,11 @@ class SignupScreen extends StatelessWidget {
                                                     );
                                                     Navigator.pushNamedAndRemoveUntil(
                                                       context,
-                                                      RoutesName.login,
+                                                      RoutesName.verifyEmail,
                                                       (route) => false,
+                                                      arguments: {
+                                                        'email': viewModel.email,
+                                                      },
                                                     );
                                                   } else if (context.mounted) {
                                                     CustomFlushbar.showError(
