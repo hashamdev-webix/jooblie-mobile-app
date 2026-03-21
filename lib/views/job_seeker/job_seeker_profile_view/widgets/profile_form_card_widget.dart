@@ -73,7 +73,7 @@ class ProfileFormCardWidget extends StatelessWidget {
 
           // Bio (multiline)
           Text(
-            'Bio',
+            'About',
             style: theme.textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -81,7 +81,7 @@ class ProfileFormCardWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           TextFormField(
-            controller: jobSeekerProfileViewModel.bioController,
+            controller: jobSeekerProfileViewModel.aboutController,
             maxLines: 3,
             style: theme.textTheme.bodyLarge?.copyWith(fontSize: 14),
             decoration: InputDecoration(

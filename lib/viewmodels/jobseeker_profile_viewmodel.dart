@@ -9,7 +9,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
   late final TextEditingController emailController;
   late final TextEditingController locationController;
   late final TextEditingController jobTitleController;
-  late final TextEditingController bioController;
+  late final TextEditingController aboutController;
   late final TextEditingController skillsController;
 
   JobseekerProfileModel _profile = const JobseekerProfileModel(
@@ -17,7 +17,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
     email: 'anast4390@gmail.com',
     location: 'Lahore',
     jobTitle: 'Mobile App Developer',
-    bio: 'I am AI Engineer.',
+    about: '',
     skills: ['AI', 'Backend Developer', 'Digital Marketer'],
   );
 
@@ -38,7 +38,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
     emailController = TextEditingController(text: _profile.email);
     locationController = TextEditingController(text: _profile.location);
     jobTitleController = TextEditingController(text: _profile.jobTitle);
-    bioController = TextEditingController(text: _profile.bio);
+    aboutController = TextEditingController(text: _profile.about);
     skillsController = TextEditingController(text: _profile.skills.join(', '));
   }
 
@@ -61,13 +61,15 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       final String? fullName =
           profileData?['full_name'] ?? metadata?['full_name'];
       final String email = user.email ?? 'No email';
-      final String? location = metadata?['location'];
+      final String? location = profileData?['location'] ?? metadata?['location'];
       final String? jobTitle =
           profileData?['job_title'] ?? metadata?['job_title'];
-      final String? bio = metadata?['bio'];
-      final List<String>? skills = (metadata?['skills'] as List<dynamic>?)
-          ?.map((e) => e.toString())
-          .toList();
+      final String? about = profileData?['about'] ?? metadata?['about'];
+      final List<String>? skills = profileData?['skills'] != null
+          ? (profileData!['skills'] as List<dynamic>).map((e) => e.toString()).toList()
+          : (metadata?['skills'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList();
 
       // Use profile table's avatar_url if available, else metadata
       final String? avatarUrl =
@@ -80,7 +82,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
         email: email,
         location: location ?? _profile.location,
         jobTitle: jobTitle ?? _profile.jobTitle,
-        bio: bio ?? _profile.bio,
+        about: about ?? _profile.about,
         skills: skills ?? _profile.skills,
         avatarUrl: avatarUrl,
       );
@@ -89,7 +91,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       nameController.text = _profile.fullName;
       locationController.text = _profile.location;
       jobTitleController.text = _profile.jobTitle;
-      bioController.text = _profile.bio;
+      aboutController.text = _profile.about;
       skillsController.text = _profile.skills.join(', ');
 
       notifyListeners();
@@ -206,7 +208,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
         'full_name': nameController.text.trim(),
         'location': locationController.text.trim(),
         'job_title': jobTitleController.text.trim(),
-        'bio': bioController.text.trim(),
+        'about': aboutController.text.trim(),
         'skills': parsedSkills,
         'avatar_url': finalAvatarUrl,
       };
@@ -222,6 +224,9 @@ class JobseekerProfileViewModel extends ChangeNotifier {
             'full_name': nameController.text.trim(),
             'job_title': jobTitleController.text.trim(),
             'avatar_url': finalAvatarUrl,
+            'location': locationController.text.trim(),
+            'about': aboutController.text.trim(),
+            'skills': parsedSkills,
           })
           .eq('id', user.id);
 
@@ -231,7 +236,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
         email: emailController.text.trim(),
         location: locationController.text.trim(),
         jobTitle: jobTitleController.text.trim(),
-        bio: bioController.text.trim(),
+        about: aboutController.text.trim(),
         skills: parsedSkills,
         avatarUrl: finalAvatarUrl,
       );
@@ -257,7 +262,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
     emailController.dispose();
     locationController.dispose();
     jobTitleController.dispose();
-    bioController.dispose();
+    aboutController.dispose();
     skillsController.dispose();
     super.dispose();
   }

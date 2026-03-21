@@ -137,17 +137,17 @@ class SettingsView extends StatelessWidget {
                         subtitle: 'Sign out of your account securely',
                         onTap: () async {
                           final authVM = Provider.of<AuthViewModel>(context, listen: false);
-                          await authVM.signOut();
+                          await authVM.signOut(context);
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.remove('is_job_seeker');
                           
-                          if (context.mounted) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              RoutesName.login,
-                              (route) => false,
-                            );
-                          }
+                          // if (context.mounted) {
+                          //   Navigator.pushNamedAndRemoveUntil(
+                          //     context,
+                          //     RoutesName.login,
+                          //     (route) => false,
+                          //   );
+                          // }
                         },
                       ),
                     ),

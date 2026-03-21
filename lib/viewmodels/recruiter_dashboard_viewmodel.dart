@@ -354,33 +354,48 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
   bool isLoading = false;
 
   RecruiterCompanyViewModel() {
+    _initCompanyProfile();
+  }
+
+  Future<void> _initCompanyProfile() async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user != null) {
       email = user.email ?? '';
-      final metadata = user.userMetadata;
-      if (metadata != null) {
-        final cName = metadata['company_name'];
-        if (cName != null && cName.toString().isNotEmpty) {
-          companyName = cName.toString();
-        }
-        final fName = metadata['full_name'];
-        if (fName != null && fName.toString().isNotEmpty) {
-          fullName = fName.toString();
-        }
-        final web = metadata['website'];
+      
+      try {
+        final profileData = await Supabase.instance.client
+            .from('profiles')
+            .select()
+            .eq('id', user.id)
+            .maybeSingle();
+            
+        final metadata = user.userMetadata;
+        
+        // Use profileData first, fallback to metadata
+        final cName = profileData?['company_name'] ?? metadata?['company_name'];
+        if (cName != null && cName.toString().isNotEmpty) companyName = cName.toString();
+
+        final fName = profileData?['full_name'] ?? metadata?['full_name'];
+        if (fName != null && fName.toString().isNotEmpty) fullName = fName.toString();
+
+        final web = profileData?['website'] ?? metadata?['website'];
         if (web != null && web.toString().isNotEmpty) website = web.toString();
-        
-        final size = metadata['company_size'];
+
+        final size = profileData?['company_size'] ?? metadata?['company_size'];
         if (size != null && size.toString().isNotEmpty) companySize = size.toString();
-        
-        final loc = metadata['location'];
+
+        final loc = profileData?['location'] ?? metadata?['location'];
         if (loc != null && loc.toString().isNotEmpty) location = loc.toString();
-        
-        final ind = metadata['industry'];
+
+        final ind = profileData?['industry'] ?? metadata?['industry'];
         if (ind != null && ind.toString().isNotEmpty) industry = ind.toString();
-        
-        final abt = metadata['about'];
+
+        final abt = profileData?['about'] ?? metadata?['about'];
         if (abt != null && abt.toString().isNotEmpty) about = abt.toString();
+
+        notifyListeners();
+      } catch (e) {
+        debugPrint('Error initializing recruiter profile: $e');
       }
     }
   }
@@ -406,21 +421,39 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
       notifyListeners();
       
       try {
+        final user = Supabase.instance.client.auth.currentUser;
+        if (user == null) {
+          isLoading = false;
+          notifyListeners();
+          return false;
+        }
+
         final Map<String, dynamic> metadata = {
           'company_name': companyName,
+          'full_name': fullName,
           'website': website,
           'company_size': companySize,
           'location': location,
           'industry': industry,
           'about': about,
         };
+        
+        // 1. Update user metadata
         await Supabase.instance.client.auth.updateUser(
           UserAttributes(data: metadata),
         );
+
+        // 2. Update profiles table
+        await Supabase.instance.client
+            .from('profiles')
+            .update(metadata)
+            .eq('id', user.id);
+
         isLoading = false;
         notifyListeners();
         return true;
       } catch (e) {
+        debugPrint('Error updating company profile: $e');
         isLoading = false;
         notifyListeners();
         return false;

@@ -3,7 +3,7 @@ class JobseekerProfileModel {
   final String email;
   final String location;
   final String jobTitle;
-  final String bio;
+  final String about;
   final List<String> skills;
   final String? avatarUrl;
 
@@ -12,7 +12,7 @@ class JobseekerProfileModel {
     required this.email,
     required this.location,
     required this.jobTitle,
-    required this.bio,
+    required this.about,
     required this.skills,
     this.avatarUrl,
   });
@@ -22,7 +22,7 @@ class JobseekerProfileModel {
     String? email,
     String? location,
     String? jobTitle,
-    String? bio,
+    String? about,
     List<String>? skills,
     String? avatarUrl,
   }) {
@@ -31,7 +31,7 @@ class JobseekerProfileModel {
       email: email ?? this.email,
       location: location ?? this.location,
       jobTitle: jobTitle ?? this.jobTitle,
-      bio: bio ?? this.bio,
+      about: about ?? this.about,
       skills: skills ?? this.skills,
       avatarUrl: avatarUrl ?? this.avatarUrl,
     );

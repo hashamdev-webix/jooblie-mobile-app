@@ -55,7 +55,7 @@ class AuthViewModel extends ChangeNotifier {
       
       // Supabase email enumeration protection returns a user with empty identities if the email is already in use
       if (response.user != null && response.user!.identities != null && response.user!.identities!.isEmpty) {
-        final msg = 'An account already exists with this email address. Please sign in instead.';
+        final msg = 'An account with this email already exists.';
         _setError(msg);
         return msg;
       }
@@ -66,9 +66,10 @@ class AuthViewModel extends ChangeNotifier {
       return null;
     } on AuthException catch (e) {
       String msg = e.message;
-      if (msg.toLowerCase().contains('already registered') || 
-          msg.toLowerCase().contains('already exists')) {
-        msg = 'An account already exists with this email address. Please sign in instead.';
+      if (msg.toLowerCase().contains('rate limit')) {
+        msg = 'Too many signup attempts. Please wait a few minutes.';
+      } else if (msg.toLowerCase().contains('already')) {
+        msg = 'An account with this email already exists.';
       }
       _setError(msg);
       _setLoading(false);
@@ -76,14 +77,14 @@ class AuthViewModel extends ChangeNotifier {
     } catch (e) {
       _setError(e.toString());
       _setLoading(false);
-      return e.toString();
+      return 'Something went wrong. Please try again.';
     }
   }
 
-  Future<void> signOut() async {
+  Future<void> signOut(BuildContext context) async {
     _setLoading(true);
     try {
-      await _authRepository.signOut();
+      await _authRepository.signOut(context);
       _setLoading(false);
     } catch (e) {
       _setError(e.toString());

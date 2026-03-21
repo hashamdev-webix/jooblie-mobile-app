@@ -57,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
         // It's normally filled via checking emailConfirmedAt
         if (user.emailConfirmedAt != null) {
           final userType = user.userMetadata?['role'];
-          final isJobSeeker = userType != null 
+          final isJobSeeker = userType != null
               ? (userType == 'job_seeker')
               : (prefs.getBool('is_job_seeker') ?? true);
               

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final AuthViewModel authViewModel;
@@ -59,18 +60,20 @@ class LoginViewModel extends ChangeNotifier {
       final result = await authViewModel.signIn(_email, _password);
       
       if (result == null && authViewModel.currentUser != null) {
-         final userData = authViewModel.currentUser!.userMetadata;
-         final user = authViewModel.currentUser;
-         
-         debugPrint('--- User Login Data ---');
-         debugPrint('Email: ${user?.email}');
-         debugPrint('UID: ${user?.id}');
-         debugPrint('Metadata: $userData');
-         debugPrint('-----------------------');
+         try {
+           final profile = await Supabase.instance.client
+               .from('profiles')
+               .select('role')
+               .eq('id', authViewModel.currentUser!.id)
+               .maybeSingle();
 
-         final userType = userData?['role'] ?? 'job_seeker';
-         isJobSeeker = (userType == 'job_seeker');
-         
+           final userType = profile?['role'] ?? authViewModel.currentUser!.userMetadata?['role'] ?? 'job_seeker';
+           isJobSeeker = (userType == 'job_seeker');
+         } catch (e) {
+           final userType = authViewModel.currentUser!.userMetadata?['role'] ?? 'job_seeker';
+           isJobSeeker = (userType == 'job_seeker');
+         }
+
          // Save role to SharedPreferences as backup
          final prefs = await SharedPreferences.getInstance();
          await prefs.setBool('is_job_seeker', isJobSeeker);
