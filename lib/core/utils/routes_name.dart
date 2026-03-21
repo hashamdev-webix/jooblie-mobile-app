@@ -12,4 +12,5 @@ class RoutesName {
   static const String forgotPassword = 'forgotPassword';
   static const String favorites = 'favorites_screen';
   static const String companyView = 'company_view';
+  static const String verifyEmail = 'verify_email_screen';
 }
