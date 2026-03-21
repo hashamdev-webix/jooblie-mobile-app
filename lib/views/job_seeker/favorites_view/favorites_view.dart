@@ -37,22 +37,28 @@ class FavoritesView extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: favoriteJobs.isEmpty
+      body: favViewModel.isLoading
+          ?  Center(child: CircularProgressIndicator(color: AppColors.lightPrimary))
+          : favViewModel.favoriteJobs.isEmpty
           ? _buildEmptyState(theme, isDark)
-          : ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              itemCount: favoriteJobs.length,
-              itemBuilder: (context, index) {
-                final job = favoriteJobs[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: JobCardWidget(
-                    job: job,
-                    onTap: () => JobDetailsBottomSheet.show(context, job),
-                  ),
-                );
-              },
-            ),
+          : RefreshIndicator(
+        onRefresh: () => favViewModel.fetchFavoriteJobs(),
+        color: AppColors.lightPrimary,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          itemCount: favoriteJobs.length,
+          itemBuilder: (context, index) {
+            final job = favoriteJobs[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: JobCardWidget(
+                job: job,
+                onTap: () => JobDetailsBottomSheet.show(context, job),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 

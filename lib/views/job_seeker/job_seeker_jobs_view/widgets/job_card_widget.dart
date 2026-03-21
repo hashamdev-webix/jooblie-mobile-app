@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/app_colors.dart';
 import '../../../../models/job_recommendation_model.dart';
+import '../../../../viewmodels/favorites_viewmodel.dart';
 
 class JobCardWidget extends StatelessWidget {
   final JobRecommendationModel job;
   final VoidCallback onTap;
 
-  const JobCardWidget({
-    super.key,
-    required this.job,
-    required this.onTap,
-  });
+  const JobCardWidget({super.key, required this.job, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -38,61 +36,101 @@ class JobCardWidget extends StatelessWidget {
               ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // Company Icon Placeholder
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.lightPrimary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.business_center_rounded,
-                color: AppColors.lightPrimary,
-                size: 28,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Job Title
-            Text(
-              job.title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            const SizedBox(height: 4),
-
-            // Company
-            Text(
-              job.company,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Tags
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: job.tags.map((tag) => _BuildTag(tag: tag)).toList(),
-            ),
-            const SizedBox(height: 16),
-
-            // Details Row
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildInfoItem(Icons.location_on_outlined, job.location, isDark),
-                const SizedBox(width: 12),
-                _buildInfoItem(Icons.attach_money_rounded, job.salaryRange, isDark),
-                const SizedBox(width: 12),
-                _buildInfoItem(Icons.access_time_rounded, job.postedTime, isDark),
+                // Company Icon Placeholder
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.lightPrimary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.business_center_rounded,
+                    color: AppColors.lightPrimary,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Job Title
+                Padding(
+                  padding: const EdgeInsets.only(right: 40),
+                  // Space for heart icon
+                  child: Text(
+                    job.title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+
+                // Company
+                Text(
+                  job.company,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Tags
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: job.tags.map((tag) => _BuildTag(tag: tag)).toList(),
+                ),
+                const SizedBox(height: 16),
+
+                // Details Row
+                Row(
+                  children: [
+                    _buildInfoItem(
+                      Icons.location_on_outlined,
+                      job.location,
+                      isDark,
+                    ),
+                    const SizedBox(width: 12),
+                    _buildInfoItem(
+                      Icons.attach_money_rounded,
+                      job.salaryRange,
+                      isDark,
+                    ),
+                    const SizedBox(width: 12),
+                    _buildInfoItem(
+                      Icons.access_time_rounded,
+                      job.postedTime,
+                      isDark,
+                    ),
+                  ],
+                ),
               ],
+            ),
+
+            // Favorite Button
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Consumer<FavoritesViewModel>(
+                builder: (context, favViewModel, child) {
+                  final isSaved = favViewModel.isFavorite(job.id);
+                  return IconButton(
+                    icon: Icon(
+                      isSaved ? Icons.favorite : Icons.favorite_border,
+                      color: isSaved
+                          ? Colors.red
+                          : (isDark ? Colors.white38 : Colors.black26),
+                    ),
+                    onPressed: () => favViewModel.toggleFavorite(job),
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -103,11 +141,7 @@ class JobCardWidget extends StatelessWidget {
   Widget _buildInfoItem(IconData icon, String label, bool isDark) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: isDark ? Colors.white60 : Colors.black45,
-        ),
+        Icon(icon, size: 16, color: isDark ? Colors.white60 : Colors.black45),
         const SizedBox(width: 4),
         Text(
           label,
@@ -123,6 +157,7 @@ class JobCardWidget extends StatelessWidget {
 
 class _BuildTag extends StatelessWidget {
   final String tag;
+
   const _BuildTag({required this.tag});
 
   @override
