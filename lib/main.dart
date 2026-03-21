@@ -21,6 +21,7 @@ import 'core/utils/responsive.dart';
 import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/onboarding_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/verify_email_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
 
 
@@ -52,6 +53,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_)=>JobseekerResumeViewModel()),
         ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel()),
         ChangeNotifierProvider(create: (_)=>JobSeekerJobsViewModel()),
+        ChangeNotifierProvider(create: (_)=>VerifyEmailViewModel()),
       ],
       child: const JooblieApp(),
     ),
