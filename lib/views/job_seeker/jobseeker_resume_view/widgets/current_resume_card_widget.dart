@@ -86,14 +86,26 @@ class CurrentResumeCardWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Bootstrap.cloud_download,
-                      size: 20,
-                      color: isDark
-                          ? AppColors.darkMutedForeground
-                          : AppColors.lightMutedForeground),
-                  onPressed: () {},
-                ),
+                vm.isDownloading
+                    ? Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 10),
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          value: vm.downloadProgress,
+                          strokeWidth: 2.5,
+                          backgroundColor: Colors.grey.withValues(alpha: 0.2),
+                          color: AppColors.lightPrimary,
+                        ),
+                      )
+                    : IconButton(
+                        icon: Icon(Bootstrap.cloud_download,
+                            size: 20,
+                            color: isDark
+                                ? AppColors.darkMutedForeground
+                                : AppColors.lightMutedForeground),
+                        onPressed: vm.downloadResume,
+                      ),
                 IconButton(
                   icon: Icon(Bootstrap.trash,
                       size: 20,

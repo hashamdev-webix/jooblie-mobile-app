@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -7,9 +10,61 @@ import '../models/resume_model.dart';
 class JobseekerResumeViewModel extends ChangeNotifier {
   ResumeModel? currentResume;
   bool isUploading = false;
+  bool isDownloading = false;
+  double downloadProgress = 0.0;
 
   JobseekerResumeViewModel() {
     _fetchResume();
+  }
+
+  Future<void> downloadResume() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null || currentResume == null) return;
+
+      final profileData = await Supabase.instance.client
+          .from('profiles')
+          .select('resume_path')
+          .eq('id', user.id)
+          .maybeSingle();
+
+      final String? resumePath = profileData?['resume_path'];
+      if (resumePath == null) return;
+
+      isDownloading = true;
+      downloadProgress = 0.0;
+      notifyListeners();
+
+      final signedUrl = await Supabase.instance.client.storage
+          .from('resumes')
+          .createSignedUrl(resumePath, 60);
+
+      final tempDir = await getApplicationDocumentsDirectory();
+      final String savePath = '${tempDir.path}/${currentResume!.fileName}';
+
+      final dio = Dio();
+      await dio.download(
+        signedUrl,
+        savePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            downloadProgress = received / total;
+            notifyListeners();
+          }
+        },
+      );
+
+      isDownloading = false;
+      downloadProgress = 0.0;
+      notifyListeners();
+
+      await OpenFilex.open(savePath);
+    } catch (e) {
+      debugPrint('Error downloading resume: $e');
+      isDownloading = false;
+      downloadProgress = 0.0;
+      notifyListeners();
+    }
   }
 
   Future<void> _fetchResume() async {
