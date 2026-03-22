@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/app_colors.dart';
 import '../../../../core/utils/my_slide_animation.dart';
 import '../../../../models/job_application_model.dart';
+import '../../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
 
 class ApplicationCard extends StatelessWidget {
   final JobApplicationModel application;
@@ -24,8 +25,14 @@ class ApplicationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _statusColor(application.status);
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+    return GestureDetector(
+      onTap: () {
+        if (application.jobData != null) {
+          JobDetailsBottomSheet.show(context, application.jobData!);
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.cardColor,
@@ -101,6 +108,6 @@ class ApplicationCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
