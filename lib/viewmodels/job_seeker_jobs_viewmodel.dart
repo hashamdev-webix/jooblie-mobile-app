@@ -4,6 +4,7 @@ import '../models/job_recommendation_model.dart';
 import '../models/job_filters_model.dart';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class JobSeekerJobsViewModel extends ChangeNotifier {
   List<JobRecommendationModel> _jobs = [];
@@ -90,10 +91,16 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
         return;
       }
 
-      await Geolocator.getCurrentPosition();
-      // For now, we set a placeholder "Current Location" string or coordinates
-      // In a real app, you'd reverse-geocode this or use it for distance-based search
-      setLocation('My Location'); // Placeholder
+      final position = await Geolocator.getCurrentPosition();
+      final placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+      
+      if (placemarks.isNotEmpty) {
+        final placemark = placemarks.first;
+        final city = placemark.locality ?? placemark.subAdministrativeArea ?? placemark.administrativeArea ?? 'My Location';
+        setLocation(city);
+      } else {
+        setLocation('My Location');
+      }
     } catch (e) {
       error = 'Failed to get location: $e';
       isLoading = false;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/core/sized.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../viewmodels/job_seeker_jobs_viewmodel.dart';
 
 class SearchView extends StatefulWidget {
@@ -16,23 +17,40 @@ class _SearchViewState extends State<SearchView> {
   late TextEditingController _searchController;
   bool _hasError = false;
 
-  final List<String> _suggestedSearches = [
-    'flutter developer',
-    'flutter',
-    'flutter internship',
-    'flutter developer internship',
-    'flutter developer remote',
-    'flutter intern',
-    'flutter remote',
-    'flutter app developer',
-    'flutter developer junior',
-  ];
+  List<String> _suggestedSearches = [];
+  static const String _historyKey = 'job_search_history';
 
   @override
   void initState() {
     super.initState();
     final vm = context.read<JobSeekerJobsViewModel>();
     _searchController = TextEditingController(text: vm.filters.search ?? '');
+    _loadSearchHistory();
+  }
+
+  Future<void> _loadSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final history = prefs.getStringList(_historyKey) ?? [];
+    if (mounted) {
+      setState(() {
+        _suggestedSearches = history;
+      });
+    }
+  }
+
+  Future<void> _saveSearchToHistory(String query) async {
+    if (query.trim().isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    final history = prefs.getStringList(_historyKey) ?? [];
+    
+    // Remove if exists to jump it to the top
+    history.removeWhere((s) => s.toLowerCase() == query.toLowerCase());
+    history.insert(0, query.trim());
+    
+    // Keep only last 10 searches
+    if (history.length > 10) history.removeLast();
+    
+    await prefs.setStringList(_historyKey, history);
   }
 
   @override
@@ -41,10 +59,13 @@ class _SearchViewState extends State<SearchView> {
     super.dispose();
   }
 
-  void _onSearchSelected(String query) {
+  void _onSearchSelected(String query) async {
     final vm = context.read<JobSeekerJobsViewModel>();
-    vm.setSearch(query.isEmpty ? null : query);
-    Navigator.pop(context);
+    await _saveSearchToHistory(query);
+    if (mounted) {
+      vm.setSearch(query.isEmpty ? null : query);
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -126,7 +147,7 @@ class _SearchViewState extends State<SearchView> {
             ..._suggestedSearches.where((s) => s.toLowerCase().contains(_searchController.text.toLowerCase())).map((suggestion) => FadeInUp(
               duration: const Duration(milliseconds: 300),
               child: ListTile(
-                leading: Icon(Icons.search, color: isDark ? Colors.white54 : Colors.black45),
+                leading: Icon(Icons.history, color: isDark ? Colors.white54 : Colors.black45),
                 title: Text(
                   suggestion,
                   style: TextStyle(color: isDark ? Colors.white : Colors.black87),
