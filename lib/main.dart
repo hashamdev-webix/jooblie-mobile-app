@@ -23,6 +23,8 @@ import 'package:jooblie_app/viewmodels/onboarding_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/verify_email_viewmodel.dart';
 import 'viewmodels/recruiter_dashboard_viewmodel.dart';
+import 'package:jooblie_app/services/network_service.dart';
+import 'package:jooblie_app/views/no_internet_screen.dart';
 
 
 Future<void> main() async {
@@ -36,11 +38,12 @@ Future<void> main() async {
   final supabaseService = SupabaseService();
   final authRepository = AuthRepository(supabaseService);
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
-        ChangeNotifierProvider(create: (_) => AppThemeProvider()),
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => NetworkService()),
+          ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
+          ChangeNotifierProvider(create: (_) => AppThemeProvider()),
         ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
         ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
@@ -89,7 +92,23 @@ class JooblieApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             initialRoute: RoutesName.splash,
             onGenerateRoute: Routes.generateRoute,
-            builder: EasyLoading.init(),
+            builder: (context, child) {
+              final easyLoadingChild = EasyLoading.init()(context, child);
+              return Consumer<NetworkService>(
+                builder: (context, network, _) {
+                  return Stack(
+                    children: [
+                      if (easyLoadingChild != null) easyLoadingChild,
+                      if (!network.isConnected)
+                        const Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: NoInternetScreen(),
+                        ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         );
       },
