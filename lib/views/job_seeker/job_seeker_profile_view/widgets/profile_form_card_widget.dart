@@ -52,6 +52,7 @@ class ProfileFormCardWidget extends StatelessWidget {
             theme: theme,
             isDark: isDark,
             keyboardType: TextInputType.emailAddress,
+            enabled: false,
           ),
           const SizedBox(height: 16),
           ProfileFieldWidget(
