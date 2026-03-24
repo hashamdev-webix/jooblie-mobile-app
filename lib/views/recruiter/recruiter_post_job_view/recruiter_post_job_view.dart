@@ -131,23 +131,6 @@ class RecruiterPostJobView extends StatelessWidget {
                             ),
                             24.h,
                             RecruiterPostJobFormField(
-                              label: 'Company Name',
-                              child: TextFormField(
-                                initialValue: vm.companyName.isNotEmpty ? vm.companyName : null,
-                                decoration: _inputDecoration(
-                                  context,
-                                  'e.g. TechCorp Inc.',
-                                  Icons.business_outlined,
-                                ),
-                                textInputAction: TextInputAction.next,
-                                onSaved: (v) => vm.companyName = v ?? '',
-                                validator: (v) => (v == null || v.isEmpty)
-                                    ? 'Required'
-                                    : null,
-                              ),
-                            ),
-                            24.h,
-                            RecruiterPostJobFormField(
                               label: 'Location',
                               child: TextFormField(
                                 initialValue: vm.location.isNotEmpty ? vm.location : null,

@@ -271,8 +271,22 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       
-      try {
-        final List<String> skillsList = skills
+        // Fetch Recruiter Company Name from Profile before publishing
+        final user = Supabase.instance.client.auth.currentUser;
+        if (user != null) {
+          final profileData = await Supabase.instance.client
+              .from('profiles')
+              .select('company_name')
+              .eq('id', user.id)
+              .maybeSingle();
+          
+          if (profileData != null && profileData['company_name'] != null) {
+            companyName = profileData['company_name'].toString();
+          }
+        }
+
+        try {
+          final List<String> skillsList = skills
             .split(',')
             .map((s) => s.trim())
             .where((s) => s.isNotEmpty)
@@ -312,7 +326,7 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
         salaryMin = '';
         salaryMax = '';
         requirements = '';
-        description = '';
+        description = ''; 
         skills = '';
         formKey.currentState?.reset();
 
@@ -352,6 +366,7 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
   String industry = '';
   String about = '';
   bool isLoading = false;
+  bool isFirstLoad = true;
 
   RecruiterCompanyViewModel() {
     _initCompanyProfile();
@@ -361,6 +376,8 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
     final user = Supabase.instance.client.auth.currentUser;
     if (user != null) {
       email = user.email ?? '';
+      isLoading = true;
+      notifyListeners();
       
       try {
         final profileData = await Supabase.instance.client
@@ -393,9 +410,13 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
         final abt = profileData?['about'] ?? metadata?['about'];
         if (abt != null && abt.toString().isNotEmpty) about = abt.toString();
 
+        isFirstLoad = false;
         notifyListeners();
       } catch (e) {
         debugPrint('Error initializing recruiter profile: $e');
+      } finally {
+        isLoading = false;
+        notifyListeners();
       }
     }
   }

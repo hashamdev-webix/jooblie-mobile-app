@@ -9,6 +9,7 @@ import '../../core/sized.dart';
 import '../../viewmodels/recruiter_dashboard_viewmodel.dart';
 import '../../core/utils/custom_easyloading.dart';
 import '../../core/utils/custom_flushbar.dart';
+import '../../widgets/custom_shimmer_widget.dart';
 
 class RecruiterCompanyView extends StatelessWidget {
   const RecruiterCompanyView({super.key});
@@ -87,33 +88,42 @@ class RecruiterCompanyView extends StatelessWidget {
                           duration: const Duration(milliseconds: 500),
                           child: Row(
                             children: [
-                              ZoomIn(
-                                duration: const Duration(milliseconds: 600),
-                                child: Container(
-                                  width: 64,
-                                  height: 64,
-                                  decoration: BoxDecoration(
-                                    gradient: AppColors.gradientPrimary,
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: const Icon(
-                                    Icons.business_outlined,
-                                    color: Colors.white,
-                                    size: 32,
+                                ZoomIn(
+                                  duration: const Duration(milliseconds: 600),
+                                  child: Container(
+                                    width: 64,
+                                    height: 64,
+                                    decoration: BoxDecoration(
+                                      gradient: AppColors.gradientPrimary,
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: const Icon(
+                                      Icons.business_outlined,
+                                      color: Colors.white,
+                                      size: 32,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              20.w,
-                              Text(
-                                vm.companyName.isEmpty
-                                    ? 'Company Name'
-                                    : vm.companyName,
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                                20.w,
+                                vm.isLoading
+                                    ? CustomShimmerWidget.rectangular(
+                                        width: 150,
+                                        height: 30,
+                                        isDark: isDark,
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      )
+                                    : Text(
+                                        vm.companyName.isEmpty
+                                            ? 'Company Name'
+                                            : vm.companyName,
+                                        style: theme.textTheme.headlineMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ],
+                            ),
                         ),
                         32.h,
 
@@ -142,59 +152,98 @@ class RecruiterCompanyView extends StatelessWidget {
                               children: [
                                 _FieldLabel('Full Name'),
                                 8.h,
-                                TextFormField(
-                                  initialValue: vm.fullName,
-                                  readOnly: true,
-                                  decoration: _inputDecoration(
-                                    context,
-                                    'Your Name',
-                                    Icons.person_outline,
-                                  ),
-                                ),
+                                vm.isLoading
+                                    ? CustomShimmerWidget.rectangular(
+                                        height: 50,
+                                        isDark: isDark,
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      )
+                                    : TextFormField(
+                                        initialValue: vm.fullName,
+                                        decoration: _inputDecoration(
+                                          context,
+                                          'Your Name',
+                                          Icons.person_outline,
+                                        ),
+                                        textInputAction: TextInputAction.next,
+                                        onSaved: (v) => vm.fullName = v ?? '',
+                                        validator: (v) => (v == null || v.isEmpty)
+                                            ? 'Required'
+                                            : null,
+                                      ),
                                 24.h,
 
                                 _FieldLabel('Email Address'),
                                 8.h,
-                                TextFormField(
-                                  initialValue: vm.email,
-                                  readOnly: true,
-                                  decoration: _inputDecoration(
-                                    context,
-                                    'your@email.com',
-                                    Icons.mail_outline,
-                                  ),
-                                ),
+                                vm.isLoading
+                                    ? CustomShimmerWidget.rectangular(
+                                        height: 50,
+                                        isDark: isDark,
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      )
+
+                                    : TextFormField(
+                                        initialValue: vm.email,
+                                        readOnly: true,
+                                        enabled: false,
+                                        decoration: _inputDecoration(
+                                          context,
+                                          'your@email.com',
+                                          Icons.mail_outline,
+                                        ),
+                                      ),
                                 24.h,
                                 
                                 _FieldLabel('Company Name'),
                                 8.h,
-                                TextFormField(
-                                  initialValue: vm.companyName,
-                                  decoration: _inputDecoration(
-                                    context,
-                                    'Your Company',
-                                    Icons.business_outlined,
-                                  ),
-                                  textInputAction: TextInputAction.next,
-                                  onSaved: (v) => vm.companyName = v ?? '',
-                                  validator: (v) => (v == null || v.isEmpty)
-                                      ? 'Required'
-                                      : null,
-                                ),
+                                vm.isLoading
+                                    ? CustomShimmerWidget.rectangular(
+                                        height: 50,
+                                        isDark: isDark,
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      )
+                                    : TextFormField(
+                                        initialValue: vm.companyName,
+                                        decoration: _inputDecoration(
+                                          context,
+                                          'Your Company',
+                                          Icons.business_outlined,
+                                        ),
+                                        textInputAction: TextInputAction.next,
+                                        onSaved: (v) => vm.companyName = v ?? '',
+                                        validator: (v) => (v == null || v.isEmpty)
+                                            ? 'Required'
+                                            : null,
+                                      ),
                                 24.h,
 
                                 _FieldLabel('Website'),
                                 8.h,
-                                TextFormField(
-                                  decoration: _inputDecoration(
-                                    context,
-                                    'https://yourcompany.com',
-                                    Icons.language_outlined,
-                                  ),
-                                  keyboardType: TextInputType.url,
-                                  textInputAction: TextInputAction.next,
-                                  onSaved: (v) => vm.website = v ?? '',
-                                ),
+                                vm.isLoading
+                                    ? CustomShimmerWidget.rectangular(
+                                        height: 50,
+                                        isDark: isDark,
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                      )
+                                    : TextFormField(
+                                        initialValue: vm.website,
+                                        decoration: _inputDecoration(
+                                          context,
+                                          'https://yourcompany.com',
+                                          Icons.language_outlined,
+                                        ),
+                                        keyboardType: TextInputType.url,
+                                        textInputAction: TextInputAction.next,
+                                        onSaved: (v) => vm.website = v ?? '',
+                                      ),
                                 24.h,
 
                                 _FieldLabel('Company Size'),
