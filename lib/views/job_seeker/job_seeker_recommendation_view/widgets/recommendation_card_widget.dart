@@ -22,9 +22,9 @@ class RecommendationCard extends StatelessWidget {
         JobDetailsBottomSheet.show(context, job);
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        // margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: BoxDecoration( 
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(

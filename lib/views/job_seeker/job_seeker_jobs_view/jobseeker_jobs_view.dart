@@ -151,14 +151,11 @@ class JobSeekerJobsView extends StatelessWidget {
                         else ...[
                           ...vm.jobs.map((job) => FadeInUp(
                                 duration: const Duration(milliseconds: 500),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: JobCardWidget(
-                                    job: job,
-                                    onTap: () {
-                                      JobDetailsBottomSheet.show(context, job);
-                                    },
-                                  ),
+                                child: JobCardWidget(
+                                  job: job,
+                                  onTap: () {
+                                    JobDetailsBottomSheet.show(context, job);
+                                  },
                                 ),
                               )),
                           if (vm.isFetchingMore)

@@ -123,66 +123,63 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
     }
 
     try {
-      // Start building the query
-      var filterQuery = Supabase.instance.client
+      // 1. Start building the query
+      var queryBuilder = Supabase.instance.client
           .from('jobs')
           .select()
-          .eq('status', 'active'); // only show active jobs to seekers
+          .eq('status', 'active'); // seeker only sees active jobs
 
-      // Search — ilike across title, description, and company_name
+      // 2. SEARCH (Server-side OR across multiple fields)
+      // Note: ilike is case-insensitive in Supabase/PostgreSQL
       if (_filters.search != null && _filters.search!.isNotEmpty) {
-        filterQuery = filterQuery.or(
-          'title.ilike.%${_filters.search}%,description.ilike.%${_filters.search}%,company_name.ilike.%${_filters.search}%',
+        final search = _filters.search!;
+        queryBuilder = queryBuilder.or(
+          'title.ilike.%$search%,'
+          'company_name.ilike.%$search%,'
+          'description.ilike.%$search%,'
+          'location.ilike.%$search%'
         );
       }
 
-      // Location filter (if not "My Location" placeholder)
+      // 3. FILTERS (Server-side AND filtering)
+      
+      // Location (Specific filter if not already searched)
       if (_filters.location != null && _filters.location != 'My Location' && _filters.location!.isNotEmpty) {
-        filterQuery = filterQuery.ilike('location', '%${_filters.location}%');
+        queryBuilder = queryBuilder.ilike('location', '%${_filters.location}%');
       }
 
-      // Job type filter
+      // Job Type
       if (_filters.jobType != null && _filters.jobType!.isNotEmpty) {
-        // Map UI labels to DB values if needed
-        filterQuery = filterQuery.eq('job_type', _filters.jobType!);
+        queryBuilder = queryBuilder.eq('job_type', _filters.jobType!);
       }
 
-      // Experience filter
+      // Experience Level
       if (_filters.experience != null && _filters.experience!.isNotEmpty) {
-        filterQuery = filterQuery.eq('experience', _filters.experience!);
+        queryBuilder = queryBuilder.eq('experience', _filters.experience!);
       }
 
-      // Salary filters (stored as text in DB — compare numerically if possible)
-      if (_filters.minSalary != null) {
-        filterQuery = filterQuery.gte('salary_min', _filters.minSalary.toString());
+      // Salary Range (Numeric comparisons)
+      if (filters.minSalary != null) {
+        queryBuilder = queryBuilder.gte('salary_min', filters.minSalary!);
       }
-      if (_filters.maxSalary != null) {
-        filterQuery = filterQuery.lte('salary_max', _filters.maxSalary.toString());
+      if (filters.maxSalary != null) {
+        queryBuilder = queryBuilder.lte('salary_max', filters.maxSalary!);
       }
 
-      // Apply Transforms (Order and Range) last as they change type to PostgrestTransformBuilder
+      // 4. Sorting and Pagination
       final sortColumn = _filters.sortBy ?? 'created_at';
       final ascending = (_filters.order ?? 'desc') == 'asc';
 
-      final response = await filterQuery
+      final response = await queryBuilder
           .order(sortColumn, ascending: ascending)
           .range(_page * _limit, (_page + 1) * _limit - 1);
+
       final List<dynamic> data = response as List<dynamic>;
 
-      // Skills filter — done client-side since Supabase array contains all
-      List<JobRecommendationModel> newJobs = data
+      // Map to models (No client-side filtering anymore)
+      final List<JobRecommendationModel> newJobs = data
           .map((json) => JobRecommendationModel.fromJson(json as Map<String, dynamic>))
           .toList();
-
-      if (_filters.skills != null && _filters.skills!.isNotEmpty) {
-        newJobs = newJobs.where((job) {
-          return _filters.skills!.any(
-            (skill) => job.tags.any(
-              (tag) => tag.toLowerCase().contains(skill.toLowerCase()),
-            ),
-          );
-        }).toList();
-      }
 
       if (data.length < _limit) hasMore = false;
 

@@ -97,9 +97,22 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
             spacing: 8,
             children: [
               _buildSalaryChip('All', null),
-              _buildSalaryChip('\$30k+', 30000),
-              _buildSalaryChip('\$60k+', 60000),
-              _buildSalaryChip('\$100k+', 100000),
+              _buildSalaryChip("${'30k+'}", 30000),
+              _buildSalaryChip('${'60k+'}', 60000),
+              _buildSalaryChip('${'100k+'}', 100000),
+            ],
+          ),
+          24.h,
+
+          const Text('Max Salary', style: TextStyle(fontWeight: FontWeight.bold)),
+          12.h,
+          Wrap(
+            spacing: 8,
+            children: [
+              _buildMaxSalaryChip('All', null),
+              _buildMaxSalaryChip('Up to ${'80k'}', 80000),
+              _buildMaxSalaryChip('Up to ${'150k'}', 150000),
+              _buildMaxSalaryChip('Up to ${'250k'}', 250000),
             ],
           ),
           32.h,
@@ -170,6 +183,23 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       onSelected: (selected) {
         setState(() {
           _localFilters = _localFilters.copyWith(minSalary: selected ? value : null);
+        });
+      },
+      selectedColor: AppColors.lightPrimary.withValues(alpha: 0.2),
+      labelStyle: TextStyle(
+        color: isSelected ? AppColors.lightPrimary : null,
+      ),
+    );
+  }
+
+  Widget _buildMaxSalaryChip(String label, int? value) {
+    final isSelected = _localFilters.maxSalary == value;
+    return ChoiceChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (selected) {
+        setState(() {
+          _localFilters = _localFilters.copyWith(maxSalary: selected ? value : null);
         });
       },
       selectedColor: AppColors.lightPrimary.withValues(alpha: 0.2),
