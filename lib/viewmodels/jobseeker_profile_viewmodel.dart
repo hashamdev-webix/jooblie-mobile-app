@@ -13,24 +13,51 @@ class JobseekerProfileViewModel extends ChangeNotifier {
   late final TextEditingController skillsController;
 
   JobseekerProfileModel _profile = const JobseekerProfileModel(
-    fullName: 'Anas Tahir',
-    email: 'anast4390@gmail.com',
-    location: 'Lahore',
-    jobTitle: 'Mobile App Developer',
+    fullName: '',
+    email: '',
+    location: '',
+    jobTitle: '',
     about: '',
-    skills: ['AI', 'Backend Developer', 'Digital Marketer'],
+    skills: [],
   );
 
   JobseekerProfileModel get profile => _profile;
 
   bool _isSaving = false;
+  bool _isLoading = true;
 
   bool get isSaving => _isSaving;
+  bool get isLoading => _isLoading;
 
   JobseekerProfileViewModel() {
     _initControllers();
-    _initProfile();
+    
+    // Listen to Auth State to handle login/logout clearing
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      if (data.event == AuthChangeEvent.signedIn || data.event == AuthChangeEvent.initialSession) {
+        if (Supabase.instance.client.auth.currentUser != null) {
+          _initProfile();
+        }
+      } else if (data.event == AuthChangeEvent.signedOut) {
+        _clearProfile();
+      }
+    });
+
     skillsController.addListener(_onSkillsChanged);
+  }
+
+  void _clearProfile() {
+    _profile = const JobseekerProfileModel(
+      fullName: '',
+      email: '',
+      location: '',
+      jobTitle: '',
+      about: '',
+      skills: [],
+    );
+    _isLoading = true;
+    _initControllers();
+    notifyListeners();
   }
 
   void _initControllers() {
@@ -53,23 +80,34 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       // 2. Fetch from Profiles table as secondary verification
       final profileData = await Supabase.instance.client
           .from('profiles')
-          .select()
+          .select() 
           .eq('id', user.id)
           .maybeSingle();
 
       final metadata = user.userMetadata;
       final String? fullName =
           profileData?['full_name'] ?? metadata?['full_name'];
-      final String email = user.email ?? 'No email';
+      final String email = user.email ?? metadata?['email'] ?? '';
       final String? location = profileData?['location'] ?? metadata?['location'];
       final String? jobTitle =
           profileData?['job_title'] ?? metadata?['job_title'];
       final String? about = profileData?['about'] ?? metadata?['about'];
-      final List<String>? skills = profileData?['skills'] != null
-          ? (profileData!['skills'] as List<dynamic>).map((e) => e.toString()).toList()
-          : (metadata?['skills'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList();
+      List<String>? skills;
+      final dynamic rawSkills = profileData?['skills'] ?? metadata?['skills'];
+      
+      if (rawSkills != null) {
+        if (rawSkills is String) {
+          // Strip brackets if they exist (e.g. "[]" or "[Skill1, Skill2]")
+          String cleaned = rawSkills.replaceAll('[', '').replaceAll(']', '').trim();
+          if (cleaned.isEmpty) {
+            skills = [];
+          } else {
+            skills = cleaned.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+          }
+        } else if (rawSkills is List) {
+          skills = rawSkills.map((e) => e.toString()).toList();
+        }
+      }
 
       // Use profile table's avatar_url if available, else metadata
       final String? avatarUrl =
@@ -89,14 +127,18 @@ class JobseekerProfileViewModel extends ChangeNotifier {
 
       // Update controllers with fresh data
       nameController.text = _profile.fullName;
+      emailController.text = _profile.email;
       locationController.text = _profile.location;
       jobTitleController.text = _profile.jobTitle;
       aboutController.text = _profile.about;
       skillsController.text = _profile.skills.join(', ');
 
+      _isLoading = false;
       notifyListeners();
     } catch (e) {
       debugPrint("Error initializing profile: $e");
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
