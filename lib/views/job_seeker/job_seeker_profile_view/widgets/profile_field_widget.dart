@@ -8,16 +8,20 @@ class ProfileFieldWidget extends StatelessWidget {
   final ThemeData theme;
   final bool isDark;
   final TextInputType keyboardType;
-final bool showIcon;
-final String? hintText;
+  final bool showIcon;
+  final String? hintText;
+  final bool enabled;
+
   const ProfileFieldWidget({
-     this.label,
+    this.label,
     required this.controller,
-     this.icon,
+    this.icon,
     required this.theme,
     required this.isDark,
     this.keyboardType = TextInputType.text,
-    this.showIcon=true,this.hintText
+    this.showIcon = true,
+    this.hintText,
+    this.enabled = true,
   });
 
   @override
@@ -34,7 +38,11 @@ final String? hintText;
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          style: theme.textTheme.bodyLarge?.copyWith(fontSize: 14),
+          enabled: enabled,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontSize: 14,
+            color: enabled ? null : (isDark ? Colors.white54 : Colors.black54)
+          ),
 
           decoration: InputDecoration(
             prefixIcon:showIcon ?  Icon(icon,
