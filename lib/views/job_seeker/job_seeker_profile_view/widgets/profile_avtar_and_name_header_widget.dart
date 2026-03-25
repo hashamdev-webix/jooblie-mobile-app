@@ -40,26 +40,26 @@ class ProfileAvtarAndNameHeader extends StatelessWidget {
                   child: _buildAvatarImage(),
                 ),
               ),
-              // Positioned(
-              //   bottom: 0,
-              //   right: 0,
-              //   child: GestureDetector(
-              //     onTap: () => viewModel.pickImage(),
-              //     child: Container(
-              //       padding: const EdgeInsets.all(8),
-              //       decoration: BoxDecoration(
-              //         color: AppColors.lightPrimary,
-              //         shape: BoxShape.circle,
-              //         border: Border.all(color: Colors.white, width: 2),
-              //       ),
-              //       child: const Icon(
-              //         Icons.camera_alt_rounded,
-              //         color: Colors.white,
-              //         size: 18,
-              //       ),
-              //     ),
-              //   ),
-              // ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () => viewModel.pickImage(),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightPrimary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
           if (viewModel.pickedImage != null ||
