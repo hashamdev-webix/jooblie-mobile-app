@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/job_post_model.dart';
@@ -34,7 +38,7 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         return;
       }
 
-      // Fetch all jobs for this recruiter
+      // 1. Fetch all jobs for this recruiter
       final jobsResponse = await Supabase.instance.client
           .from('jobs')
           .select()
@@ -42,47 +46,199 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
 
       final List<dynamic> allJobs = jobsResponse as List<dynamic>;
 
-      // Active jobs count
-      activeJobs = allJobs.where((j) => j['status'] == 'active').length;
+      // Show ALL jobs in the count for now, as requested (no status filter)
+      activeJobs = allJobs.length; 
 
       // Total applicants & views across all jobs
       totalApplicants = allJobs.fold<int>(0, (sum, j) => sum + ((j['applicants'] ?? 0) as int));
       jobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
 
-      // Hire rate: (hired / total applicants) * 100 — using a "hired" field if it exists, else 0
-      final totalHired = allJobs.fold<int>(0, (sum, j) => sum + ((j['hired'] ?? 0) as int));
-      hireRate = totalApplicants > 0 ? (totalHired / totalApplicants) * 100 : 0.0;
-
-      // Top jobs sorted by applicants desc
-      topJobs = allJobs
-          .map((j) => JobPerformance.fromJson(j))
-          .toList()
-        ..sort((a, b) => b.applicants.compareTo(a.applicants));
-      if (topJobs.length > 5) topJobs = topJobs.sublist(0, 5);
-
       // Recent applicants: fetch from applications table joining profile info
       try {
         final applicantsResponse = await Supabase.instance.client
             .from('applications')
-            .select('job_id, jobs!inner(recruiter_id), profiles(full_name, job_title)')
+            .select('*, jobs!inner(title, recruiter_id), profiles:applicant_id(*)')
             .eq('jobs.recruiter_id', userId)
             .order('created_at', ascending: false)
-            .limit(5);
+            .limit(10);
+
+        debugPrint('RAW Applicants Data: $applicantsResponse');
 
         final List<dynamic> appList = applicantsResponse as List<dynamic>;
         recentApplicants = appList.map((a) {
-          final profile = a['profiles'] as Map<String, dynamic>?;
-          return RecentApplicant.fromJson(profile ?? {});
-        }).toList();
-      } catch (_) {
-        // applications table may not exist yet — silently ignore
+          try {
+            final data = Map<String, dynamic>.from(a as Map);
+            
+            // Resolve full public URL for resume path
+            final String? resUrl = data['resume_url']?.toString();
+            if (resUrl != null && !resUrl.startsWith('http')) {
+              final String path = resUrl.startsWith('resumes/') 
+                  ? resUrl.replaceFirst('resumes/', '') 
+                  : resUrl;
+              data['resume_url'] = Supabase.instance.client.storage
+                  .from('resumes')
+                  .getPublicUrl(path);
+            }
+            
+            return RecentApplicant.fromJson(data);
+          } catch (e) {
+            debugPrint('Error parsing applicant: $e');
+            return null;
+          }
+        }).whereType<RecentApplicant>().toList();
+        
+        debugPrint('Final Recent Applicants Count: ${recentApplicants.length}');
+      } catch (e, stack) {
+        debugPrint('CRITICAL: Error fetching recruiter applicants: $e\n$stack');
         recentApplicants = [];
       }
+
     } catch (e) {
-      debugPrint('Error fetching recruiter stats: $e');
+      debugPrint('Error fetching recruiter dashboard stats: $e');
       error = 'Failed to load stats.';
     } finally {
       isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> recordProfileView(String applicantId) async {
+    try {
+      final viewerId = Supabase.instance.client.auth.currentUser?.id;
+      if (viewerId == null) return;
+
+      // Don't record if viewing own profile
+      if (viewerId == applicantId) return;
+
+      await Supabase.instance.client.from('profile_views').insert({
+        'profile_id': applicantId,
+        'viewer_id': viewerId,
+      });
+      debugPrint('Profile view recorded for $applicantId');
+    } catch (e) {
+      debugPrint('Error recording profile view: $e');
+    }
+  }
+}
+
+class ApplicantDetailViewModel extends ChangeNotifier {
+  ApplicationDetail? application;
+  bool isLoading = false;
+  String? error;
+  bool isDownloading = false;
+  double downloadProgress = 0.0;
+
+  Future<void> fetchApplicationDetail(String applicationId) async {
+    isLoading = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final response = await Supabase.instance.client
+          .from('applications')
+          .select('*, jobs(title), profiles(*)')
+          .eq('id', applicationId)
+          .single();
+
+      final data = Map<String, dynamic>.from(response);
+      debugPrint('Raw Application Data: $data');
+      
+      // Resolve full public URL for resume if resume_url is a path
+      final String? resumeUrl = data['resume_url']?.toString();
+      if (resumeUrl != null && !resumeUrl.startsWith('http')) {
+        // Strip 'resumes/' prefix if present because we are using .from('resumes')
+        final String path = resumeUrl.startsWith('resumes/') 
+            ? resumeUrl.replaceFirst('resumes/', '') 
+            : resumeUrl;
+            
+        final fullUrl = Supabase.instance.client.storage
+            .from('resumes')
+            .getPublicUrl(path);
+            
+        data['resume_url'] = fullUrl;
+      }
+
+      application = ApplicationDetail.fromJson(data);
+    } catch (e) {
+      debugPrint('Error fetching application detail: $e');
+      error = 'Failed to load application details.';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateStatus(String newStatus) async {
+    if (application == null) {
+      debugPrint('Update Status Failed: No application loaded');
+      return false;
+    }
+
+    try {
+      final appId = application!.applicationId;
+      debugPrint('Supabase Update Attempt: table=applications, id=$appId, newStatus=$newStatus');
+      
+      // Attempt update WITHOUT .select() first to see if it throws an error
+      // select() after an update can sometimes fail due to specific RLS select policies
+      await Supabase.instance.client
+          .from('applications')
+          .update({'status': newStatus})
+          .eq('id', appId);
+
+      debugPrint('Supabase Update Command Sent Successfully');
+
+      // Fetch updated data to reflect in UI and verify update
+      await fetchApplicationDetail(appId);
+      
+      // Verify if the status actually changed
+      if (application?.status == newStatus) {
+        debugPrint('Update Verified: Status is now $newStatus');
+        return true;
+      } else {
+        debugPrint('Update Check Failed: Status is still ${application?.status}. This confirms an RLS or permission issue.');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Postgrest Error updating status: $e');
+      if (e is PostgrestException) {
+        debugPrint('Details: ${e.message}, Hint: ${e.hint}, Code: ${e.code}');
+      }
+      return false;
+    }
+  }
+
+  Future<void> downloadAndOpenResume(String url, String fileName) async {
+    try {
+      isDownloading = true;
+      downloadProgress = 0.0;
+      notifyListeners();
+
+      final tempDir = await getTemporaryDirectory();
+      // Ensure unique filename to avoid conflicts, or just use the provided one
+      final String savePath = '${tempDir.path}/$fileName';
+
+      final dio = Dio();
+      await dio.download(
+        url,
+        savePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            downloadProgress = received / total;
+            notifyListeners();
+          }
+        },
+      );
+
+      isDownloading = false;
+      downloadProgress = 0.0;
+      notifyListeners();
+
+      // Open the downloaded file
+      await OpenFilex.open(savePath);
+    } catch (e) {
+      debugPrint('Error downloading resume: $e');
+      isDownloading = false;
+      downloadProgress = 0.0;
       notifyListeners();
     }
   }
