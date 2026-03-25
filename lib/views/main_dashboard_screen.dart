@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:jooblie_app/models/job_recommendation_model.dart';
 import 'package:provider/provider.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_recommendations_viewmodel.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
 import '../core/app_colors.dart';
@@ -11,7 +12,6 @@ import '../core/utils/routes_name.dart';
 import 'recruiter/recruiter_dashboard_view/recruiter_dashboard_view.dart';
 import 'recruiter/recruiter_jobs_view/recruiter_jobs_view.dart';
 import 'recruiter/recruiter_post_job_view/recruiter_post_job_view.dart';
-import 'recruiter/recruiter_company_view.dart';
 import 'job_seeker/job_seeker_home_view/jobseeker_home_view.dart';
 import 'job_seeker/job_seeker_applications_view/jobseeker_applications_view.dart';
 import 'job_seeker/job_seeker_recommendation_view/jobseeker_recommendations_view.dart';
@@ -241,7 +241,17 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
         bottomNavigationBar: _PremiumBottomNav(
           currentIndex: _currentIndex,
           items: tabs,
-          onTap: (index) => setState(() => _currentIndex = index),
+          onTap: (index) {
+            final wasOnHome = _currentIndex == 0;
+            setState(() {
+              _currentIndex = index;
+            });
+            // Only refresh Home stats when coming BACK to Home from another tab
+            if (widget.isJobSeeker && index == 0 && !wasOnHome) {
+              Provider.of<JobseekerHomeViewModel>(context, listen: false).fetchStats();
+              Provider.of<FavoritesViewModel>(context, listen: false).fetchFavoriteJobs();
+            }
+          },
         ),
       ),
     );

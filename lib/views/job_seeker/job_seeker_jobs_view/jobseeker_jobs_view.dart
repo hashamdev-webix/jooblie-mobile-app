@@ -13,9 +13,20 @@ import 'widgets/job_card_widget.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_filter_bottom_sheet.dart';
 
 
-class JobSeekerJobsView extends StatelessWidget {
+class JobSeekerJobsView extends StatefulWidget {
   const JobSeekerJobsView({super.key});
 
+  @override
+  State<JobSeekerJobsView> createState() => _JobSeekerJobsViewState();
+}
+
+class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<JobSeekerJobsViewModel>(context, listen: false).fetchJobs();
+    });    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<JobSeekerJobsViewModel>();
@@ -179,14 +190,14 @@ class JobSeekerJobsView extends StatelessWidget {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: AppColors.lightPrimary,
-        child: const Icon(
-          Icons.chat_bubble_outline_rounded,
-          color: Colors.white,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {},
+      //   backgroundColor: AppColors.lightPrimary,
+      //   child: const Icon(
+      //     Icons.chat_bubble_outline_rounded,
+      //     color: Colors.white,
+      //   ),
+      // ),
     );
   }
 

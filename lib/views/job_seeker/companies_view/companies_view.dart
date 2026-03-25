@@ -9,6 +9,7 @@ import '../../../widgets/header_appbar_widget.dart';
 import '../../../core/utils/my_slide_animation.dart';
 import '../../../models/company_model.dart';
 import '../../../widgets/custom_shimmer_widget.dart';
+import '../../../core/utils/routes_name.dart';
 
 class CompaniesView extends StatelessWidget {
   const CompaniesView({super.key});
@@ -136,7 +137,14 @@ class CompaniesView extends StatelessWidget {
                             final company = entry.value;
                             return MySlideTransition(
                               delay: index * 100,
-                              child: CompanyCard(company: company),
+                              child: GestureDetector(
+                                onTap: () => Navigator.pushNamed(
+                                  context,
+                                  RoutesName.companyDetails,
+                                  arguments: company,
+                                ),
+                                child: CompanyCard(company: company),
+                              ),
                             );
                           }),
                           100.h, // Bottom padding for tabs

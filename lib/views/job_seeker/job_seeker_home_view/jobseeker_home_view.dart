@@ -15,10 +15,24 @@ import '../../../core/utils/routes_name.dart';
 import '../../recruiter/recruiter_dashboard_view/widgets/stat_card_widget.dart';
 import '../../recruiter/recruiter_dashboard_view/widgets/card_width_list_tile.dart';
 
-class JobseekerHomeView extends StatelessWidget {
+class JobseekerHomeView extends StatefulWidget {
   const JobseekerHomeView();
 
-  static IconData _iconFor(String asset) {
+  @override
+  State<JobseekerHomeView> createState() => _JobseekerHomeViewState();
+}
+
+class _JobseekerHomeViewState extends State<JobseekerHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    // Refresh data every time the Home tab is shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<JobseekerHomeViewModel>(context, listen: false).fetchStats();
+    });
+  }
+
+  IconData _iconFor(String asset) {
     switch (asset) {
       case 'applications':
         return Icons.description_outlined;

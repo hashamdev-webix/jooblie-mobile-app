@@ -14,6 +14,8 @@ import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
 import 'package:jooblie_app/views/verify_email_screen.dart';
 import 'package:jooblie_app/views/reset_password_screen.dart';
+import 'package:jooblie_app/models/company_model.dart';
+import 'package:jooblie_app/views/job_seeker/companies_view/company_details_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -77,6 +79,12 @@ class Routes {
 
       case RoutesName.resetPassword:
         return MaterialPageRoute(builder: (_) => const ResetPasswordScreen());
+
+      case RoutesName.companyDetails:
+        final company = settings.arguments as CompanyModel;
+        return MaterialPageRoute(
+          builder: (_) => CompanyDetailsView(company: company),
+        );
         
       default:
         return MaterialPageRoute(
