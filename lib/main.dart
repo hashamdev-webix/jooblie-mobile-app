@@ -22,10 +22,10 @@ import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/onboarding_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/verify_email_viewmodel.dart';
-import 'viewmodels/recruiter_dashboard_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/companies_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'package:jooblie_app/services/network_service.dart';
 import 'package:jooblie_app/views/no_internet_screen.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +50,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
         ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel()),
+        ChangeNotifierProvider(create: (_)=>CompaniesViewModel()),
         ChangeNotifierProvider(create: (_)=>JobseekerHomeViewModel()),
         ChangeNotifierProvider(create: (_)=>JobseekerApplicationsViewModel()),
         ChangeNotifierProvider(create: (_)=>JobseekerRecommendationsViewModel()),

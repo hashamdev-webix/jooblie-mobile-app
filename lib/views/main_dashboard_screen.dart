@@ -16,8 +16,8 @@ import 'job_seeker/job_seeker_home_view/jobseeker_home_view.dart';
 import 'job_seeker/job_seeker_applications_view/jobseeker_applications_view.dart';
 import 'job_seeker/job_seeker_recommendation_view/jobseeker_recommendations_view.dart';
 import 'job_seeker/jobseeker_resume_view/jobseeker_resume_view.dart';
-import 'job_seeker/job_seeker_profile_view/jobseeker_profile_view.dart';
 import 'job_seeker/job_seeker_jobs_view/jobseeker_jobs_view.dart';
+import 'job_seeker/companies_view/companies_view.dart';
 
 // ─── Tab Model ───────────────────────────────────────────────────────────────
 class _TabItem {
@@ -184,6 +184,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
 
   static final List<Widget> _jobSeekerScreens = [
     const JobseekerHomeView(),
+    const CompaniesView(),
     const JobSeekerJobsView(),
     const JobseekerApplicationsView(),
     const JobseekerRecommendationsView(),
@@ -205,6 +206,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
 
   static const _jobSeekerTabs = [
     _TabItem(label: 'Home', selectedIcon: Icons.home_rounded, unselectedIcon: Icons.home_outlined),
+    _TabItem(label: 'Companies', selectedIcon: Icons.business_rounded, unselectedIcon: Icons.business_outlined),
     _TabItem(label: 'Jobs', selectedIcon: Icons.work, unselectedIcon: Icons.work_outline),
     _TabItem(label: 'Applications', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
     _TabItem(label: 'Matches', selectedIcon: Icons.auto_awesome_rounded, unselectedIcon: Icons.auto_awesome_outlined),
