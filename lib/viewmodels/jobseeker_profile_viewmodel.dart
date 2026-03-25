@@ -135,10 +135,35 @@ class JobseekerProfileViewModel extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
+
+      // Record self-view if first time
+      await _recordSelfView(user.id);
     } catch (e) {
       debugPrint("Error initializing profile: $e");
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// Records a view when the user visits their own profile for the first time
+  Future<void> _recordSelfView(String userId) async {
+    try {
+      final existingView = await Supabase.instance.client
+          .from('profile_views')
+          .select('id')
+          .eq('profile_id', userId)
+          .eq('viewer_id', userId)
+          .maybeSingle();
+
+      if (existingView == null) {
+        await Supabase.instance.client.from('profile_views').insert({
+          'profile_id': userId,
+          'viewer_id': userId,
+        });
+        debugPrint('Self-view recorded for $userId');
+      }
+    } catch (e) {
+      debugPrint('Error recording self-view: $e');
     }
   }
 
