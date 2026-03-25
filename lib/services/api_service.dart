@@ -42,14 +42,19 @@ class ApiService {
     if (resumeUrl == null) {
        throw Exception("Please upload a resume before applying");
     }
+
+    // Ensure resumes/ prefix is present as requested by the user
+    final String formattedResumeUrl = resumeUrl.startsWith('resumes/') 
+        ? resumeUrl : 'resumes/$resumeUrl';
     
     final Map<String, dynamic> payload = {
       'job_id': jobId,
       'applicant_id': user.id,
-      'resume_url': resumeUrl,
+      'resume_url': formattedResumeUrl,
+      'cover_letter': request.coverLetter,
+      'status': 'Pending',
     };
 
-    // Note: cover_letter and status are omitted because they don't exist in the applications table schema.
     await Supabase.instance.client.from('applications').insert(payload);
 
     return {'status': 'success', 'message': 'Application submitted successfully'};
