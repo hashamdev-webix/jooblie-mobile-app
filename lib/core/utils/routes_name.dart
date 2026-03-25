@@ -15,4 +15,5 @@ class RoutesName {
   static const String verifyEmail = 'verify_email_screen';
   static const String resetPassword = 'reset_password_screen';
   static const String companyDetails = 'company_details_view';
+  static const String applicantDetail = 'applicant_detail_view';
 }
