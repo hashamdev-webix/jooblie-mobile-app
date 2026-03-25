@@ -49,18 +49,24 @@ class JobseekerHomeViewModel extends ChangeNotifier {
       int interviews = allApps.where((app) => app['status'] == 'Interview').length;
       int offers = allApps.where((app) => app['status'] == 'Offer').length;
 
-      // Profile views & user name from profiles table
-      int pViews = 0;
+      // Profile views from profile_views table
+      int pViewsCount = 0;
+      try {
+        final profileViewsResponse = await Supabase.instance.client
+            .from('profile_views')
+            .select('id')
+            .eq('profile_id', user.id);
+        pViewsCount = (profileViewsResponse as List).length;
+      } catch (_) {}
+
+      // Fetch user name from profiles table
       try {
         final profile = await Supabase.instance.client
             .from('profiles')
-            .select('profile_views, full_name')
+            .select('full_name')
             .eq('id', user.id)
             .maybeSingle();
         if (profile != null) {
-          if (profile['profile_views'] != null) {
-            pViews = profile['profile_views'] as int;
-          }
           final name = profile['full_name']?.toString() ?? '';
           if (name.isNotEmpty) {
             userName = name.split(' ').first;
@@ -132,7 +138,7 @@ class JobseekerHomeViewModel extends ChangeNotifier {
         activeApplications: activeApps,
         interviewsScheduled: interviews,
         offersReceived: offers,
-        profileViews: pViews,
+        profileViews: pViewsCount,
         applicationsByStatus: byStatus,
         recentActivities: recentActs,
       );
@@ -141,7 +147,7 @@ class JobseekerHomeViewModel extends ChangeNotifier {
         HomeStatModel(label: 'Applications', count: totalApps, badge: 'Total applied', iconAsset: 'applications'),
         HomeStatModel(label: 'Interviews', count: interviews, badge: 'Scheduled', iconAsset: 'interviews'),
         HomeStatModel(label: 'Saved Jobs', count: savedJobsCount, badge: 'Bookmarked', iconAsset: 'saved'),
-        HomeStatModel(label: 'Profile Views', count: pViews, badge: 'From recruiters', iconAsset: 'views'),
+        HomeStatModel(label: 'Profile Views', count: pViewsCount, badge: 'From recruiters', iconAsset: 'views'),
       ];
 
     } catch (e, stack) {
