@@ -68,7 +68,10 @@ class AuthRepository {
   }
 
   Future<void> resetPassword(String email) async {
-    await _client.auth.resetPasswordForEmail(email);
+    await _client.auth.resetPasswordForEmail(
+      email,
+      redirectTo: 'myapp://reset-password',
+    );
   }
 
   User? get currentUser => _client.auth.currentUser;

@@ -65,8 +65,34 @@ Future<void> main() async {
 }
 
 
-class JooblieApp extends StatelessWidget {
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+class JooblieApp extends StatefulWidget {
   const JooblieApp({super.key});
+
+  @override
+  State<JooblieApp> createState() => _JooblieAppState();
+}
+
+class _JooblieAppState extends State<JooblieApp> {
+  @override
+  void initState() {
+    super.initState();
+    _setupAuthListener();
+  }
+
+  void _setupAuthListener() {
+    Supabase.instance.client.auth.onAuthStateChange.listen((data) {
+      final AuthChangeEvent event = data.event;
+      if (event == AuthChangeEvent.passwordRecovery) {
+        debugPrint('Password Recovery Event Detected! 🚨');
+        // Small delay to ensure navigator is ready and context is valid
+        Future.delayed(const Duration(milliseconds: 500), () {
+          navigatorKey.currentState?.pushNamed(RoutesName.resetPassword);
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +113,7 @@ class JooblieApp extends StatelessWidget {
           ),
           child: MaterialApp(
             title: 'Jooblie',
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

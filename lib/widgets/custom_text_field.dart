@@ -13,7 +13,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
-
+final void Function(String)? onChanged;
   const CustomTextField({
     super.key,
     required this.label,
@@ -27,6 +27,7 @@ class CustomTextField extends StatefulWidget {
     this.textInputAction,
     this.onFieldSubmitted,
     this.focusNode,
+    this.onChanged
   });
 
   @override
@@ -61,6 +62,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           validator: widget.validator,
           onSaved: widget.onSaved,
           style: theme.textTheme.labelLarge,
+          onChanged:widget.onChanged ,
           decoration: InputDecoration(
             hintText: widget.hintText,
             prefixIcon: Icon(widget.prefixIcon, size: 20),

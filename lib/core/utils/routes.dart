@@ -13,6 +13,7 @@ import 'package:jooblie_app/views/job_seeker/search_view/location_search_view.da
 import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
 import 'package:jooblie_app/views/verify_email_screen.dart';
+import 'package:jooblie_app/views/reset_password_screen.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -73,6 +74,9 @@ class Routes {
             return VerifyEmailScreen(email: email);
           },
         );
+
+      case RoutesName.resetPassword:
+        return MaterialPageRoute(builder: (_) => const ResetPasswordScreen());
         
       default:
         return MaterialPageRoute(
