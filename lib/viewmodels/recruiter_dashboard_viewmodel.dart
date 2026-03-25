@@ -49,11 +49,22 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
       // Show ALL jobs in the count for now, as requested (no status filter)
       activeJobs = allJobs.length; 
 
-      // Total applicants & views across all jobs
-      totalApplicants = allJobs.fold<int>(0, (sum, j) => sum + ((j['applicants'] ?? 0) as int));
+      // 2. Fetch ALL applications for this recruiter's jobs to get accurate total count and hire rate
+      final allAppsResponse = await Supabase.instance.client
+          .from('applications')
+          .select('status, jobs!inner(recruiter_id)')
+          .eq('jobs.recruiter_id', userId);
+          
+      final List<dynamic> allApps = allAppsResponse as List<dynamic>;
+      totalApplicants = allApps.length;
+      
+      final hiredCount = allApps.where((a) => a['status'] == 'Hired').length;
+      hireRate = totalApplicants > 0 ? (hiredCount / totalApplicants) * 100 : 0.0;
+
+      // 3. Total views across all jobs (still using jobs table count)
       jobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
 
-      // Recent applicants: fetch from applications table joining profile info
+      // 4. Recent applicants: fetch from applications table joining profile info
       try {
         final applicantsResponse = await Supabase.instance.client
             .from('applications')
@@ -92,6 +103,23 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         debugPrint('CRITICAL: Error fetching recruiter applicants: $e\n$stack');
         recentApplicants = [];
       }
+
+      // 5. Top performing jobs (sort by applicants then views)
+      final sortedJobs = List<dynamic>.from(allJobs);
+      sortedJobs.sort((a, b) {
+        int cmp = ((b['applicants'] ?? 0) as int).compareTo((a['applicants'] ?? 0) as int);
+        if (cmp == 0) {
+          cmp = ((b['views'] ?? 0) as int).compareTo((a['views'] ?? 0) as int);
+        }
+        return cmp;
+      });
+      
+      topJobs = sortedJobs.take(3).map((j) => JobPerformance(
+        id: j['id']?.toString() ?? '',
+        title: j['title'] ?? 'Untitled',
+        applicants: (j['applicants'] ?? 0) as int,
+        views: (j['views'] ?? 0) as int,
+      )).toList();
 
     } catch (e) {
       debugPrint('Error fetching recruiter dashboard stats: $e');
