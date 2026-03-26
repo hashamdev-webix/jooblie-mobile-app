@@ -49,8 +49,14 @@ class Routes {
       case RoutesName.dashboard:
         final args = settings.arguments as Map<String, dynamic>?;
         final isJobSeeker = args?['isJobSeeker'] ?? true;
+        final initialIndex = args?['initialIndex'] ?? 0;
+        final initialJobId = args?['initialJobId'];
         return MaterialPageRoute(
-          builder: (_) => MainDashboardScreen(isJobSeeker: isJobSeeker),
+          builder: (_) => MainDashboardScreen(
+            isJobSeeker: isJobSeeker, 
+            initialIndex: initialIndex,
+            initialJobId: initialJobId,
+          ),
         );
       
       case RoutesName.settings:

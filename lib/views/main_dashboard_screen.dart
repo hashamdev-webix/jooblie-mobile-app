@@ -146,18 +146,27 @@ class _AnimatedTabBody extends StatelessWidget {
 class MainDashboardScreen extends StatefulWidget {
   final bool isJobSeeker;
   final String? initialJobId;
-  const MainDashboardScreen({super.key, required this.isJobSeeker, this.initialJobId});
+  final int initialIndex;
+  
+  const MainDashboardScreen({
+    super.key, 
+    required this.isJobSeeker, 
+    this.initialJobId,
+    this.initialIndex = 0,
+  });
 
   @override
   State<MainDashboardScreen> createState() => _MainDashboardScreenState();
 }
 
 class _MainDashboardScreenState extends State<MainDashboardScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
+    
     if (widget.initialJobId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _handleInitialJob(widget.initialJobId!);

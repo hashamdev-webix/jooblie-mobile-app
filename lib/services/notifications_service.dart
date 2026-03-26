@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:jooblie_app/main.dart'; // To access navigatorKey
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotificationsService {
@@ -62,48 +64,39 @@ class NotificationsService {
   }
 
 
-  /// --- init local notification --- ///
-
-
-void initLocalNotification(BuildContext context, RemoteMessage message) async{
+  /// --- firebase init  & local notifications init --- ///
+  
+  void firebaseInit(){
     
+    // Initialize Local Notifications ONCE here
     var androidInitSetting = AndroidInitializationSettings("@mipmap/ic_launcher");
-
     var iosInitSetting = DarwinInitializationSettings();
-
-    var initializationSetting= InitializationSettings(
+    var initializationSetting = InitializationSettings(
       android: androidInitSetting,
       iOS: iosInitSetting,
     );
 
+    _flutterLocalNotificationsPlugin.initialize(
+      settings: initializationSetting, 
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        if (response.payload != null) {
+          try {
+            final data = jsonDecode(response.payload!);
+            handleMessageFromPayload(data);
+          } catch(e) {
+            print("Error parsing local notification payload: $e");
+          }
+        }
+      }
+    );
 
-    await _flutterLocalNotificationsPlugin.initialize(settings: initializationSetting, onDidReceiveNotificationResponse:(payload){
-      handleMessage(context, message);
-      
-    });
-
-
-
-
-
-
-    
-
-}
-
-
-
-/// --- firebase init --- ///
-
-  /// jab app running main ho gi to ya method run ho ga
-
-void firebaseInit(BuildContext context){
-
+    // Listen to foreground FCM messages
     FirebaseMessaging.onMessage.listen((message){
       RemoteNotification? notification = message.notification;
-      AndroidNotification? androidNotification=message.notification!.android;
+      AndroidNotification? androidNotification = message.notification!.android;
 
       if(kDebugMode){
+        print("FCM Foreground Message Data Payload: ${message.data}");
         print("notification title: ${notification?.title}");
         print("notification body: ${notification?.body}");
       }
@@ -122,32 +115,25 @@ void firebaseInit(BuildContext context){
       // ios
       if(Platform.isIOS){
         iosForegroundMessage();
-
       }
       // android
       if(Platform.isAndroid){
-        initLocalNotification(context, message);
-        // handleMessage(context, message);
         showNotifications(message);
       }
-
-    }
-    );
-
-
-}
+    });
+  }
 
 
 /// ---  Background and terminated state --- ///
 
 
-  Future<void> setupInteractMessage(BuildContext context) async{
+  Future<void> setupInteractMessage() async{
 
     // background state
 
     FirebaseMessaging.onMessageOpenedApp.listen(
             (message){
-handleMessage(context, message);
+handleMessage(message);
     }
     );
 
@@ -156,7 +142,7 @@ handleMessage(context, message);
 
     FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message){
       if(message != null && message.data.isNotEmpty){
-        handleMessage(context, message);
+        handleMessage(message);
       }
     });
 
@@ -165,8 +151,44 @@ handleMessage(context, message);
 
   /// --- handle Message --- ///
 
-  Future<void> handleMessage(BuildContext context,RemoteMessage message)async{
-    Navigator.pushNamed(context, RoutesName.recruiterPostJob);
+  Future<void> handleMessage(RemoteMessage message)async{
+    // Tap handler for background/terminated notifications
+    if (kDebugMode){
+      print("Tapped Notification with FCM Data: ${message.data}");
+    }
+    final type = message.data['type'];
+    _routeBasedOnType(type);
+  }
+
+  void handleMessageFromPayload(Map<String, dynamic> data) {
+    // Tap handler for local (foreground) notifications
+    if (kDebugMode){
+      print("Tapped Notification with Local Payload Data: $data");
+    }
+    final type = data['type'];
+    _routeBasedOnType(type);
+  }
+
+  void _routeBasedOnType(String? type) {
+    if (kDebugMode) {
+      print("Routing for Notification Data Type: $type");
+    }
+
+    if (type == 'status_update') {
+      print("Routing to Applications Tab (Index 3)");
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        RoutesName.dashboard, 
+        (route) => false,
+        arguments: {'isJobSeeker': true, 'initialIndex': 3}, // 3 is Applications tab
+      );
+    } else {
+      print("Routing to Default App Dashboard (Index 0)");
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        RoutesName.dashboard, 
+        (route) => false,
+        arguments: {'isJobSeeker': true, 'initialIndex': 0},
+      );
+    }
   }
 
 
@@ -210,16 +232,13 @@ handleMessage(context, message);
     );
 
     //show notification
-
     Future.delayed(Duration.zero,(){
       _flutterLocalNotificationsPlugin.show(
         id: 0,
-    title: message.notification!.title.toString(),
-        body: message.notification!.body.toString(),
+        title: message.notification?.title.toString() ?? 'Notification',
+        body: message.notification?.body.toString() ?? '',
         notificationDetails: notificationDetails,
-        payload: "my_data"
-
-
+        payload: jsonEncode(message.data), // Encode data to be passed to onDidReceiveNotificationResponse
       );
     });
 

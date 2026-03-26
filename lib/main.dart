@@ -30,6 +30,7 @@ import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'package:jooblie_app/services/network_service.dart';
 import 'package:jooblie_app/views/no_internet_screen.dart';
 import 'package:jooblie_app/viewmodels/notifications_viewmodel.dart';
+import 'package:jooblie_app/services/notifications_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async{
@@ -96,6 +97,12 @@ class _JooblieAppState extends State<JooblieApp> {
   void initState() {
     super.initState();
     _setupAuthListener();
+    
+    // Initialize push notifications globally
+    final notificationsService = NotificationsService();
+    notificationsService.requestNotificationPermission();
+    notificationsService.firebaseInit();
+    notificationsService.setupInteractMessage();
   }
 
   void _setupAuthListener() {

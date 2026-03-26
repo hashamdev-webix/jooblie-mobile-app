@@ -30,11 +30,6 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
   @override
   void initState() {
     super.initState();
-    notificationsService.requestNotificationPermission();
-    notificationsService.getDeviceToken();
-    notificationsService.firebaseInit(context);
-    notificationsService.setupInteractMessage(context);
-
     FcmService.firebaseInit();
   }
 
