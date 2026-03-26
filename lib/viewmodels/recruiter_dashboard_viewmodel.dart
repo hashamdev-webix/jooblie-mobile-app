@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/job_post_model.dart';
 import '../models/create_job_request_model.dart';
-
 import '../models/recruiter_stats_model.dart';
+import 'package:jooblie_app/services/get_service_key.dart';
 
 class RecruiterDashboardViewModel extends ChangeNotifier {
   bool isLoading = false;
@@ -214,6 +214,63 @@ class ApplicantDetailViewModel extends ChangeNotifier {
           .eq('id', appId);
 
       debugPrint('Supabase Update Command Sent Successfully');
+
+      // Add Notification Logic
+      try {
+        final applicantId = application!.applicantId;
+        final jobTitle = application!.jobTitle;
+        final title = 'Application Update';
+        final body = 'Your application for $jobTitle is now $newStatus';
+
+        // 1. Save Notification to Supabase
+        await Supabase.instance.client.from('notifications').insert({
+          'user_id': applicantId,
+          'title': title,
+          'body': body,
+          'is_read': false,
+        });
+
+        // 2. Fetch Device Token and Send FCM
+        final profileResponse = await Supabase.instance.client
+            .from('profiles')
+            .select('userDeviceToken')
+            .eq('id', applicantId)
+            .maybeSingle();
+
+        if (profileResponse != null) {
+          final deviceToken = profileResponse['userDeviceToken'];
+          if (deviceToken != null && deviceToken.toString().isNotEmpty) {
+            // Send FCM Notification calling FCM HTTP v1 API
+            final GetServerKey getServerKey = GetServerKey();
+            final String accessToken = await getServerKey.getServerKeyToken(); 
+            
+            final dio = Dio();
+            dio.options.headers['Content-Type'] = 'application/json';
+            dio.options.headers['Authorization'] = 'Bearer $accessToken';
+            
+            final response = await dio.post(
+              'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
+              data: {
+                'message': {
+                  'token': deviceToken,
+                  'notification': {
+                    'title': title,
+                    'body': body,
+                  },
+                  'data': {
+                    'type': 'status_update',
+                    'applicationId': appId,
+                    'targetUserId': applicantId,
+                  }
+                }
+              },
+            );
+            debugPrint('FCM Response: ${response.data}');
+          }
+        }
+      } catch (notifyError) {
+        debugPrint('Error sending notification: $notifyError');
+      }
 
       // Fetch updated data to reflect in UI and verify update
       await fetchApplicationDetail(appId);
