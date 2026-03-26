@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotificationsService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -103,10 +104,21 @@ void firebaseInit(BuildContext context){
       AndroidNotification? androidNotification=message.notification!.android;
 
       if(kDebugMode){
-        print("notification title: ${notification!.title}");
-        print("notification title: ${notification.body}");
-
+        print("notification title: ${notification?.title}");
+        print("notification body: ${notification?.body}");
       }
+      
+      // Check if notification is meant for the currently logged-in user
+      final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+      final targetUserId = message.data['targetUserId'];
+      
+      if (targetUserId != null && currentUserId != null && targetUserId.toString() != currentUserId.toString()) {
+        if(kDebugMode){
+          print("Notification is for user $targetUserId, but current user is $currentUserId. Ignoring.");
+        }
+        return;
+      }
+
       // ios
       if(Platform.isIOS){
         iosForegroundMessage();
@@ -164,10 +176,10 @@ handleMessage(context, message);
   Future<void> showNotifications(RemoteMessage message)async{
 
     //chanel setting
-    AndroidNotificationChannel channel = AndroidNotificationChannel(message.notification!.android!.channelId.toString(),
-
-        message.notification!.android!.channelId!.toString(),
-      importance: Importance.high,
+    AndroidNotificationChannel channel = AndroidNotificationChannel(
+      message.notification?.android?.channelId ?? 'high_importance_channel_id',
+      'High Importance Notifications',
+      importance: Importance.max,
       showBadge: true,
       playSound: true
 
@@ -175,15 +187,12 @@ handleMessage(context, message);
 
     // android settings
     AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-        channel.id.toString(),
-
-        channel.name.toString(),
-importance:Importance.high,
-priority: Priority.high,
-playSound: true,
-sound: channel.sound,
-channelDescription: "Channel Description"
-    // channelDescription: channel.description.toString()
+        channel.id,
+        channel.name,
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      channelDescription: "High priority channel for application updates"
     );
 
     // ios settings
