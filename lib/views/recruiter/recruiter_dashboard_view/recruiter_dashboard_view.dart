@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/services/fcm_service.dart';
 import 'package:jooblie_app/services/get_service_key.dart';
 import 'package:jooblie_app/services/notifications_service.dart';
 import 'package:jooblie_app/views/recruiter/recruiter_dashboard_view/widgets/stat_card_widget.dart';
@@ -31,6 +32,10 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
     super.initState();
     notificationsService.requestNotificationPermission();
     notificationsService.getDeviceToken();
+    notificationsService.firebaseInit(context);
+    notificationsService.setupInteractMessage(context);
+
+    FcmService.firebaseInit();
   }
 
   @override
