@@ -29,6 +29,7 @@ import 'package:jooblie_app/viewmodels/companies_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'package:jooblie_app/services/network_service.dart';
 import 'package:jooblie_app/views/no_internet_screen.dart';
+import 'package:jooblie_app/viewmodels/notifications_viewmodel.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async{
@@ -73,6 +74,7 @@ FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
         ChangeNotifierProvider(create: (_)=>JobSeekerJobsViewModel()),
         ChangeNotifierProvider(create: (_) => VerifyEmailViewModel()),
         ChangeNotifierProvider(create: (_) => ApplicantDetailViewModel()),
+        ChangeNotifierProvider(create: (_) => NotificationsViewModel()),
       ],
       child: const JooblieApp(),
     ),
