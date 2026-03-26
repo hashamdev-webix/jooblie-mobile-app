@@ -61,8 +61,42 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
       final hiredCount = allApps.where((a) => a['status'] == 'Hired').length;
       hireRate = totalApplicants > 0 ? (hiredCount / totalApplicants) * 100 : 0.0;
 
-      // 3. Total views across all jobs (still using jobs table count)
-      jobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
+      // 3. Fetch UNIQUE views for ALL jobs of this recruiter from the 'views' table
+      int totalUniqueJobViews = 0;
+      try {
+        // Diagnostic: Check columns of views table
+        try {
+          final testResult = await Supabase.instance.client.from('views').select().limit(1);
+          if (testResult.isNotEmpty) {
+            debugPrint('DIAGNOSTIC - Views Table Columns: ${testResult.first.keys.toList()}');
+          }
+        } catch (_) {}
+
+        final jobIds = allJobs.map((j) => j['id']).toList();
+        if (jobIds.isNotEmpty) {
+          final viewsResponse = await Supabase.instance.client
+              .from('views')
+              .select('job_id, viewer_id')
+              .inFilter('job_id', jobIds);
+          
+          final List<dynamic> allViews = viewsResponse as List<dynamic>;
+          
+          // Count unique viewers across all jobs (as a total)
+          final uniqueViewers = allViews.map((v) => v['viewer_id']).toSet();
+          totalUniqueJobViews = uniqueViewers.length;
+
+          // Also count per-job for top jobs logic
+          for (var job in allJobs) {
+            final jobViews = allViews.where((v) => v['job_id'] == job['id']).toList();
+            job['unique_views_count'] = jobViews.map((v) => v['viewer_id']).toSet().length;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error fetching unique job views: $e');
+        // Fallback to legacy views if views table fails or is empty
+        totalUniqueJobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
+      }
+      jobViews = totalUniqueJobViews;
 
       // 4. Recent applicants: fetch from applications table joining profile info
       try {
@@ -109,7 +143,9 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
       sortedJobs.sort((a, b) {
         int cmp = ((b['applicants'] ?? 0) as int).compareTo((a['applicants'] ?? 0) as int);
         if (cmp == 0) {
-          cmp = ((b['views'] ?? 0) as int).compareTo((a['views'] ?? 0) as int);
+          int bViews = (b['unique_views_count'] ?? b['views'] ?? 0) as int;
+          int aViews = (a['unique_views_count'] ?? a['views'] ?? 0) as int;
+          cmp = bViews.compareTo(aViews);
         }
         return cmp;
       });
@@ -118,7 +154,7 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         id: j['id']?.toString() ?? '',
         title: j['title'] ?? 'Untitled',
         applicants: (j['applicants'] ?? 0) as int,
-        views: (j['views'] ?? 0) as int,
+        views: (j['unique_views_count'] ?? j['views'] ?? 0) as int,
       )).toList();
 
     } catch (e) {
@@ -135,16 +171,62 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
       final viewerId = Supabase.instance.client.auth.currentUser?.id;
       if (viewerId == null) return;
 
-      // Don't record if viewing own profile
+      // Don't record if viewing own profile (rare for recruiter)
       if (viewerId == applicantId) return;
 
-      await Supabase.instance.client.from('profile_views').insert({
-        'profile_id': applicantId,
-        'viewer_id': viewerId,
-      });
-      debugPrint('Profile view recorded for $applicantId');
+      // Check if this viewer already viewed this profile to ensure uniqueness in the table
+      // though the user wants to count unique, recording multiple is also fine but let's be efficient
+      final existingView = await Supabase.instance.client
+          .from('views')
+          .select('id')
+          .eq('profile_id', applicantId)
+          .eq('viewer_id', viewerId)
+          .maybeSingle();
+
+      if (existingView == null) {
+        await Supabase.instance.client.from('views').insert({
+          'profile_id': applicantId,
+          'viewer_id': viewerId,
+        });
+        debugPrint('Profile view recorded: applicant=$applicantId, viewer=$viewerId');
+      }
     } catch (e) {
       debugPrint('Error recording profile view: $e');
+    }
+  }
+
+  Future<void> recordJobView(String jobId) async {
+    try {
+      final viewerId = Supabase.instance.client.auth.currentUser?.id;
+      if (viewerId == null) return;
+
+      // Check for existing view
+      final existingView = await Supabase.instance.client
+          .from('views')
+          .select('id')
+          .eq('job_id', jobId)
+          .eq('viewer_id', viewerId)
+          .maybeSingle();
+
+      if (existingView == null) {
+        await Supabase.instance.client.from('views').insert({
+          'job_id': jobId,
+          'viewer_id': viewerId,
+        });
+        debugPrint('Job view recorded: job=$jobId, viewer=$viewerId');
+        
+        // Optionally update the legacy views counter in the jobs table
+        // But the requirement is to use the views table.
+      }
+    } catch (e) {
+      debugPrint('Error recording job view: $e');
+      // Diagnostic: Check columns on failure
+      try {
+        final testResult = await Supabase.instance.client.from('views').select().limit(1);
+        if (testResult.isNotEmpty) {
+          debugPrint('DIAGNOSTIC (recordJobView) - Columns: ${testResult.first.keys.toList()}');
+        }
+      } catch (_) {}
     }
   }
 }
@@ -187,6 +269,14 @@ class ApplicantDetailViewModel extends ChangeNotifier {
       }
 
       application = ApplicationDetail.fromJson(data);
+
+      // Record profile view by the recruiter
+      try {
+        final recruiterDashboardVM = RecruiterDashboardViewModel();
+        await recruiterDashboardVM.recordProfileView(application!.applicantId);
+      } catch (e) {
+        debugPrint('Error triggering profile view record: $e');
+      }
     } catch (e) {
       debugPrint('Error fetching application detail: $e');
       error = 'Failed to load application details.';
@@ -215,67 +305,79 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
       debugPrint('Supabase Update Command Sent Successfully');
 
-      // Add Notification Logic
-      try {
-        final applicantId = application!.applicantId;
-        final jobTitle = application!.jobTitle;
-        final title = 'Application Update';
-        final body = 'Your application for $jobTitle is now $newStatus';
+        // Add Notification Logic
+        try {
+          final applicantId = application!.applicantId;
+          final jobTitle = application!.jobTitle;
+          final title = 'Application Update';
+          final body = 'Your application for $jobTitle is now $newStatus';
 
-        // 1. Save Notification to Supabase
-        await Supabase.instance.client.from('notifications').insert({
-          'user_id': applicantId,
-          'title': title,
-          'body': body,
-          'type': 'status_update',
-          'reference_id': appId,
-          'is_read': false,
-        });
+          debugPrint('🔔 [Notifications] Starting notification process for user $applicantId');
 
-        debugPrint('Notification inserted into Supabase for applicant: $applicantId');
-
-        // 2. Fetch Device Token and Send FCM
-        final profileResponse = await Supabase.instance.client
-            .from('profiles')
-            .select('userDeviceToken')
-            .eq('id', applicantId)
-            .maybeSingle();
-
-        if (profileResponse != null) {
-          final deviceToken = profileResponse['userDeviceToken'];
-          debugPrint('[UpdateStatus] Fetched deviceToken for $applicantId: $deviceToken');
-          if (deviceToken != null && deviceToken.toString().isNotEmpty) {
-            // Send FCM Notification calling FCM HTTP v1 API
-            final GetServerKey getServerKey = GetServerKey();
-            final String accessToken = await getServerKey.getServerKeyToken(); 
-            
-            final dio = Dio();
-            dio.options.headers['Content-Type'] = 'application/json';
-            dio.options.headers['Authorization'] = 'Bearer $accessToken';
-            
-            final response = await dio.post(
-              'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
-              data: {
-                'message': {
-                  'token': deviceToken,
-                  'notification': {
-                    'title': title,
-                    'body': body,
-                  },
-                  'data': {
-                    'type': 'status_update',
-                    'applicationId': appId,
-                    'targetUserId': applicantId,
-                  }
-                }
-              },
-            );
-            debugPrint('FCM Response: ${response.data}');
+          // 1. Save Notification to Supabase (Optional for Push)
+          try {
+            await Supabase.instance.client.from('notifications').insert({
+              'user_id': applicantId,
+              'title': title,
+              'body': body,
+              'is_read': false,
+            });
+            debugPrint('✅ [Notifications] Saved to DB');
+          } catch (dbError) {
+            debugPrint('⚠️ [Notifications] Failed to save to DB: $dbError');
+            // We continue with Push Notification even if DB save fails
           }
+
+          // 2. Fetch Device Token and Send FCM
+          try {
+            final profileResponse = await Supabase.instance.client
+                .from('profiles')
+                .select('userDeviceToken')
+                .eq('id', applicantId)
+                .maybeSingle();
+
+            if (profileResponse != null) {
+              final deviceToken = profileResponse['userDeviceToken'];
+              if (deviceToken != null && deviceToken.toString().isNotEmpty) {
+                debugPrint('🚀 [Notifications] Sending FCM to token: $deviceToken');
+                
+                final GetServerKey getServerKey = GetServerKey();
+                final String accessToken = await getServerKey.getServerKeyToken(); 
+                
+                final dio = Dio();
+                dio.options.headers['Content-Type'] = 'application/json';
+                dio.options.headers['Authorization'] = 'Bearer $accessToken';
+                
+                final response = await dio.post(
+                  'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
+                  data: {
+                    'message': {
+                      'token': deviceToken,
+                      'notification': {
+                        'title': title,
+                        'body': body,
+                      },
+                      'data': {
+                        'type': 'status_update',
+                        'applicationId': appId,
+                        'targetUserId': applicantId,
+                      }
+                    }
+                  },
+                );
+                debugPrint('✅ [Notifications] FCM Sent! Response: ${response.data}');
+              } else {
+                debugPrint('❌ [Notifications] Device token is null or empty for user $applicantId');
+              }
+            } else {
+              debugPrint('❌ [Notifications] Profile not found for user $applicantId');
+            }
+          } catch (fcmError) {
+            debugPrint('❌ [Notifications] FCM Send Error: $fcmError');
+          }
+        } catch (generalError) {
+          debugPrint('❌ [Notifications] General Error: $generalError');
         }
-      } catch (notifyError) {
-        debugPrint('Error sending notification: $notifyError');
-      }
 
       // Fetch updated data to reflect in UI and verify update
       await fetchApplicationDetail(appId);

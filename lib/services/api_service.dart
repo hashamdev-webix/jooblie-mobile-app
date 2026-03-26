@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dio/dio.dart';
+import 'get_service_key.dart';
 import '../models/apply_job_request.dart';
 import 'package:jooblie_app/services/get_service_key.dart';
 
@@ -142,6 +144,71 @@ class ApiService {
       }
     } catch (e) {
       debugPrint('Error sending recruiter notification: $e');
+    }
+
+    // --- Notification Logic for Recruiter ---
+    try {
+      // 1. Fetch Job and Recruiter Info
+      final jobData = await Supabase.instance.client
+          .from('jobs')
+          .select('title, recruiter_id, profiles!jobs_recruiter_id_fkey(full_name, userDeviceToken)')
+          .eq('id', jobId)
+          .maybeSingle();
+
+      if (jobData != null) {
+        final recruiterId = jobData['recruiter_id'];
+        final jobTitle = jobData['title'];
+        final applicantName = (await Supabase.instance.client
+            .from('profiles')
+            .select('full_name')
+            .eq('id', user.id)
+            .maybeSingle())?['full_name'] ?? 'A candidate';
+
+        final title = 'New Application';
+        final body = '$applicantName applied for $jobTitle';
+
+        // 2. Save Notification to Supabase for Recruiter
+        try {
+          await Supabase.instance.client.from('notifications').insert({
+            'user_id': recruiterId,
+            'title': title,
+            'body': body,
+            'is_read': false,
+          });
+        } catch (_) {}
+
+        // 3. Send FCM to Recruiter
+        final deviceToken = jobData['profiles']?['userDeviceToken'];
+        if (deviceToken != null && deviceToken.toString().isNotEmpty) {
+          try {
+            final GetServerKey getServerKey = GetServerKey();
+            final String accessToken = await getServerKey.getServerKeyToken();
+            
+            final dio = Dio();
+            dio.options.headers['Content-Type'] = 'application/json';
+            dio.options.headers['Authorization'] = 'Bearer $accessToken';
+            
+            await dio.post(
+              'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
+              data: {
+                'message': {
+                  'token': deviceToken,
+                  'notification': {'title': title, 'body': body},
+                  'data': {
+                    'type': 'new_application',
+                    'jobId': jobId,
+                    'targetUserId': recruiterId,
+                  }
+                }
+              },
+            );
+          } catch (e) {
+            print("Error sending FCM to recruiter: $e");
+          }
+        }
+      }
+    } catch (e) {
+      print("Error in application notification trigger: $e");
     }
 
     return {'status': 'success', 'message': 'Application submitted successfully'};

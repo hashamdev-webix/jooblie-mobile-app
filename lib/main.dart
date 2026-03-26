@@ -108,6 +108,12 @@ class _JooblieAppState extends State<JooblieApp> {
   void _setupAuthListener() {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
+      
+      // Auto-sync token on login or session start
+      if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.initialSession) {
+        NotificationsService().syncTokenToSupabase();
+      }
+
       if (event == AuthChangeEvent.passwordRecovery) {
         debugPrint('Password Recovery Event Detected! 🚨');
         // Small delay to ensure navigator is ready and context is valid

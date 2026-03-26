@@ -60,13 +60,50 @@ class NotificationsService {
 
     String? token = await messaging.getToken();
     print("Notifications Device Token ==> $token");
-    return token!;
+    
+    // Sync to Supabase if user is logged in
+    await syncTokenToSupabase();
+    
+    return token ?? "";
+  }
+
+  /// --- Sync Token to Supabase --- ///
+  Future<void> syncTokenToSupabase() async {
+    try {
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user == null) return;
+
+      String? token = await messaging.getToken();
+      if (token != null && token.isNotEmpty) {
+        await Supabase.instance.client
+            .from('profiles')
+            .update({'userDeviceToken': token})
+            .eq('id', user.id);
+        if (kDebugMode) {
+          print("✅ FCM Token Synced to Supabase for user ${user.id}");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ Error syncing FCM token: $e");
+      }
+    }
   }
 
 
   /// --- firebase init  & local notifications init --- ///
   
   void firebaseInit(){
+    // Listen for token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      if (kDebugMode) {
+        print("🔄 FCM Token Refreshed: $newToken");
+      }
+      syncTokenToSupabase();
+    });
+
+    // Initial sync
+    syncTokenToSupabase();
     
     // Initialize Local Notifications ONCE here
     var androidInitSetting = AndroidInitializationSettings("@mipmap/ic_launcher");

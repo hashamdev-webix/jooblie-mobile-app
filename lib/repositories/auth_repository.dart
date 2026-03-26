@@ -60,9 +60,8 @@ class AuthRepository {
             'userDeviceToken': deviceToken,
           });
         } else {
-          await _client.from('profiles').update({
-            'userDeviceToken': deviceToken,
-          }).eq('id', user.id);
+          // Sync token even for existing users during sign in
+          await NotificationsService().syncTokenToSupabase();
         }
       } catch (e) {
         throw Exception('Error checking/creating/updating profile: $e');

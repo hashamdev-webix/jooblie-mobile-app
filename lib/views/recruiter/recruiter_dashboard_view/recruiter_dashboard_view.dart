@@ -182,12 +182,7 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                 ),
               ),
             ),
-            ElevatedButton(onPressed: ()async{
-              GetServerKey getServerKey=GetServerKey();
-              String accessToken = await getServerKey.getServerKeyToken();
 
-              print(accessToken);
-            }, child: Text("Send Notification"))
 
 
           ],
