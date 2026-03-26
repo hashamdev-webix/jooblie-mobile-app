@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "789382410696",
+    "project_id": "jooblienotifactions",
+    "storage_bucket": "jooblienotifactions.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789382410696:android:11255ace5f91815e2890fd",
+        "android_client_info": {
+          "package_name": "com.jooblie.jooblie_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx9VaB7eKbESjRyypXawwJ2v8cl0rGXE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

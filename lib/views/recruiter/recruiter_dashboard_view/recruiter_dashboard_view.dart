@@ -1,5 +1,8 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/services/get_service_key.dart';
+import 'package:jooblie_app/services/notifications_service.dart';
 import 'package:jooblie_app/views/recruiter/recruiter_dashboard_view/widgets/stat_card_widget.dart';
 import 'package:jooblie_app/widgets/custom_shimmer_widget.dart';
 import 'package:jooblie_app/widgets/header_appbar_widget.dart';
@@ -12,8 +15,23 @@ import '../../../viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'widgets/dashboard_aplicant_tile_widget.dart';
 import 'widgets/card_width_list_tile.dart';
 
-class RecruiterDashboardView extends StatelessWidget {
+class RecruiterDashboardView extends StatefulWidget {
   const RecruiterDashboardView({super.key});
+
+  @override
+  State<RecruiterDashboardView> createState() => _RecruiterDashboardViewState();
+}
+
+class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
+
+  NotificationsService notificationsService = NotificationsService();
+
+  @override
+  void initState() {
+    super.initState();
+    notificationsService.requestNotificationPermission();
+    notificationsService.getDeviceToken();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +182,14 @@ class RecruiterDashboardView extends StatelessWidget {
                 ),
               ),
             ),
+            ElevatedButton(onPressed: ()async{
+              GetServerKey getServerKey=GetServerKey();
+              String accessToken = await getServerKey.getServerKeyToken();
+
+              print(accessToken);
+            }, child: Text("Send Notification"))
+
+
           ],
         ),
       ),

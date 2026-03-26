@@ -1,7 +1,9 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jooblie_app/firebase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:jooblie_app/services/supabase_service.dart';
 import 'package:jooblie_app/repositories/auth_repository.dart';
@@ -29,6 +31,9 @@ import 'package:jooblie_app/views/no_internet_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',

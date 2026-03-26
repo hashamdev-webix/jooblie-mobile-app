@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/services/supabase_service.dart';
+import 'package:jooblie_app/services/notifications_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRepository {
@@ -31,6 +32,14 @@ class AuthRepository {
     final user = response.user;
     if (user != null) {
       try {
+        String? deviceToken;
+        try {
+          NotificationsService notificationService = NotificationsService();
+          deviceToken = await notificationService.getDeviceToken();
+        } catch (e) {
+          print("Error getting device token: $e");
+        }
+
         final existingProfile = await _client
             .from('profiles')
             .select('*')
@@ -48,10 +57,15 @@ class AuthRepository {
             'company_name': userRole == 'recruiter'
                 ? metadata['company_name']
                 : null,
+            'userDeviceToken': deviceToken,
           });
+        } else {
+          await _client.from('profiles').update({
+            'userDeviceToken': deviceToken,
+          }).eq('id', user.id);
         }
       } catch (e) {
-        throw Exception('Error checking/creating profile: $e');
+        throw Exception('Error checking/creating/updating profile: $e');
       }
     }
 
