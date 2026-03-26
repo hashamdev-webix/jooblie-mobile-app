@@ -155,39 +155,48 @@ handleMessage(message);
     // Tap handler for background/terminated notifications
     if (kDebugMode){
       print("Tapped Notification with FCM Data: ${message.data}");
+      print("Notification type: ${message.data['type']}");
+      print("Notification applicationId: ${message.data['applicationId']}");
+      print("Notification targetUserId: ${message.data['targetUserId']}");
     }
-    final type = message.data['type'];
-    _routeBasedOnType(type);
+    _routeBasedOnData(message.data);
   }
 
   void handleMessageFromPayload(Map<String, dynamic> data) {
     // Tap handler for local (foreground) notifications
     if (kDebugMode){
       print("Tapped Notification with Local Payload Data: $data");
+      print("Notification type: ${data['type']}");
+      print("Notification applicationId: ${data['applicationId']}");
     }
-    final type = data['type'];
-    _routeBasedOnType(type);
+    _routeBasedOnData(data);
   }
 
-  void _routeBasedOnType(String? type) {
+  void _routeBasedOnData(Map<String, dynamic> data) {
+    final type = data['type']?.toString();
+    final applicationId = data['applicationId']?.toString();
+
     if (kDebugMode) {
-      print("Routing for Notification Data Type: $type");
+      print("[NotificationsService] Routing => type: $type | applicationId: $applicationId");
     }
 
-    if (type == 'status_update') {
-      print("Routing to Applications Tab (Index 3)");
+    if (type == 'new_application' && applicationId != null && applicationId.isNotEmpty) {
+      // Recruiter receives this — go directly to Applicant Detail
+      print("[NotificationsService] Routing recruiter to ApplicantDetail: $applicationId");
+      navigatorKey.currentState?.pushNamed(
+        RoutesName.applicantDetail,
+        arguments: applicationId,
+      );
+    } else if (type == 'status_update') {
+      // Job Seeker receives this — go to Applications tab
+      print("[NotificationsService] Routing job seeker to Applications Tab (Index 3)");
       navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        RoutesName.dashboard, 
+        RoutesName.dashboard,
         (route) => false,
-        arguments: {'isJobSeeker': true, 'initialIndex': 3}, // 3 is Applications tab
+        arguments: {'isJobSeeker': true, 'initialIndex': 3},
       );
     } else {
-      print("Routing to Default App Dashboard (Index 0)");
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        RoutesName.dashboard, 
-        (route) => false,
-        arguments: {'isJobSeeker': true, 'initialIndex': 0},
-      );
+      print("[NotificationsService] Unknown type: $type — No navigation performed.");
     }
   }
 

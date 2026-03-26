@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/core/sized.dart';
 import 'package:jooblie_app/viewmodels/notifications_viewmodel.dart';
+import 'package:jooblie_app/core/utils/routes_name.dart';
 
 class NotificationsView extends StatefulWidget {
   const NotificationsView({super.key});
@@ -75,12 +76,58 @@ class _NotificationsViewState extends State<NotificationsView> {
                 final notification = vm.notifications[index];
                 final isUnread = !notification.isRead;
 
-                return InkWell(
-                  onTap: () {
-                    if (isUnread) {
-                      vm.markAsRead(notification.id);
-                    }
+                return Dismissible(
+                  key: Key(notification.id),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    color: Colors.red.shade400,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 20),
+                    child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
+                  ),
+                  onDismissed: (direction) {
+                    vm.deleteNotification(notification.id);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Notification deleted'), duration: Duration(seconds: 2)),
+                    );
                   },
+                  child: InkWell(
+                    onTap: () {
+                      if (isUnread) {
+                        vm.markAsRead(notification.id);
+                      }
+                      
+                      final type = notification.type;
+                      var refId = notification.referenceId;
+
+                      // Routing Logic Based on Type
+                      if (type == null) {
+                         // Fallback for older notifications
+                         if (notification.title.toLowerCase().contains('application')) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              RoutesName.dashboard,
+                              (route) => false,
+                              arguments: {'isJobSeeker': true, 'initialIndex': 3},
+                            );
+                         }
+                      } else if (type == 'status_update') {
+                         Navigator.pushNamedAndRemoveUntil(
+                           context,
+                           RoutesName.dashboard,
+                           (route) => false,
+                           arguments: {'isJobSeeker': true, 'initialIndex': 3},
+                         );
+                      } else if (type == 'new_application' && refId != null) {
+                         // Some data sources return quoted strings, strip if necessary
+                         refId = refId.replaceAll('"', '').trim();
+                         Navigator.pushNamed(
+                           context,
+                           RoutesName.applicantDetail,
+                           arguments: refId,
+                         );
+                      }
+                    },
                   child: Container(
                     color: isUnread 
                         ? (isDark ? AppColors.lightPrimary.withOpacity(0.1) : Colors.blue.withOpacity(0.05)) 
@@ -148,7 +195,8 @@ class _NotificationsViewState extends State<NotificationsView> {
                       ],
                     ),
                   ),
-                );
+                  ), // closing InkWell
+                ); // closing Dismissible
               },
             ),
           );

@@ -227,8 +227,12 @@ class ApplicantDetailViewModel extends ChangeNotifier {
           'user_id': applicantId,
           'title': title,
           'body': body,
+          'type': 'status_update',
+          'reference_id': appId,
           'is_read': false,
         });
+
+        debugPrint('Notification inserted into Supabase for applicant: $applicantId');
 
         // 2. Fetch Device Token and Send FCM
         final profileResponse = await Supabase.instance.client
@@ -239,6 +243,7 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
         if (profileResponse != null) {
           final deviceToken = profileResponse['userDeviceToken'];
+          debugPrint('[UpdateStatus] Fetched deviceToken for $applicantId: $deviceToken');
           if (deviceToken != null && deviceToken.toString().isNotEmpty) {
             // Send FCM Notification calling FCM HTTP v1 API
             final GetServerKey getServerKey = GetServerKey();

@@ -56,6 +56,8 @@ class NotificationsViewModel extends ChangeNotifier {
           userId: old.userId,
           title: old.title,
           body: old.body,
+          type: old.type,
+          referenceId: old.referenceId,
           isRead: true,
           createdAt: old.createdAt,
         );
@@ -63,6 +65,20 @@ class NotificationsViewModel extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error marking notification as read: $e');
+    }
+  }
+
+  Future<void> deleteNotification(String notificationId) async {
+    try {
+      await Supabase.instance.client
+          .from('notifications')
+          .delete()
+          .eq('id', notificationId);
+          
+      notifications.removeWhere((n) => n.id == notificationId);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error deleting notification: $e');
     }
   }
 
@@ -84,6 +100,8 @@ class NotificationsViewModel extends ChangeNotifier {
             userId: notifications[i].userId,
             title: notifications[i].title,
             body: notifications[i].body,
+            type: notifications[i].type,
+            referenceId: notifications[i].referenceId,
             isRead: true,
             createdAt: notifications[i].createdAt,
           );
