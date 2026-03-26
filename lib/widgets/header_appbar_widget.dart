@@ -14,6 +14,7 @@ class HeaderAppBarWidget extends StatelessWidget {
   final bool showSetting;
   final bool showLeadingIcon;
   final bool showProfileIcon;
+  final bool showNotificationIcon;
 
   const HeaderAppBarWidget({
     super.key,
@@ -24,6 +25,7 @@ class HeaderAppBarWidget extends StatelessWidget {
     this.showSetting = true,
     this.showLeadingIcon = false,
     this.showProfileIcon = false,
+    this.showNotificationIcon = true,
   });
 
   @override
@@ -73,6 +75,13 @@ class HeaderAppBarWidget extends StatelessWidget {
                     icon: Icon(Icons.settings_outlined),
                   )
                 : SizedBox.shrink(),
+            if (showNotificationIcon)
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, RoutesName.notifications);
+                },
+                icon: Icon(Icons.notifications_none_rounded),
+              ),
             if (showProfileIcon)
               IconButton(
                 style: IconButton.styleFrom(
