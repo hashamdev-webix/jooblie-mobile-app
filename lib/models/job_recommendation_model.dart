@@ -62,7 +62,7 @@ class JobRecommendationModel {
     final rawSkills = json['skills'];
     List<String> tags = [];
     if (rawSkills is List) {
-      tags = rawSkills.map((s) => s.toString()).toList();
+      tags = rawSkills.map((s) => s.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
     }
 
     // Parse requirements

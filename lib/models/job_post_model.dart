@@ -49,7 +49,9 @@ class JobPost {
       salaryCurrency: json['salary_currency'],
       description: json['description'],
       requirements: json['requirements'],
-      skills: (json['skills'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      skills: (json['skills'] as List<dynamic>?)
+              ?.map((e) => e.toString().trim().replaceAll('"', '').replaceAll("'", ''))
+              .toList() ?? [],
       postedDate: json['created_at'] != null 
           ? DateTime.parse(json['created_at']) 
           : DateTime.now(),
@@ -175,9 +177,9 @@ class ApplicationDetail {
     List<String> skillsList = [];
     final rawSkills = profile['skills'];
     if (rawSkills is List) {
-      skillsList = rawSkills.map((s) => s.toString()).toList();
+      skillsList = rawSkills.map((s) => s.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
     } else if (rawSkills is String && rawSkills.isNotEmpty) {
-      skillsList = rawSkills.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+      skillsList = rawSkills.split(',').map((s) => s.trim().replaceAll('"', '').replaceAll("'", '')).where((s) => s.isNotEmpty).toList();
     }
 
     return ApplicationDetail(

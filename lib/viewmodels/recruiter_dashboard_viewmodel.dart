@@ -472,7 +472,7 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
         try {
           final List<String> skillsList = skills
             .split(',')
-            .map((s) => s.trim())
+            .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
             .where((s) => s.isNotEmpty)
             .toList();
 

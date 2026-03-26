@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/jobseeker_profile_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'dart:convert';
 
 class JobseekerProfileViewModel extends ChangeNotifier {
   late final TextEditingController nameController;
@@ -94,18 +95,28 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       final String? about = profileData?['about'] ?? metadata?['about'];
       List<String>? skills;
       final dynamic rawSkills = profileData?['skills'] ?? metadata?['skills'];
-      
+
       if (rawSkills != null) {
         if (rawSkills is String) {
-          // Strip brackets if they exist (e.g. "[]" or "[Skill1, Skill2]")
-          String cleaned = rawSkills.replaceAll('[', '').replaceAll(']', '').trim();
-          if (cleaned.isEmpty) {
-            skills = [];
-          } else {
+          try {
+            final trimmed = rawSkills.trim();
+            // Try to parse as JSON if it looks like an array
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+              final decoded = jsonDecode(trimmed);
+              if (decoded is List) {
+                skills = decoded.map((e) => e.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
+              }
+            } else {
+              // Fallback to comma-separated parsing
+              skills = trimmed.split(',').map((e) => e.trim().replaceAll('"', '').replaceAll("'", '')).where((e) => e.isNotEmpty).toList();
+            }
+          } catch (e) {
+            // Final fallback: just strip brackets and quotes
+            String cleaned = rawSkills.replaceAll('[', '').replaceAll(']', '').replaceAll('"', '').replaceAll("'", '').trim();
             skills = cleaned.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
           }
         } else if (rawSkills is List) {
-          skills = rawSkills.map((e) => e.toString()).toList();
+          skills = rawSkills.map((e) => e.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
         }
       }
 
@@ -170,7 +181,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
   List<String> get parsedSkills {
     return skillsController.text
         .split(',')
-        .map((s) => s.trim())
+        .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
         .where((s) => s.isNotEmpty)
         .toList();
   }
