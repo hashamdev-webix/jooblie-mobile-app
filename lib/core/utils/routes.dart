@@ -19,6 +19,9 @@ import 'package:jooblie_app/views/job_seeker/companies_view/company_details_view
 import 'package:jooblie_app/views/recruiter/applicant_detail_view/applicant_detail_view.dart';
 import 'package:jooblie_app/views/notifications_view.dart';
 
+import 'package:jooblie_app/views/job_seeker/profile_insights_view.dart';
+import 'package:jooblie_app/views/recruiter/job_view_insights_view.dart';
+
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     // Handle root route or routes with query parameters from deep links
@@ -114,7 +117,16 @@ class Routes {
 
       case RoutesName.notifications:
         return MaterialPageRoute(builder: (_) => const NotificationsView());
-
+      case RoutesName.profileInsights:
+        return MaterialPageRoute(builder: (_) => const ProfileInsightsView());
+      case RoutesName.jobInsights:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => JobViewInsightsView(
+            jobId: args['jobId'],
+            jobTitle: args['jobTitle'],
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
