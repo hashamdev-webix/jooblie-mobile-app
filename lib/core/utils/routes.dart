@@ -21,6 +21,12 @@ import 'package:jooblie_app/views/notifications_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    // Handle root route or routes with query parameters from deep links
+    if (settings.name == '/' ||
+        (settings.name != null && settings.name!.startsWith('/?'))) {
+      return MaterialPageRoute(builder: (_) => SplashScreen());
+    }
+
     // Handle dynamic job routes from deep links
     if (settings.name != null && settings.name!.startsWith('/job/')) {
       final jobId = settings.name!.split('/').last;
@@ -83,7 +89,11 @@ class Routes {
           builder: (BuildContext context) {
             final args = settings.arguments as Map<String, dynamic>?;
             final email = args?['email'] ?? '';
-            return VerifyEmailScreen(email: email);
+            final isFromForgotPassword = args?['isFromForgotPassword'] ?? false;
+            return VerifyEmailScreen(
+              email: email,
+              isFromForgotPassword: isFromForgotPassword,
+            );
           },
         );
 

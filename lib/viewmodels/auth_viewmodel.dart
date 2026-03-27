@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/repositories/auth_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthViewModel extends ChangeNotifier {
@@ -34,6 +35,11 @@ class AuthViewModel extends ChangeNotifier {
       if (response.user != null && response.user!.emailConfirmedAt == null) {
         return 'Please verify your email first ❌';
       }
+      
+      // Set manual login flag
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('has_logged_in_manually', true);
+      
       return null;
     } on AuthException catch (e) {
       _setError(e.message);
@@ -90,6 +96,9 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> signOut(BuildContext context) async {
     _setLoading(true);
     try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('has_logged_in_manually', false);
+      
       await _authRepository.signOut(context);
       _setLoading(false);
     } catch (e) {

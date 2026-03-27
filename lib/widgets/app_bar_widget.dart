@@ -18,6 +18,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final PreferredSizeWidget? bottom;
   final SystemUiOverlayStyle? systemOverlayStyle;
   final bool showAppLogo;
+  final Widget? leading;
 
   const AppBarWidget({
     super.key,
@@ -32,6 +33,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
     this.bottom,
     this.systemOverlayStyle,
     this.showAppLogo = true,
+    this.leading,
   });
 
   @override
@@ -49,7 +51,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       ),
       automaticallyImplyLeading: false,
       systemOverlayStyle: systemOverlayStyle,
-      leading: showLeadingIcon
+      leading: leading ?? (showLeadingIcon
           ? IconButton(
               onPressed: () => Navigator.pop(context),
               icon: Icon(
@@ -58,7 +60,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
               ),
               // color: AppColors.primary,
             )
-          : null,
+          : null),
       backgroundColor: backGroundColor,
       // backgroundColor: isDark
       //     ? AppColors.darkBackground

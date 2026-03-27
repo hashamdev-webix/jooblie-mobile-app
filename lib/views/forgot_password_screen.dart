@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/app_colors.dart';
 import 'package:jooblie_app/core/sized.dart';
 import 'package:jooblie_app/core/utils/responsive.dart';
+import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/forgot_password_viewmodel.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
@@ -125,7 +126,22 @@ class ForgotPasswordScreen extends StatelessWidget {
                                           message:
                                               'Reset link sent! Check your email.',
                                         );
-                                        // Optional: Navigate back after some delay or show success state
+                                        // Navigate to Verify Email screen
+                                        Future.delayed(
+                                          const Duration(seconds: 1),
+                                          () {
+                                            if (context.mounted) {
+                                              Navigator.pushNamed(
+                                                context,
+                                                RoutesName.verifyEmail,
+                                                arguments: {
+                                                  'email': viewModel.email,
+                                                  'isFromForgotPassword': true,
+                                                },
+                                              );
+                                            }
+                                          },
+                                        );
                                       } else if (context.mounted) {
                                         CustomFlushbar.showError(
                                           context: context,

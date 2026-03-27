@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResetPasswordViewModel extends ChangeNotifier {
@@ -52,6 +53,8 @@ class ResetPasswordViewModel extends ChangeNotifier {
           UserAttributes(password: _password),
         );
         // Destroy the recovery session so they are forced to log in manually
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('has_logged_in_manually', false);
         await Supabase.instance.client.auth.signOut();
         _isLoading = false;
         notifyListeners();

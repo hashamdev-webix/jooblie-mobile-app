@@ -40,44 +40,54 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate after 3 seconds with session and onboarding logic
-    Future.delayed(const Duration(seconds: 3), () async {
-      final prefs = await SharedPreferences.getInstance();
+    delayedNavigate();
+  }
 
-      final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
-      if (!hasSeenOnboarding) {
+  // Navigate after 3 seconds with session and onboarding logic
+  Future<void> delayedNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+
+    // Guard: If another route (like ResetPassword) has already been pushed, don't navigate.
+    if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+    if (!hasSeenOnboarding) {
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, RoutesName.onboarding);
+      }
+      return;
+    }
+
+    final session = Supabase.instance.client.auth.currentSession;
+    final hasLoggedInManually = prefs.getBool('has_logged_in_manually') ?? false;
+
+    if (session != null && hasLoggedInManually) {
+      final user = session.user;
+      // Verify email is confirmed if required by your Supabase setup.
+      // It's normally filled via checking emailConfirmedAt
+      if (user.emailConfirmedAt != null) {
+        final userType = user.userMetadata?['role'];
+        final isJobSeeker = userType != null
+            ? (userType == 'job_seeker')
+            : (prefs.getBool('is_job_seeker') ?? true);
+
         if (mounted) {
-          Navigator.pushReplacementNamed(context, RoutesName.onboarding);
+          Navigator.pushReplacementNamed(
+            context,
+            RoutesName.dashboard,
+            arguments: {'isJobSeeker': isJobSeeker},
+          );
         }
         return;
       }
+    }
 
-      final session = Supabase.instance.client.auth.currentSession;
-      if (session != null) {
-        final user = session.user;
-        // Verify email is confirmed if required by your Supabase setup.
-        // It's normally filled via checking emailConfirmedAt
-        if (user.emailConfirmedAt != null) {
-          final userType = user.userMetadata?['role'];
-          final isJobSeeker = userType != null
-              ? (userType == 'job_seeker')
-              : (prefs.getBool('is_job_seeker') ?? true);
-
-          if (mounted) {
-            Navigator.pushReplacementNamed(
-              context,
-              RoutesName.dashboard,
-              arguments: {'isJobSeeker': isJobSeeker},
-            );
-          }
-          return;
-        }
-      }
-
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, RoutesName.login);
-      }
-    });
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, RoutesName.login);
+    }
   }
 
   @override
@@ -133,18 +143,14 @@ class _SplashScreenState extends State<SplashScreen>
                         'Jooblie',
                         style: theme.textTheme.displaySmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark
-                              ? Colors.white
-                              : AppColors.lightForeground,
+                          color: isDark ? Colors.white : AppColors.lightForeground,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Find your next adventure',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isDark
-                              ? Colors.white70
-                              : AppColors.lightMutedForeground,
+                          color: isDark ? Colors.white70 : AppColors.lightMutedForeground,
                         ),
                       ),
                     ],

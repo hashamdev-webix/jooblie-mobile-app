@@ -12,8 +12,13 @@ import 'package:jooblie_app/core/utils/routes_name.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;
+  final bool isFromForgotPassword;
 
-  const VerifyEmailScreen({super.key, required this.email});
+  const VerifyEmailScreen({
+    super.key,
+    required this.email,
+    this.isFromForgotPassword = false,
+  });
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -28,7 +33,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       Provider.of<VerifyEmailViewModel>(
         context,
         listen: false,
-      ).listenAuthentication(context);
+      ).listenAuthentication(context, isFromForgotPassword: widget.isFromForgotPassword);
     });
   }
 
@@ -168,6 +173,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   viewModel.resendVerificationEmail(
                                     context,
                                     widget.email,
+                                    isFromForgotPassword: widget.isFromForgotPassword,
                                   );
                                 },
                               );

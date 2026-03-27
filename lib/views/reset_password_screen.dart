@@ -10,6 +10,7 @@ import 'package:jooblie_app/widgets/fade_slide_up.dart';
 import 'package:provider/provider.dart';
 import 'package:jooblie_app/core/utils/custom_flushbar.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   const ResetPasswordScreen({super.key});
@@ -31,6 +32,15 @@ class ResetPasswordScreen extends StatelessWidget {
           title: 'Update Password',
           backGroundColor: isDark ? AppColors.darkBackground : Colors.white,
           showLeadingIcon: true,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, RoutesName.login);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new_sharp,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
         ),
         body: Stack(
           children: [
@@ -126,35 +136,67 @@ class ResetPasswordScreen extends StatelessWidget {
                                   PrimaryButton(
                                     text: 'Update Password',
                                     isLoading: viewModel.isLoading,
-                                    onPressed: () async {
-                                      final result = await viewModel
-                                          .updatePassword();
-                                      if (result == null && context.mounted) {
-                                        CustomFlushbar.showSuccess(
-                                          context: context,
-                                          message:
-                                              'Password updated successfully! ✅',
-                                        );
-                                        Future.delayed(
-                                          const Duration(seconds: 2),
-                                          () {
+                                      onPressed: () async {
+                                        final result = await viewModel.updatePassword();
+
+                                        if (result == null && context.mounted) {
+
+                                          // ✅ STEP 1: Force logout (VERY IMPORTANT)
+                                          await Supabase.instance.client.auth.signOut();
+
+                                          // ✅ STEP 2: Success message
+                                          CustomFlushbar.showSuccess(
+                                            context: context,
+                                            message: 'Password updated successfully! ✅',
+                                          );
+
+                                          // ✅ STEP 3: Navigate to login (clean stack)
+                                          Future.delayed(const Duration(seconds: 2), () {
                                             if (context.mounted) {
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
                                                 RoutesName.login,
-                                                (route) => false,
+                                                    (route) => false,
                                               );
                                             }
-                                          },
-                                        );
-                                      } else if (context.mounted) {
-                                        CustomFlushbar.showError(
-                                          context: context,
-                                          message:
-                                              result ?? 'Something went wrong',
-                                        );
+                                          });
+
+                                        } else if (context.mounted) {
+                                          CustomFlushbar.showError(
+                                            context: context,
+                                            message: result ?? 'Something went wrong',
+                                          );
+                                        }
                                       }
-                                    },
+                                    // onPressed: () async {
+                                    //   final result = await viewModel
+                                    //       .updatePassword();
+                                    //   if (result == null && context.mounted) {
+                                    //     CustomFlushbar.showSuccess(
+                                    //       context: context,
+                                    //       message:
+                                    //           'Password updated successfully! ✅',
+                                    //     );
+                                    //     Future.delayed(
+                                    //       const Duration(seconds: 2),
+                                    //       () {
+                                    //         if (context.mounted) {
+                                    //           Navigator.pushNamedAndRemoveUntil(
+                                    //             context,
+                                    //             RoutesName.login,
+                                    //             (route) => false,
+                                    //           );
+                                    //         }
+                                    //       },
+                                    //     );
+                                    //   } else if (context.mounted) {
+                                    //     CustomFlushbar.showError(
+                                    //       context: context,
+                                    //       message:
+                                    //           result ?? 'Something went wrong',
+                                    //     );
+                                    //   }
+                                    // },
                                   ),
                                 ],
                               ),
