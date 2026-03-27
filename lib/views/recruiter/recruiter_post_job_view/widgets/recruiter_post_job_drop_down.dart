@@ -7,7 +7,8 @@ class RecruiterPostJObDropdown<T> extends StatelessWidget {
   final ValueChanged<T?> onChanged;
   final bool isDark;
 
-  const RecruiterPostJObDropdown({super.key,
+  const RecruiterPostJObDropdown({
+    super.key,
     required this.value,
     required this.items,
     required this.onChanged,
@@ -42,10 +43,10 @@ class RecruiterPostJObDropdown<T> extends StatelessWidget {
           items: items
               .map(
                 (item) => DropdownMenuItem<T>(
-              value: item,
-              child: Text(item.toString()),
-            ),
-          )
+                  value: item,
+                  child: Text(item.toString()),
+                ),
+              )
               .toList(),
           onChanged: onChanged,
         ),

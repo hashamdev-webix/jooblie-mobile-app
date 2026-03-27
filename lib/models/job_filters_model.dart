@@ -59,17 +59,22 @@ class JobFilters {
   String toQueryString() {
     final params = <String, String>{};
     if (search != null && search!.isNotEmpty) params['search'] = search!;
-    if (location != null && location!.isNotEmpty) params['location'] = location!;
+    if (location != null && location!.isNotEmpty)
+      params['location'] = location!;
     if (jobType != null && jobType!.isNotEmpty) params['job_type'] = jobType!;
-    if (experience != null && experience!.isNotEmpty) params['experience'] = experience!;
+    if (experience != null && experience!.isNotEmpty)
+      params['experience'] = experience!;
     if (minSalary != null) params['min_salary'] = minSalary.toString();
     if (maxSalary != null) params['max_salary'] = maxSalary.toString();
-    if (skills != null && skills!.isNotEmpty) params['skills'] = skills!.join(',');
+    if (skills != null && skills!.isNotEmpty)
+      params['skills'] = skills!.join(',');
     params['page'] = page.toString();
     params['limit'] = limit.toString();
     if (sortBy != null) params['sort_by'] = sortBy!;
     if (order != null) params['order'] = order!;
-    return params.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
+    return params.entries
+        .map((e) => '${e.key}=${Uri.encodeComponent(e.value)}')
+        .join('&');
   }
 
   bool get hasActiveFilters =>

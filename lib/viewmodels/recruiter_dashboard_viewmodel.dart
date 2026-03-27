@@ -51,23 +51,32 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
           .from('applications')
           .select('job_id, status, jobs!inner(recruiter_id)')
           .eq('jobs.recruiter_id', userId);
-          
+
       final List<dynamic> allApps = allAppsResponse as List<dynamic>;
       totalApplicants = allApps.length;
 
       for (var job in allJobs) {
-        job['applicants'] = allApps.where((a) => a['job_id'].toString() == job['id'].toString()).length;
+        job['applicants'] = allApps
+            .where((a) => a['job_id'].toString() == job['id'].toString())
+            .length;
       }
-      
+
       final hiredCount = allApps.where((a) => a['status'] == 'Hired').length;
-      hireRate = totalApplicants > 0 ? (hiredCount / totalApplicants) * 100 : 0.0;
+      hireRate = totalApplicants > 0
+          ? (hiredCount / totalApplicants) * 100
+          : 0.0;
 
       int totalUniqueJobViews = 0;
       try {
         try {
-          final testResult = await Supabase.instance.client.from('views').select().limit(1);
+          final testResult = await Supabase.instance.client
+              .from('views')
+              .select()
+              .limit(1);
           if (testResult.isNotEmpty) {
-            debugPrint('DIAGNOSTIC - Views Table Columns: ${testResult.first.keys.toList()}');
+            debugPrint(
+              'DIAGNOSTIC - Views Table Columns: ${testResult.first.keys.toList()}',
+            );
           }
         } catch (_) {}
 
@@ -75,22 +84,31 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         if (jobIds.isNotEmpty) {
           final jobViewCounts = await ViewsService.getJobViews(jobIds);
 
-          totalUniqueJobViews = jobViewCounts.values.fold(0, (sum, count) => sum + count);
+          totalUniqueJobViews = jobViewCounts.values.fold(
+            0,
+            (sum, count) => sum + count,
+          );
 
           for (var job in allJobs) {
-            job['unique_views_count'] = jobViewCounts[job['id'].toString()] ?? 0;
+            job['unique_views_count'] =
+                jobViewCounts[job['id'].toString()] ?? 0;
           }
         }
       } catch (e) {
         debugPrint('Error fetching unique job views: $e');
-        totalUniqueJobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
+        totalUniqueJobViews = allJobs.fold<int>(
+          0,
+          (sum, j) => sum + ((j['views'] ?? 0) as int),
+        );
       }
       jobViews = totalUniqueJobViews;
 
       try {
         final applicantsResponse = await Supabase.instance.client
             .from('applications')
-            .select('*, jobs!inner(title, recruiter_id), profiles:applicant_id(*)')
+            .select(
+              '*, jobs!inner(title, recruiter_id), profiles:applicant_id(*)',
+            )
             .eq('jobs.recruiter_id', userId)
             .order('created_at', ascending: false)
             .limit(10);
@@ -98,27 +116,30 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         debugPrint('RAW Applicants Data: $applicantsResponse');
 
         final List<dynamic> appList = applicantsResponse as List<dynamic>;
-        recentApplicants = appList.map((a) {
-          try {
-            final data = Map<String, dynamic>.from(a as Map);
+        recentApplicants = appList
+            .map((a) {
+              try {
+                final data = Map<String, dynamic>.from(a as Map);
 
-            final String? resUrl = data['resume_url']?.toString();
-            if (resUrl != null && !resUrl.startsWith('http')) {
-              final String path = resUrl.startsWith('resumes/') 
-                  ? resUrl.replaceFirst('resumes/', '') 
-                  : resUrl;
-              data['resume_url'] = Supabase.instance.client.storage
-                  .from('resumes')
-                  .getPublicUrl(path);
-            }
-            
-            return RecentApplicant.fromJson(data);
-          } catch (e) {
-            debugPrint('Error parsing applicant: $e');
-            return null;
-          }
-        }).whereType<RecentApplicant>().toList();
-        
+                final String? resUrl = data['resume_url']?.toString();
+                if (resUrl != null && !resUrl.startsWith('http')) {
+                  final String path = resUrl.startsWith('resumes/')
+                      ? resUrl.replaceFirst('resumes/', '')
+                      : resUrl;
+                  data['resume_url'] = Supabase.instance.client.storage
+                      .from('resumes')
+                      .getPublicUrl(path);
+                }
+
+                return RecentApplicant.fromJson(data);
+              } catch (e) {
+                debugPrint('Error parsing applicant: $e');
+                return null;
+              }
+            })
+            .whereType<RecentApplicant>()
+            .toList();
+
         debugPrint('Final Recent Applicants Count: ${recentApplicants.length}');
       } catch (e, stack) {
         debugPrint('CRITICAL: Error fetching recruiter applicants: $e\n$stack');
@@ -127,7 +148,9 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
 
       final sortedJobs = List<dynamic>.from(allJobs);
       sortedJobs.sort((a, b) {
-        int cmp = ((b['applicants'] ?? 0) as int).compareTo((a['applicants'] ?? 0) as int);
+        int cmp = ((b['applicants'] ?? 0) as int).compareTo(
+          (a['applicants'] ?? 0) as int,
+        );
         if (cmp == 0) {
           int bViews = (b['unique_views_count'] ?? b['views'] ?? 0) as int;
           int aViews = (a['unique_views_count'] ?? a['views'] ?? 0) as int;
@@ -135,14 +158,18 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         }
         return cmp;
       });
-      
-      topJobs = sortedJobs.take(3).map((j) => JobPerformance(
-        id: j['id']?.toString() ?? '',
-        title: j['title'] ?? 'Untitled',
-        applicants: (j['applicants'] ?? 0) as int,
-        views: (j['unique_views_count'] ?? j['views'] ?? 0) as int,
-      )).toList();
 
+      topJobs = sortedJobs
+          .take(3)
+          .map(
+            (j) => JobPerformance(
+              id: j['id']?.toString() ?? '',
+              title: j['title'] ?? 'Untitled',
+              applicants: (j['applicants'] ?? 0) as int,
+              views: (j['unique_views_count'] ?? j['views'] ?? 0) as int,
+            ),
+          )
+          .toList();
     } catch (e) {
       debugPrint('Error fetching recruiter dashboard stats: $e');
       error = 'Failed to load stats.';
@@ -186,13 +213,13 @@ class ApplicantDetailViewModel extends ChangeNotifier {
       final String? resumeUrl = data['resume_url']?.toString();
       if (resumeUrl != null && !resumeUrl.startsWith('http')) {
         final String path = resumeUrl.startsWith('resumes/')
-            ? resumeUrl.replaceFirst('resumes/', '') 
+            ? resumeUrl.replaceFirst('resumes/', '')
             : resumeUrl;
-            
+
         final fullUrl = Supabase.instance.client.storage
             .from('resumes')
             .getPublicUrl(path);
-            
+
         data['resume_url'] = fullUrl;
       }
 
@@ -220,7 +247,9 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
     try {
       final appId = application!.applicationId;
-      debugPrint('Supabase Update Attempt: table=applications, id=$appId, newStatus=$newStatus');
+      debugPrint(
+        'Supabase Update Attempt: table=applications, id=$appId, newStatus=$newStatus',
+      );
 
       await Supabase.instance.client
           .from('applications')
@@ -230,74 +259,81 @@ class ApplicantDetailViewModel extends ChangeNotifier {
       debugPrint('Supabase Update Command Sent Successfully');
 
       try {
-          final applicantId = application!.applicantId;
-          final jobTitle = application!.jobTitle;
-          final title = 'Application Update';
-          final body = 'Your application for $jobTitle is now $newStatus';
+        final applicantId = application!.applicantId;
+        final jobTitle = application!.jobTitle;
+        final title = 'Application Update';
+        final body = 'Your application for $jobTitle is now $newStatus';
 
-          debugPrint('🔔 [Notifications] Starting notification process for user $applicantId');
+        debugPrint(
+          '🔔 [Notifications] Starting notification process for user $applicantId',
+        );
 
-          try {
-            await Supabase.instance.client.from('notifications').insert({
-              'user_id': applicantId,
-              'title': title,
-              'body': body,
-              'is_read': false,
-            });
-            debugPrint('✅ [Notifications] Saved to DB');
-          } catch (dbError) {
-            debugPrint('⚠️ [Notifications] Failed to save to DB: $dbError');
-          }
-
-          try {
-            final profileResponse = await Supabase.instance.client
-                .from('profiles')
-                .select('userDeviceToken')
-                .eq('id', applicantId)
-                .maybeSingle();
-
-            if (profileResponse != null) {
-              final deviceToken = profileResponse['userDeviceToken'];
-              if (deviceToken != null && deviceToken.toString().isNotEmpty) {
-                debugPrint('🚀 [Notifications] Sending FCM to token: $deviceToken');
-                
-                final GetServerKey getServerKey = GetServerKey();
-                final String accessToken = await getServerKey.getServerKeyToken(); 
-                
-                final dio = Dio();
-                dio.options.headers['Content-Type'] = 'application/json';
-                dio.options.headers['Authorization'] = 'Bearer $accessToken';
-                
-                final response = await dio.post(
-                  'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
-                  data: {
-                    'message': {
-                      'token': deviceToken,
-                      'notification': {
-                        'title': title,
-                        'body': body,
-                      },
-                      'data': {
-                        'type': 'status_update',
-                        'applicationId': appId,
-                        'targetUserId': applicantId,
-                      }
-                    }
-                  },
-                );
-                debugPrint('✅ [Notifications] FCM Sent! Response: ${response.data}');
-              } else {
-                debugPrint('❌ [Notifications] Device token is null or empty for user $applicantId');
-              }
-            } else {
-              debugPrint('❌ [Notifications] Profile not found for user $applicantId');
-            }
-          } catch (fcmError) {
-            debugPrint('❌ [Notifications] FCM Send Error: $fcmError');
-          }
-        } catch (generalError) {
-          debugPrint('❌ [Notifications] General Error: $generalError');
+        try {
+          await Supabase.instance.client.from('notifications').insert({
+            'user_id': applicantId,
+            'title': title,
+            'body': body,
+            'is_read': false,
+          });
+          debugPrint('✅ [Notifications] Saved to DB');
+        } catch (dbError) {
+          debugPrint('⚠️ [Notifications] Failed to save to DB: $dbError');
         }
+
+        try {
+          final profileResponse = await Supabase.instance.client
+              .from('profiles')
+              .select('userDeviceToken')
+              .eq('id', applicantId)
+              .maybeSingle();
+
+          if (profileResponse != null) {
+            final deviceToken = profileResponse['userDeviceToken'];
+            if (deviceToken != null && deviceToken.toString().isNotEmpty) {
+              debugPrint(
+                '🚀 [Notifications] Sending FCM to token: $deviceToken',
+              );
+
+              final GetServerKey getServerKey = GetServerKey();
+              final String accessToken = await getServerKey.getServerKeyToken();
+
+              final dio = Dio();
+              dio.options.headers['Content-Type'] = 'application/json';
+              dio.options.headers['Authorization'] = 'Bearer $accessToken';
+
+              final response = await dio.post(
+                'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
+                data: {
+                  'message': {
+                    'token': deviceToken,
+                    'notification': {'title': title, 'body': body},
+                    'data': {
+                      'type': 'status_update',
+                      'applicationId': appId,
+                      'targetUserId': applicantId,
+                    },
+                  },
+                },
+              );
+              debugPrint(
+                '✅ [Notifications] FCM Sent! Response: ${response.data}',
+              );
+            } else {
+              debugPrint(
+                '❌ [Notifications] Device token is null or empty for user $applicantId',
+              );
+            }
+          } else {
+            debugPrint(
+              '❌ [Notifications] Profile not found for user $applicantId',
+            );
+          }
+        } catch (fcmError) {
+          debugPrint('❌ [Notifications] FCM Send Error: $fcmError');
+        }
+      } catch (generalError) {
+        debugPrint('❌ [Notifications] General Error: $generalError');
+      }
 
       await fetchApplicationDetail(appId);
 
@@ -305,7 +341,9 @@ class ApplicantDetailViewModel extends ChangeNotifier {
         debugPrint('Update Verified: Status is now $newStatus');
         return true;
       } else {
-        debugPrint('Update Check Failed: Status is still ${application?.status}. This confirms an RLS or permission issue.');
+        debugPrint(
+          'Update Check Failed: Status is still ${application?.status}. This confirms an RLS or permission issue.',
+        );
         return false;
       }
     } catch (e) {
@@ -410,13 +448,13 @@ class RecruiterJobsViewModel extends ChangeNotifier {
       final List<dynamic> data = response as List<dynamic>;
 
       final List<String> jobIds = data.map((j) => j['id'].toString()).toList();
-      
+
       if (jobIds.isNotEmpty) {
         final results = await Future.wait([
           ViewsService.getJobViews(jobIds),
           ViewsService.getJobApplicants(jobIds),
         ]);
-        
+
         final jobViewCounts = results[0] as Map<String, int>;
         final jobAppCounts = results[1] as Map<String, int>;
 
@@ -576,20 +614,20 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
       notifyListeners();
 
       final user = Supabase.instance.client.auth.currentUser;
-        if (user != null) {
-          final profileData = await Supabase.instance.client
-              .from('profiles')
-              .select('company_name')
-              .eq('id', user.id)
-              .maybeSingle();
-          
-          if (profileData != null && profileData['company_name'] != null) {
-            companyName = profileData['company_name'].toString();
-          }
-        }
+      if (user != null) {
+        final profileData = await Supabase.instance.client
+            .from('profiles')
+            .select('company_name')
+            .eq('id', user.id)
+            .maybeSingle();
 
-        try {
-          final List<String> skillsList = skills
+        if (profileData != null && profileData['company_name'] != null) {
+          companyName = profileData['company_name'].toString();
+        }
+      }
+
+      try {
+        final List<String> skillsList = skills
             .split(',')
             .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
             .where((s) => s.isNotEmpty)
@@ -617,11 +655,14 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
         }
 
         if (editingJobId != null) {
-          await Supabase.instance.client.from('jobs').update(jobData).eq('id', editingJobId!);
+          await Supabase.instance.client
+              .from('jobs')
+              .update(jobData)
+              .eq('id', editingJobId!);
         } else {
           await Supabase.instance.client.from('jobs').insert(jobData);
         }
-        
+
         editingJobId = null;
         jobTitle = '';
         companyName = '';
@@ -629,7 +670,7 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
         salaryMin = '';
         salaryMax = '';
         requirements = '';
-        description = ''; 
+        description = '';
         skills = '';
         formKey.currentState?.reset();
 
@@ -681,27 +722,30 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
       email = user.email ?? '';
       isLoading = true;
       notifyListeners();
-      
+
       try {
         final profileData = await Supabase.instance.client
             .from('profiles')
             .select()
             .eq('id', user.id)
             .maybeSingle();
-            
+
         final metadata = user.userMetadata;
 
         final cName = profileData?['company_name'] ?? metadata?['company_name'];
-        if (cName != null && cName.toString().isNotEmpty) companyName = cName.toString();
+        if (cName != null && cName.toString().isNotEmpty)
+          companyName = cName.toString();
 
         final fName = profileData?['full_name'] ?? metadata?['full_name'];
-        if (fName != null && fName.toString().isNotEmpty) fullName = fName.toString();
+        if (fName != null && fName.toString().isNotEmpty)
+          fullName = fName.toString();
 
         final web = profileData?['website'] ?? metadata?['website'];
         if (web != null && web.toString().isNotEmpty) website = web.toString();
 
         final size = profileData?['company_size'] ?? metadata?['company_size'];
-        if (size != null && size.toString().isNotEmpty) companySize = size.toString();
+        if (size != null && size.toString().isNotEmpty)
+          companySize = size.toString();
 
         final loc = profileData?['location'] ?? metadata?['location'];
         if (loc != null && loc.toString().isNotEmpty) location = loc.toString();
@@ -742,7 +786,7 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
       formKey.currentState?.save();
       isLoading = true;
       notifyListeners();
-      
+
       try {
         final user = Supabase.instance.client.auth.currentUser;
         if (user == null) {

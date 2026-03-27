@@ -5,13 +5,17 @@ class HeadingTextWidget extends StatelessWidget {
   final String title;
   const HeadingTextWidget({
     super.key,
-    required this.theme, required this.title,
+    required this.theme,
+    required this.title,
   });
-
-
 
   @override
   Widget build(BuildContext context) {
-    return Text(title, style: theme.textTheme.headlineLarge?.copyWith(fontWeight: FontWeight.bold));
+    return Text(
+      title,
+      style: theme.textTheme.headlineLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 }

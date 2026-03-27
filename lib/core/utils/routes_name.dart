@@ -5,7 +5,7 @@ class RoutesName {
   static const String signup = 'signup_screen';
   static const String dashboard = 'main_dashboard_screen';
   static const String settings = 'settings_view';
-  static const String profileView='profile_view';
+  static const String profileView = 'profile_view';
   static const String search = 'search_view';
   static const String locationSearch = 'location_search_view';
   static const String recruiterPostJob = 'recruiterPostJob';

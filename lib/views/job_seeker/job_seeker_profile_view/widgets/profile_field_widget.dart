@@ -31,8 +31,10 @@ class ProfileFieldWidget extends StatelessWidget {
       children: [
         Text(
           label ?? '',
-          style: theme.textTheme.bodyLarge
-              ?.copyWith(fontWeight: FontWeight.w600, fontSize: 14),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
         ),
         const SizedBox(height: 8),
         TextFormField(
@@ -41,29 +43,37 @@ class ProfileFieldWidget extends StatelessWidget {
           enabled: enabled,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 14,
-            color: enabled ? null : (isDark ? Colors.white54 : Colors.black54)
+            color: enabled ? null : (isDark ? Colors.white54 : Colors.black54),
           ),
 
           decoration: InputDecoration(
-            prefixIcon:showIcon ?  Icon(icon,
-                size: 18,
-                color: isDark
-                    ? AppColors.darkMutedForeground
-                    : AppColors.lightMutedForeground):null,
+            prefixIcon: showIcon
+                ? Icon(
+                    icon,
+                    size: 18,
+                    color: isDark
+                        ? AppColors.darkMutedForeground
+                        : AppColors.lightMutedForeground,
+                  )
+                : null,
             filled: true,
             fillColor: isDark ? AppColors.darkMuted : AppColors.lightMuted,
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 14,
+            ),
             hintText: hintText,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                  color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

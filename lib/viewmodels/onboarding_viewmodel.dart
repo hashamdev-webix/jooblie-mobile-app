@@ -19,17 +19,20 @@ class OnboardingViewModel extends ChangeNotifier {
   final List<OnboardingContent> _items = [
     OnboardingContent(
       title: 'Find Your Dream Job',
-      description: 'Discover thousands of job opportunities tailored to your skills and preferences. Your next career move starts with Jooblie.',
+      description:
+          'Discover thousands of job opportunities tailored to your skills and preferences. Your next career move starts with Jooblie.',
       imagePath: 'assets/images/onboarding/onboarding_1.png',
     ),
     OnboardingContent(
       title: 'Smart Matching',
-      description: 'Our AI-powered engine matches you with the most relevant jobs, saving you time and effort in your job search.',
+      description:
+          'Our AI-powered engine matches you with the most relevant jobs, saving you time and effort in your job search.',
       imagePath: 'assets/images/onboarding/onboarding_2.png',
     ),
     OnboardingContent(
       title: 'Get Hired Faster',
-      description: 'Connect directly with recruiters and track your application status in real-time. Jooblie makes hiring simple.',
+      description:
+          'Connect directly with recruiters and track your application status in real-time. Jooblie makes hiring simple.',
       imagePath: 'assets/images/onboarding/onboarding_3.png',
     ),
   ];

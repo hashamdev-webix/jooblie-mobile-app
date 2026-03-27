@@ -11,7 +11,7 @@ class ResumeUploadCardWidget extends StatelessWidget {
     super.key,
     required this.theme,
     required this.isDark,
-    required this.vm, 
+    required this.vm,
   });
 
   final ThemeData theme;
@@ -39,9 +39,7 @@ class ResumeUploadCardWidget extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: isDark
-                  ? AppColors.darkMuted
-                  : AppColors.lightMuted,
+              color: isDark ? AppColors.darkMuted : AppColors.lightMuted,
               borderRadius: BorderRadius.circular(28),
             ),
             child: Icon(
@@ -56,21 +54,19 @@ class ResumeUploadCardWidget extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'Upload Resume',
-            style: theme.textTheme.titleLarge!.copyWith(
-                fontSize: 15
-            ),
+            style: theme.textTheme.titleLarge!.copyWith(fontSize: 15),
           ),
           6.h,
           Text(
             'PDF, DOC, or DOCX (max 5MB)',
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(fontSize: 12),
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
           ),
           const SizedBox(height: 20),
-          PrimaryButton(text: "Choose File", onPressed:vm.pickAndUpload,
+          PrimaryButton(
+            text: "Choose File",
+            onPressed: vm.pickAndUpload,
             isLoading: vm.isUploading,
           ),
-
         ],
       ),
     );

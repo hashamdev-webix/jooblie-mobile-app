@@ -42,14 +42,14 @@ class _SearchViewState extends State<SearchView> {
     if (query.trim().isEmpty) return;
     final prefs = await SharedPreferences.getInstance();
     final history = prefs.getStringList(_historyKey) ?? [];
-    
+
     // Remove if exists to jump it to the top
     history.removeWhere((s) => s.toLowerCase() == query.toLowerCase());
     history.insert(0, query.trim());
-    
+
     // Keep only last 10 searches
     if (history.length > 10) history.removeLast();
-    
+
     await prefs.setStringList(_historyKey, history);
   }
 
@@ -74,7 +74,9 @@ class _SearchViewState extends State<SearchView> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -100,7 +102,9 @@ class _SearchViewState extends State<SearchView> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: (isDark ? AppColors.darkPrimary : AppColors.lightPrimary),
+                  color: (isDark
+                      ? AppColors.darkPrimary
+                      : AppColors.lightPrimary),
                   width: 2.0,
                 ),
               ),
@@ -109,16 +113,20 @@ class _SearchViewState extends State<SearchView> {
                 autofocus: true,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search, size: 24, color: isDark ? Colors.white70 : Colors.black87),
-                  suffixIcon: _searchController.text.isNotEmpty 
-                    ? IconButton(
-                        icon: const Icon(Icons.close, size: 20),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 24,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.close, size: 20),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {});
+                          },
+                        )
+                      : null,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15),
                   hintText: 'Job title, keywords, or company',
@@ -131,7 +139,11 @@ class _SearchViewState extends State<SearchView> {
               8.h,
               Row(
                 children: [
-                  Icon(Icons.error_rounded, color: AppColors.lightError, size: 20),
+                  Icon(
+                    Icons.error_rounded,
+                    color: AppColors.lightError,
+                    size: 20,
+                  ),
                   8.w,
                   Text(
                     'Add a valid search term.',
@@ -144,18 +156,31 @@ class _SearchViewState extends State<SearchView> {
             25.h,
 
             // Suggested Searches
-            ..._suggestedSearches.where((s) => s.toLowerCase().contains(_searchController.text.toLowerCase())).map((suggestion) => FadeInUp(
-              duration: const Duration(milliseconds: 300),
-              child: ListTile(
-                leading: Icon(Icons.history, color: isDark ? Colors.white54 : Colors.black45),
-                title: Text(
-                  suggestion,
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+            ..._suggestedSearches
+                .where(
+                  (s) => s.toLowerCase().contains(
+                    _searchController.text.toLowerCase(),
+                  ),
+                )
+                .map(
+                  (suggestion) => FadeInUp(
+                    duration: const Duration(milliseconds: 300),
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.history,
+                        color: isDark ? Colors.white54 : Colors.black45,
+                      ),
+                      title: Text(
+                        suggestion,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      onTap: () => _onSearchSelected(suggestion),
+                    ),
+                  ),
                 ),
-                contentPadding: EdgeInsets.zero,
-                onTap: () => _onSearchSelected(suggestion),
-              ),
-            )),
           ],
         ),
       ),

@@ -46,15 +46,21 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  Future<String?> signUp(String email, String password, Map<String, dynamic> data) async {
+  Future<String?> signUp(
+    String email,
+    String password,
+    Map<String, dynamic> data,
+  ) async {
     _setLoading(true);
     _setError(null);
     try {
       final response = await _authRepository.signUp(email, password, data);
       _setLoading(false);
-      
+
       // Supabase email enumeration protection returns a user with empty identities if the email is already in use
-      if (response.user != null && response.user!.identities != null && response.user!.identities!.isEmpty) {
+      if (response.user != null &&
+          response.user!.identities != null &&
+          response.user!.identities!.isEmpty) {
         final msg = 'An account with this email already exists.';
         _setError(msg);
         return msg;

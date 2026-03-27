@@ -75,7 +75,11 @@ class AuthRepository {
   Future<void> signOut(BuildContext context) async {
     await _client.auth.signOut();
     if (context.mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, RoutesName.login, (route)=>false);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        RoutesName.login,
+        (route) => false,
+      );
       AppRestartWrapper.restartApp(context);
     }
   }

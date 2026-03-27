@@ -74,7 +74,9 @@ class JobseekerResumeViewModel extends ChangeNotifier {
 
       final profileData = await Supabase.instance.client
           .from('profiles')
-          .select('resume_path, resume_file_name, resume_uploaded_at, resume_file_size')
+          .select(
+            'resume_path, resume_file_name, resume_uploaded_at, resume_file_size',
+          )
           .eq('id', user.id)
           .maybeSingle();
 
@@ -89,12 +91,14 @@ class JobseekerResumeViewModel extends ChangeNotifier {
 
         String formattedDate = '';
         if (profileData['resume_uploaded_at'] != null) {
-            try {
-                final dt = DateTime.parse(profileData['resume_uploaded_at']);
-                formattedDate = '${_getMonth(dt.month)} ${dt.day}, ${dt.year}';
-            } catch (e) {
-                formattedDate = profileData['resume_uploaded_at'].toString().split('T')[0];
-            }
+          try {
+            final dt = DateTime.parse(profileData['resume_uploaded_at']);
+            formattedDate = '${_getMonth(dt.month)} ${dt.day}, ${dt.year}';
+          } catch (e) {
+            formattedDate = profileData['resume_uploaded_at'].toString().split(
+              'T',
+            )[0];
+          }
         }
 
         currentResume = ResumeModel(
@@ -110,10 +114,23 @@ class JobseekerResumeViewModel extends ChangeNotifier {
       debugPrint('Error fetching resume: $e');
     }
   }
-  
+
   String _getMonth(int month) {
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return months[month - 1];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return months[month - 1];
   }
 
   Future<void> pickAndUpload() async {
@@ -126,7 +143,7 @@ class JobseekerResumeViewModel extends ChangeNotifier {
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
         final fileSizeB = await file.length();
-        
+
         // Validate file size (5MB)
         if (fileSizeB > 5 * 1024 * 1024) {
           // Provide some alert/toast here normally
@@ -142,9 +159,9 @@ class JobseekerResumeViewModel extends ChangeNotifier {
 
         final user = Supabase.instance.client.auth.currentUser;
         if (user == null) {
-           isUploading = false;
-           notifyListeners();
-           return;
+          isUploading = false;
+          notifyListeners();
+          return;
         }
 
         // Same path logic as React -> "userId.extension"
@@ -156,7 +173,10 @@ class JobseekerResumeViewModel extends ChangeNotifier {
             .upload(
               filePath,
               file,
-              fileOptions: const FileOptions(cacheControl: '3600', upsert: true),
+              fileOptions: const FileOptions(
+                cacheControl: '3600',
+                upsert: true,
+              ),
             );
 
         final uploadDateISO = DateTime.now().toIso8601String();
@@ -174,7 +194,7 @@ class JobseekerResumeViewModel extends ChangeNotifier {
 
         isUploading = false;
         notifyListeners();
-        
+
         // Refresh Data
         await _fetchResume();
       }
@@ -189,32 +209,34 @@ class JobseekerResumeViewModel extends ChangeNotifier {
     try {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null || currentResume == null) return;
-      
+
       // Need to find the stored resume_path
       final profileData = await Supabase.instance.client
           .from('profiles')
           .select('resume_path')
           .eq('id', user.id)
           .maybeSingle();
-      
+
       final String? resumePath = profileData?['resume_path'];
-      
+
       if (resumePath != null) {
         // Delete from storage
-        await Supabase.instance.client.storage.from('resumes').remove([resumePath]);
+        await Supabase.instance.client.storage.from('resumes').remove([
+          resumePath,
+        ]);
       }
-      
+
       // Remove from profiles
       await Supabase.instance.client
-            .from('profiles')
-            .update({
-              'resume_path': null,
-              'resume_uploaded_at': null,
-              'resume_file_name': null,
-              'resume_file_size': null,
-            })
-            .eq('id', user.id);
-            
+          .from('profiles')
+          .update({
+            'resume_path': null,
+            'resume_uploaded_at': null,
+            'resume_file_name': null,
+            'resume_file_size': null,
+          })
+          .eq('id', user.id);
+
       currentResume = null;
       notifyListeners();
     } catch (e) {

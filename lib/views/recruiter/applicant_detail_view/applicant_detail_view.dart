@@ -10,10 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 class ApplicantDetailView extends StatefulWidget {
   final String applicationId;
 
-  const ApplicantDetailView({
-    super.key,
-    required this.applicationId,
-  });
+  const ApplicantDetailView({super.key, required this.applicationId});
 
   @override
   State<ApplicantDetailView> createState() => _ApplicantDetailViewState();
@@ -24,7 +21,9 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ApplicantDetailViewModel>().fetchApplicationDetail(widget.applicationId);
+      context.read<ApplicantDetailViewModel>().fetchApplicationDetail(
+        widget.applicationId,
+      );
     });
   }
 
@@ -34,10 +33,7 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Applicant Details'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Applicant Details'), centerTitle: true),
       body: Consumer<ApplicantDetailViewModel>(
         builder: (context, vm, child) {
           if (vm.isLoading) {
@@ -68,7 +64,12 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
 
                 // Job Details
                 _buildSectionTitle('Applied Job', theme),
-                Text(app.jobTitle, style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500)),
+                Text(
+                  app.jobTitle,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 24.h,
 
                 // Cover Letter
@@ -78,9 +79,15 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkMuted.withOpacity(0.5) : Colors.grey[50],
+                      color: isDark
+                          ? AppColors.darkMuted.withOpacity(0.5)
+                          : Colors.grey[50],
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: isDark ? AppColors.darkBorder : Colors.grey[200]!),
+                      border: Border.all(
+                        color: isDark
+                            ? AppColors.darkBorder
+                            : Colors.grey[200]!,
+                      ),
                     ),
                     child: Text(
                       app.coverLetter!,
@@ -90,7 +97,7 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                   24.h,
                 ],
 
-                // Resume 
+                // Resume
                 _buildSectionTitle('Resume', theme),
                 _buildResumeCard(app, theme, isDark),
                 24.h,
@@ -98,7 +105,10 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                 // About
                 if (app.about.isNotEmpty) ...[
                   _buildSectionTitle('About', theme),
-                  Text(app.about, style: theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
+                  Text(
+                    app.about,
+                    style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+                  ),
                   24.h,
                 ],
 
@@ -108,7 +118,9 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: app.skills.map((skill) => _buildSkillChip(skill, theme, isDark)).toList(),
+                    children: app.skills
+                        .map((skill) => _buildSkillChip(skill, theme, isDark))
+                        .toList(),
                   ),
                   40.h,
                 ],
@@ -128,42 +140,73 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
         children: [
           Row(
             children: [
-              CustomShimmerWidget.circular(width: 80, height: 80, isDark: isDark),
+              CustomShimmerWidget.circular(
+                width: 80,
+                height: 80,
+                isDark: isDark,
+              ),
               16.w,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomShimmerWidget.rectangular(height: 24, width: 200, isDark: isDark),
+                    CustomShimmerWidget.rectangular(
+                      height: 24,
+                      width: 200,
+                      isDark: isDark,
+                    ),
                     12.h,
-                    CustomShimmerWidget.rectangular(height: 16, width: 150, isDark: isDark),
+                    CustomShimmerWidget.rectangular(
+                      height: 16,
+                      width: 150,
+                      isDark: isDark,
+                    ),
                     8.h,
-                    CustomShimmerWidget.rectangular(height: 16, width: 100, isDark: isDark),
+                    CustomShimmerWidget.rectangular(
+                      height: 16,
+                      width: 100,
+                      isDark: isDark,
+                    ),
                   ],
                 ),
               ),
             ],
           ),
           32.h,
-          CustomShimmerWidget.rectangular(height: 20, width: 150, isDark: isDark),
+          CustomShimmerWidget.rectangular(
+            height: 20,
+            width: 150,
+            isDark: isDark,
+          ),
           16.h,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(3, (index) => 
-              CustomShimmerWidget.rectangular(
-                height: 40, 
-                width: (MediaQuery.of(context).size.width - 60) / 3, 
+            children: List.generate(
+              3,
+              (index) => CustomShimmerWidget.rectangular(
+                height: 40,
+                width: (MediaQuery.of(context).size.width - 60) / 3,
                 isDark: isDark,
-                shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shapeBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
           ),
           32.h,
-          CustomShimmerWidget.rectangular(height: 20, width: 150, isDark: isDark),
+          CustomShimmerWidget.rectangular(
+            height: 20,
+            width: 150,
+            isDark: isDark,
+          ),
           16.h,
           CustomShimmerWidget.rectangular(height: 100, isDark: isDark),
           32.h,
-          CustomShimmerWidget.rectangular(height: 20, width: 150, isDark: isDark),
+          CustomShimmerWidget.rectangular(
+            height: 20,
+            width: 150,
+            isDark: isDark,
+          ),
           16.h,
           CustomShimmerWidget.rectangular(height: 80, isDark: isDark),
         ],
@@ -177,11 +220,16 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
         CircleAvatar(
           radius: 40,
           backgroundColor: AppColors.lightPrimary.withOpacity(0.1),
-          backgroundImage: app.avatarUrl != null && app.avatarUrl.isNotEmpty 
-              ? NetworkImage(app.avatarUrl!) : null,
-          child: app.avatarUrl == null || app.avatarUrl.isEmpty 
-              ? Text(app.name[0].toUpperCase(), 
-                style: theme.textTheme.headlineMedium?.copyWith(color: AppColors.lightPrimary))
+          backgroundImage: app.avatarUrl != null && app.avatarUrl.isNotEmpty
+              ? NetworkImage(app.avatarUrl!)
+              : null,
+          child: app.avatarUrl == null || app.avatarUrl.isEmpty
+              ? Text(
+                  app.name[0].toUpperCase(),
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: AppColors.lightPrimary,
+                  ),
+                )
               : null,
         ),
         16.w,
@@ -189,12 +237,26 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(app.name, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-              Text(app.role, style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey)),
+              Text(
+                app.name,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                app.role,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.grey,
+                ),
+              ),
               4.h,
               Row(
                 children: [
-                  const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                  const Icon(
+                    Icons.location_on_outlined,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
                   4.w,
                   Text(app.location, style: theme.textTheme.bodySmall),
                 ],
@@ -206,9 +268,14 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
     );
   }
 
-  Widget _buildStatusSection(ApplicantDetailViewModel vm, app, ThemeData theme, bool isDark) {
+  Widget _buildStatusSection(
+    ApplicantDetailViewModel vm,
+    app,
+    ThemeData theme,
+    bool isDark,
+  ) {
     final statuses = ['Pending', 'Interview', 'Rejected', 'Offer', 'Hired'];
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -225,12 +292,14 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                 if (selected && app.status != s) {
                   final scaffoldMessenger = ScaffoldMessenger.of(context);
                   final success = await vm.updateStatus(s);
-                  
+
                   scaffoldMessenger.showSnackBar(
                     SnackBar(
-                      content: Text(success 
-                        ? 'Status updated to $s' 
-                        : 'Failed to update status'),
+                      content: Text(
+                        success
+                            ? 'Status updated to $s'
+                            : 'Failed to update status',
+                      ),
                       backgroundColor: success ? Colors.green : Colors.red,
                       duration: const Duration(seconds: 2),
                     ),
@@ -239,7 +308,9 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
               },
               selectedColor: _getStatusColor(s).withOpacity(0.2),
               labelStyle: TextStyle(
-                color: isSelected ? _getStatusColor(s) : (isDark ? Colors.white70 : Colors.black87),
+                color: isSelected
+                    ? _getStatusColor(s)
+                    : (isDark ? Colors.white70 : Colors.black87),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             );
@@ -257,13 +328,18 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
     return Consumer<ApplicantDetailViewModel>(
       builder: (context, vm, child) {
         return InkWell(
-          onTap: vm.isDownloading 
-              ? null 
-              : () => vm.downloadAndOpenResume(app.resumeUrl!, '${app.name.replaceAll(' ', '_')}_Resume.pdf'),
+          onTap: vm.isDownloading
+              ? null
+              : () => vm.downloadAndOpenResume(
+                  app.resumeUrl!,
+                  '${app.name.replaceAll(' ', '_')}_Resume.pdf',
+                ),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.lightPrimary.withOpacity(0.3)),
+              border: Border.all(
+                color: AppColors.lightPrimary.withOpacity(0.3),
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -281,22 +357,32 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                           child: LinearProgressIndicator(
                             value: vm.downloadProgress,
                             backgroundColor: Colors.grey[200],
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.lightPrimary),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.lightPrimary,
+                            ),
                           ),
                         )
                       else
-                        Text('Tap to download and open', 
-                          style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                        Text(
+                          'Tap to download and open',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.grey,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                vm.isDownloading 
-                  ? const SizedBox(
-                      width: 20, 
-                      height: 20, 
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.download_rounded, size: 20, color: Colors.grey),
+                vm.isDownloading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(
+                        Icons.download_rounded,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
               ],
             ),
           ),
@@ -331,12 +417,18 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'Pending': return Colors.orange;
-      case 'Interview': return Colors.blue;
-      case 'Rejected': return Colors.red;
-      case 'Offer': return Colors.purple;
-      case 'Hired': return Colors.green;
-      default: return Colors.grey;
+      case 'Pending':
+        return Colors.orange;
+      case 'Interview':
+        return Colors.blue;
+      case 'Rejected':
+        return Colors.red;
+      case 'Offer':
+        return Colors.purple;
+      case 'Hired':
+        return Colors.green;
+      default:
+        return Colors.grey;
     }
   }
 }

@@ -7,7 +7,8 @@ class FavoritesViewModel extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
-  List<JobRecommendationModel> get favoriteJobs => List.unmodifiable(_favoriteJobs);
+  List<JobRecommendationModel> get favoriteJobs =>
+      List.unmodifiable(_favoriteJobs);
   bool get isLoading => _isLoading;
   String? get error => _error;
 

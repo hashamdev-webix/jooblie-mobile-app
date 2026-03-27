@@ -26,7 +26,8 @@ class ProfileAvtarAndNameHeader extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: (viewModel.pickedImage == null &&
+                  gradient:
+                      (viewModel.pickedImage == null &&
                           viewModel.profile.avatarUrl == null)
                       ? AppColors.gradientPrimary
                       : null,
@@ -63,15 +64,23 @@ class ProfileAvtarAndNameHeader extends StatelessWidget {
             ],
           ),
           if (viewModel.pickedImage != null ||
-              (viewModel.profile.avatarUrl != null && !viewModel.isImageRemoved))
+              (viewModel.profile.avatarUrl != null &&
+                  !viewModel.isImageRemoved))
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: TextButton.icon(
                 onPressed: () => viewModel.removeImage(),
-                icon: Icon(Icons.delete_outline, size: 16, color: theme.colorScheme.error),
+                icon: Icon(
+                  Icons.delete_outline,
+                  size: 16,
+                  color: theme.colorScheme.error,
+                ),
                 label: Text(
                   'Remove Photo',
-                  style: TextStyle(color: theme.colorScheme.error, fontSize: 12),
+                  style: TextStyle(
+                    color: theme.colorScheme.error,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ),
@@ -96,10 +105,7 @@ class ProfileAvtarAndNameHeader extends StatelessWidget {
 
   Widget _buildAvatarImage() {
     if (viewModel.pickedImage != null) {
-      return Image.file(
-        viewModel.pickedImage!,
-        fit: BoxFit.cover,
-      );
+      return Image.file(viewModel.pickedImage!, fit: BoxFit.cover);
     }
 
     if (viewModel.profile.avatarUrl != null && !viewModel.isImageRemoved) {
@@ -109,22 +115,13 @@ class ProfileAvtarAndNameHeader extends StatelessWidget {
         placeholder: (context, url) => Shimmer.fromColors(
           baseColor: Colors.grey[300]!,
           highlightColor: Colors.grey[100]!,
-          child: Container(
-            color: Colors.white,
-          ),
+          child: Container(color: Colors.white),
         ),
-        errorWidget: (context, url, error) => const Icon(
-          Icons.person_outline,
-          color: Colors.white,
-          size: 50,
-        ),
+        errorWidget: (context, url, error) =>
+            const Icon(Icons.person_outline, color: Colors.white, size: 50),
       );
     }
 
-    return const Icon(
-      Icons.person_outline,
-      color: Colors.white,
-      size: 50,
-    );
+    return const Icon(Icons.person_outline, color: Colors.white, size: 50);
   }
 }

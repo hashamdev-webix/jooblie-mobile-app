@@ -78,7 +78,10 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
           24.h,
 
           // Experience
-          const Text('Experience Level', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Experience Level',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           12.h,
           Wrap(
             spacing: 8,
@@ -91,7 +94,10 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
           24.h,
 
           // Salary Range (Quick selection chips or slider)
-          const Text('Min Salary', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Min Salary',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           12.h,
           Wrap(
             spacing: 8,
@@ -104,7 +110,10 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
           ),
           24.h,
 
-          const Text('Max Salary', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            'Max Salary',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           12.h,
           Wrap(
             spacing: 8,
@@ -123,16 +132,24 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
             height: 55,
             child: ElevatedButton(
               onPressed: () {
-                context.read<JobSeekerJobsViewModel>().applyFilters(_localFilters);
+                context.read<JobSeekerJobsViewModel>().applyFilters(
+                  _localFilters,
+                );
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.lightPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: const Text(
                 'Apply Filters',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -148,13 +165,13 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
-          _localFilters = _localFilters.copyWith(jobType: selected ? value : null);
+          _localFilters = _localFilters.copyWith(
+            jobType: selected ? value : null,
+          );
         });
       },
       selectedColor: AppColors.lightPrimary.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: isSelected ? AppColors.lightPrimary : null,
-      ),
+      labelStyle: TextStyle(color: isSelected ? AppColors.lightPrimary : null),
     );
   }
 
@@ -165,13 +182,13 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
-          _localFilters = _localFilters.copyWith(experience: selected ? value : null);
+          _localFilters = _localFilters.copyWith(
+            experience: selected ? value : null,
+          );
         });
       },
       selectedColor: AppColors.lightPrimary.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: isSelected ? AppColors.lightPrimary : null,
-      ),
+      labelStyle: TextStyle(color: isSelected ? AppColors.lightPrimary : null),
     );
   }
 
@@ -182,13 +199,13 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
-          _localFilters = _localFilters.copyWith(minSalary: selected ? value : null);
+          _localFilters = _localFilters.copyWith(
+            minSalary: selected ? value : null,
+          );
         });
       },
       selectedColor: AppColors.lightPrimary.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: isSelected ? AppColors.lightPrimary : null,
-      ),
+      labelStyle: TextStyle(color: isSelected ? AppColors.lightPrimary : null),
     );
   }
 
@@ -199,13 +216,13 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
-          _localFilters = _localFilters.copyWith(maxSalary: selected ? value : null);
+          _localFilters = _localFilters.copyWith(
+            maxSalary: selected ? value : null,
+          );
         });
       },
       selectedColor: AppColors.lightPrimary.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: isSelected ? AppColors.lightPrimary : null,
-      ),
+      labelStyle: TextStyle(color: isSelected ? AppColors.lightPrimary : null),
     );
   }
 }

@@ -162,7 +162,8 @@ class SignupScreen extends StatelessWidget {
                                                               bottom: 20.0,
                                                             ),
                                                         child: CustomTextField(
-                                                          enabled: !viewModel.isLoading,
+                                                          enabled: !viewModel
+                                                              .isLoading,
                                                           label: 'Company Name',
                                                           hintText:
                                                               'Your Company',
@@ -257,7 +258,8 @@ class SignupScreen extends StatelessWidget {
                                                       RoutesName.verifyEmail,
                                                       (route) => false,
                                                       arguments: {
-                                                        'email': viewModel.email,
+                                                        'email':
+                                                            viewModel.email,
                                                       },
                                                     );
                                                   } else if (context.mounted) {

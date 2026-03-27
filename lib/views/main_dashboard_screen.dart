@@ -25,7 +25,11 @@ class _TabItem {
   final String label;
   final IconData selectedIcon;
   final IconData unselectedIcon;
-  const _TabItem({required this.label, required this.selectedIcon, required this.unselectedIcon});
+  const _TabItem({
+    required this.label,
+    required this.selectedIcon,
+    required this.unselectedIcon,
+  });
 }
 
 class _PremiumBottomNav extends StatelessWidget {
@@ -87,7 +91,9 @@ class _PremiumBottomNav extends StatelessWidget {
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 200),
                           child: Icon(
-                            isSelected ? item.selectedIcon : item.unselectedIcon,
+                            isSelected
+                                ? item.selectedIcon
+                                : item.unselectedIcon,
                             key: ValueKey(isSelected),
                             size: 24,
                             color: isSelected
@@ -100,7 +106,9 @@ class _PremiumBottomNav extends StatelessWidget {
                           duration: const Duration(milliseconds: 200),
                           style: TextStyle(
                             fontSize: 11,
-                            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w400,
                             color: isSelected
                                 ? AppColors.lightPrimary
                                 : (isDark ? Colors.white54 : Colors.black45),
@@ -147,10 +155,10 @@ class MainDashboardScreen extends StatefulWidget {
   final bool isJobSeeker;
   final String? initialJobId;
   final int initialIndex;
-  
+
   const MainDashboardScreen({
-    super.key, 
-    required this.isJobSeeker, 
+    super.key,
+    required this.isJobSeeker,
     this.initialJobId,
     this.initialIndex = 0,
   });
@@ -166,7 +174,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
-    
+
     if (widget.initialJobId != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _handleInitialJob(widget.initialJobId!);
@@ -176,11 +184,14 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
 
   void _handleInitialJob(String jobId) {
     final jobsVM = Provider.of<JobSeekerJobsViewModel>(context, listen: false);
-    final recVM = Provider.of<JobseekerRecommendationsViewModel>(context, listen: false);
+    final recVM = Provider.of<JobseekerRecommendationsViewModel>(
+      context,
+      listen: false,
+    );
 
     // Combine all available job lists to search for the ID
     final allJobs = [...jobsVM.jobs, ...recVM.recommendations];
-    
+
     final job = allJobs.cast<JobRecommendationModel?>().firstWhere(
       (j) => j?.id == jobId,
       orElse: () => null,
@@ -204,30 +215,70 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     const RecruiterDashboardView(),
     const RecruiterJobsView(),
     const RecruiterPostJobView(),
-     SettingsView(
+    SettingsView(
       title: "Company Profile",
       subTitle: "Edit your company information",
       routeName: RoutesName.companyView,
-       showLeadingIcon: false,
-    )
+      showLeadingIcon: false,
+    ),
     // const RecruiterCompanyView(),
   ];
 
   static const _jobSeekerTabs = [
-    _TabItem(label: 'Home', selectedIcon: Icons.home_rounded, unselectedIcon: Icons.home_outlined),
-    _TabItem(label: 'Companies', selectedIcon: Icons.business_rounded, unselectedIcon: Icons.business_outlined),
-    _TabItem(label: 'Jobs', selectedIcon: Icons.work, unselectedIcon: Icons.work_outline),
-    _TabItem(label: 'Applications', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
-    _TabItem(label: 'Matches', selectedIcon: Icons.auto_awesome_rounded, unselectedIcon: Icons.auto_awesome_outlined),
-    _TabItem(label: 'Resume', selectedIcon: Icons.description_rounded, unselectedIcon: Icons.description_outlined),
+    _TabItem(
+      label: 'Home',
+      selectedIcon: Icons.home_rounded,
+      unselectedIcon: Icons.home_outlined,
+    ),
+    _TabItem(
+      label: 'Companies',
+      selectedIcon: Icons.business_rounded,
+      unselectedIcon: Icons.business_outlined,
+    ),
+    _TabItem(
+      label: 'Jobs',
+      selectedIcon: Icons.work,
+      unselectedIcon: Icons.work_outline,
+    ),
+    _TabItem(
+      label: 'Applications',
+      selectedIcon: Icons.list_alt_rounded,
+      unselectedIcon: Icons.list_alt_outlined,
+    ),
+    _TabItem(
+      label: 'Matches',
+      selectedIcon: Icons.auto_awesome_rounded,
+      unselectedIcon: Icons.auto_awesome_outlined,
+    ),
+    _TabItem(
+      label: 'Resume',
+      selectedIcon: Icons.description_rounded,
+      unselectedIcon: Icons.description_outlined,
+    ),
     // _TabItem(label: 'Setting', selectedIcon: Icons.settings, unselectedIcon: Icons.settings_outlined),
   ];
 
   static const _recruiterTabs = [
-    _TabItem(label: 'Dashboard', selectedIcon: Icons.dashboard_rounded, unselectedIcon: Icons.dashboard_outlined),
-    _TabItem(label: 'My Jobs', selectedIcon: Icons.list_alt_rounded, unselectedIcon: Icons.list_alt_outlined),
-    _TabItem(label: 'Post Job', selectedIcon: Icons.add_box_rounded, unselectedIcon: Icons.add_box_outlined),
-    _TabItem(label: 'Setting', selectedIcon: Icons.settings, unselectedIcon: Icons.settings_outlined),
+    _TabItem(
+      label: 'Dashboard',
+      selectedIcon: Icons.dashboard_rounded,
+      unselectedIcon: Icons.dashboard_outlined,
+    ),
+    _TabItem(
+      label: 'My Jobs',
+      selectedIcon: Icons.list_alt_rounded,
+      unselectedIcon: Icons.list_alt_outlined,
+    ),
+    _TabItem(
+      label: 'Post Job',
+      selectedIcon: Icons.add_box_rounded,
+      unselectedIcon: Icons.add_box_outlined,
+    ),
+    _TabItem(
+      label: 'Setting',
+      selectedIcon: Icons.settings,
+      unselectedIcon: Icons.settings_outlined,
+    ),
   ];
 
   @override
@@ -245,7 +296,9 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
         });
       },
       child: Scaffold(
-        backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+        backgroundColor: isDark
+            ? AppColors.darkBackground
+            : AppColors.lightBackground,
         body: _AnimatedTabBody(currentIndex: _currentIndex, screens: screens),
         bottomNavigationBar: _PremiumBottomNav(
           currentIndex: _currentIndex,
@@ -257,12 +310,21 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
             });
             // Only refresh Home stats when coming BACK to Home from another tab
             if (widget.isJobSeeker && index == 0 && !wasOnHome) {
-              Provider.of<JobseekerHomeViewModel>(context, listen: false).fetchStats();
-              Provider.of<FavoritesViewModel>(context, listen: false).fetchFavoriteJobs();
+              Provider.of<JobseekerHomeViewModel>(
+                context,
+                listen: false,
+              ).fetchStats();
+              Provider.of<FavoritesViewModel>(
+                context,
+                listen: false,
+              ).fetchFavoriteJobs();
             }
             // Clear the post job form when navigating to the 'Post Job' tab (index 2) via the bottom nav bar
             if (!widget.isJobSeeker && index == 2) {
-              Provider.of<RecruiterPostJobViewModel>(context, listen: false).clear();
+              Provider.of<RecruiterPostJobViewModel>(
+                context,
+                listen: false,
+              ).clear();
             }
           },
         ),

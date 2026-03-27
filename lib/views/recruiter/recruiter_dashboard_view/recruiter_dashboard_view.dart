@@ -24,7 +24,6 @@ class RecruiterDashboardView extends StatefulWidget {
 }
 
 class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
-
   NotificationsService notificationsService = NotificationsService();
 
   @override
@@ -91,10 +90,14 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          HeadingTextWidget(theme: theme, title: "Recruiter Dashboard"),
+                          HeadingTextWidget(
+                            theme: theme,
+                            title: "Recruiter Dashboard",
+                          ),
                           4.h,
                           SubTitleWidget(
-                            subTitle: 'Manage your hiring pipeline efficiently.',
+                            subTitle:
+                                'Manage your hiring pipeline efficiently.',
                             theme: theme,
                           ),
                         ],
@@ -104,16 +107,19 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
 
                     // Stat Cards — shimmer when loading
                     if (vm.isLoading)
-                      ...List.generate(4, (i) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: CustomShimmerWidget.rectangular(
-                          height: 80,
-                          isDark: isDark,
-                          shapeBorder: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                      ...List.generate(
+                        4,
+                        (i) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: CustomShimmerWidget.rectangular(
+                            height: 80,
+                            isDark: isDark,
+                            shapeBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                         ),
-                      ))
+                      )
                     else
                       ListView.builder(
                         padding: EdgeInsets.zero,
@@ -125,7 +131,9 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                           return Column(
                             children: [
                               FadeInUp(
-                                delay: Duration(milliseconds: 100 * (index + 1)),
+                                delay: Duration(
+                                  milliseconds: 100 * (index + 1),
+                                ),
                                 duration: const Duration(milliseconds: 500),
                                 child: StatCardWidget(
                                   icon: stat["icon"] as IconData,
@@ -147,7 +155,11 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                       FadeInLeft(
                         delay: const Duration(milliseconds: 400),
                         duration: const Duration(milliseconds: 400),
-                        child: _TopJobsCard(theme: theme, isDark: isDark, vm: vm),
+                        child: _TopJobsCard(
+                          theme: theme,
+                          isDark: isDark,
+                          vm: vm,
+                        ),
                       ),
                       20.h,
                     ],
@@ -173,7 +185,9 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                                 title: 'Recent Applicants',
                                 items: vm.recentApplicants,
                                 itemBuilder: (context, item, index) =>
-                                    DashboardApplicantTileWidget(applicant: item),
+                                    DashboardApplicantTileWidget(
+                                      applicant: item,
+                                    ),
                               ),
                       ),
 
@@ -182,9 +196,6 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                 ),
               ),
             ),
-
-
-
           ],
         ),
       ),
@@ -205,12 +216,22 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
       child: Center(
         child: Column(
           children: [
-            Icon(Icons.people_outline, size: 40,
-                color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground),
+            Icon(
+              Icons.people_outline,
+              size: 40,
+              color: isDark
+                  ? AppColors.darkMutedForeground
+                  : AppColors.lightMutedForeground,
+            ),
             12.h,
-            Text('No applicants yet',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground)),
+            Text(
+              'No applicants yet',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: isDark
+                    ? AppColors.darkMutedForeground
+                    : AppColors.lightMutedForeground,
+              ),
+            ),
           ],
         ),
       ),
@@ -223,7 +244,11 @@ class _TopJobsCard extends StatelessWidget {
   final bool isDark;
   final RecruiterDashboardViewModel vm;
 
-  const _TopJobsCard({required this.theme, required this.isDark, required this.vm});
+  const _TopJobsCard({
+    required this.theme,
+    required this.isDark,
+    required this.vm,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -236,47 +261,68 @@ class _TopJobsCard extends StatelessWidget {
           color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
           width: 0.5,
         ),
-        boxShadow: [isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight],
+        boxShadow: [
+          isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Top Performing Jobs',
-              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-          12.h,
-          ...vm.topJobs.map((job) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: AppColors.lightPrimary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(Icons.work_outline, size: 18, color: AppColors.lightPrimary),
-                ),
-                12.w,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(job.title,
-                          style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
-                      4.h,
-                      Text('${job.applicants} applicants · ${job.views} views',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 11,
-                              color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground)),
-                    ],
-                  ),
-                ),
-              ],
+          Text(
+            'Top Performing Jobs',
+            style: theme.textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
             ),
-          )),
+          ),
+          12.h,
+          ...vm.topJobs.map(
+            (job) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: AppColors.lightPrimary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.work_outline,
+                      size: 18,
+                      color: AppColors.lightPrimary,
+                    ),
+                  ),
+                  12.w,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          job.title,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        4.h,
+                        Text(
+                          '${job.applicants} applicants · ${job.views} views',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 11,
+                            color: isDark
+                                ? AppColors.darkMutedForeground
+                                : AppColors.lightMutedForeground,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

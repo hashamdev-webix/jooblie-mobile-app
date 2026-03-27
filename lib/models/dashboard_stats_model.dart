@@ -24,11 +24,16 @@ class DashboardStats {
       interviewsScheduled: json['interviewsScheduled'] ?? 0,
       offersReceived: json['offersReceived'] ?? json['oqersReceived'] ?? 0,
       profileViews: json['profileViews'] ?? 0,
-      applicationsByStatus: (json['applicationsByStatus'] as List?)
-              ?.map((e) => ApplicationStatusCount.fromJson(e as Map<String, dynamic>))
+      applicationsByStatus:
+          (json['applicationsByStatus'] as List?)
+              ?.map(
+                (e) =>
+                    ApplicationStatusCount.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
-      recentActivities: (json['recentActivities'] as List?)
+      recentActivities:
+          (json['recentActivities'] as List?)
               ?.map((e) => RecentActivity.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -42,7 +47,9 @@ class DashboardStats {
       'interviewsScheduled': interviewsScheduled,
       'offersReceived': offersReceived,
       'profileViews': profileViews,
-      'applicationsByStatus': applicationsByStatus.map((e) => e.toJson()).toList(),
+      'applicationsByStatus': applicationsByStatus
+          .map((e) => e.toJson())
+          .toList(),
       'recentActivities': recentActivities.map((e) => e.toJson()).toList(),
     };
   }
@@ -52,10 +59,7 @@ class ApplicationStatusCount {
   final String status;
   final int count;
 
-  ApplicationStatusCount({
-    required this.status,
-    required this.count,
-  });
+  ApplicationStatusCount({required this.status, required this.count});
 
   factory ApplicationStatusCount.fromJson(Map<String, dynamic> json) {
     return ApplicationStatusCount(
@@ -65,10 +69,7 @@ class ApplicationStatusCount {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'count': count,
-    };
+    return {'status': status, 'count': count};
   }
 }
 

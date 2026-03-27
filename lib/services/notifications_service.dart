@@ -13,8 +13,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class NotificationsService {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin=FlutterLocalNotificationsPlugin();
-
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   /// --- For Notifications Request --- ///
 
@@ -65,10 +65,12 @@ class NotificationsService {
         apnsToken = await messaging.getAPNSToken();
       }
       if (apnsToken == null) {
-         if (kDebugMode) {
-           print("APNS Token is null. Ensure Push Notifications are enabled in Xcode.");
-         }
-         return "";
+        if (kDebugMode) {
+          print(
+            "APNS Token is null. Ensure Push Notifications are enabled in Xcode.",
+          );
+        }
+        return "";
       }
     }
 
@@ -76,10 +78,10 @@ class NotificationsService {
     if (kDebugMode) {
       print("Notifications Device Token ==> $token");
     }
-    
+
     // Sync to Supabase if user is logged in
     await syncTokenToSupabase();
-    
+
     return token ?? "";
   }
 
@@ -97,7 +99,9 @@ class NotificationsService {
         }
         if (apnsToken == null) {
           if (kDebugMode) {
-            print("APNS Token is null, skipping FCM token fetch to prevent crash.");
+            print(
+              "APNS Token is null, skipping FCM token fetch to prevent crash.",
+            );
           }
           return;
         }
@@ -120,10 +124,9 @@ class NotificationsService {
     }
   }
 
-
   /// --- firebase init  & local notifications init --- ///
-  
-  void firebaseInit(){
+
+  void firebaseInit() {
     // Listen for token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       if (kDebugMode) {
@@ -134,9 +137,11 @@ class NotificationsService {
 
     // Initial sync
     syncTokenToSupabase();
-    
+
     // Initialize Local Notifications ONCE here
-    var androidInitSetting = AndroidInitializationSettings("@mipmap/ic_launcher");
+    var androidInitSetting = AndroidInitializationSettings(
+      "@mipmap/ic_launcher",
+    );
     var iosInitSetting = DarwinInitializationSettings();
     var initializationSetting = InitializationSettings(
       android: androidInitSetting,
@@ -144,83 +149,81 @@ class NotificationsService {
     );
 
     _flutterLocalNotificationsPlugin.initialize(
-      settings: initializationSetting, 
+      settings: initializationSetting,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (response.payload != null) {
           try {
             final data = jsonDecode(response.payload!);
             handleMessageFromPayload(data);
-          } catch(e) {
+          } catch (e) {
             print("Error parsing local notification payload: $e");
           }
         }
-      }
+      },
     );
 
     // Listen to foreground FCM messages
-    FirebaseMessaging.onMessage.listen((message){
+    FirebaseMessaging.onMessage.listen((message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? androidNotification = message.notification!.android;
 
-      if(kDebugMode){
+      if (kDebugMode) {
         print("FCM Foreground Message Data Payload: ${message.data}");
         print("notification title: ${notification?.title}");
         print("notification body: ${notification?.body}");
       }
-      
+
       // Check if notification is meant for the currently logged-in user
       final currentUserId = Supabase.instance.client.auth.currentUser?.id;
       final targetUserId = message.data['targetUserId'];
-      
-      if (targetUserId != null && currentUserId != null && targetUserId.toString() != currentUserId.toString()) {
-        if(kDebugMode){
-          print("Notification is for user $targetUserId, but current user is $currentUserId. Ignoring.");
+
+      if (targetUserId != null &&
+          currentUserId != null &&
+          targetUserId.toString() != currentUserId.toString()) {
+        if (kDebugMode) {
+          print(
+            "Notification is for user $targetUserId, but current user is $currentUserId. Ignoring.",
+          );
         }
         return;
       }
 
       // ios
-      if(Platform.isIOS){
+      if (Platform.isIOS) {
         iosForegroundMessage();
       }
       // android
-      if(Platform.isAndroid){
+      if (Platform.isAndroid) {
         showNotifications(message);
       }
     });
   }
 
+  /// ---  Background and terminated state --- ///
 
-/// ---  Background and terminated state --- ///
-
-
-  Future<void> setupInteractMessage() async{
-
+  Future<void> setupInteractMessage() async {
     // background state
 
-    FirebaseMessaging.onMessageOpenedApp.listen(
-            (message){
-handleMessage(message);
-    }
-    );
-
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      handleMessage(message);
+    });
 
     // terminated state
 
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message){
-      if(message != null && message.data.isNotEmpty){
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) {
+      if (message != null && message.data.isNotEmpty) {
         handleMessage(message);
       }
     });
-
   }
-
 
   /// --- handle Message --- ///
 
-  Future<void> handleMessage(RemoteMessage message)async{
+  Future<void> handleMessage(RemoteMessage message) async {
     // Tap handler for background/terminated notifications
-    if (kDebugMode){
+    if (kDebugMode) {
       print("Tapped Notification with FCM Data: ${message.data}");
       print("Notification type: ${message.data['type']}");
       print("Notification applicationId: ${message.data['applicationId']}");
@@ -231,7 +234,7 @@ handleMessage(message);
 
   void handleMessageFromPayload(Map<String, dynamic> data) {
     // Tap handler for local (foreground) notifications
-    if (kDebugMode){
+    if (kDebugMode) {
       print("Tapped Notification with Local Payload Data: $data");
       print("Notification type: ${data['type']}");
       print("Notification applicationId: ${data['applicationId']}");
@@ -244,97 +247,99 @@ handleMessage(message);
     final applicationId = data['applicationId']?.toString();
 
     if (kDebugMode) {
-      print("[NotificationsService] Routing => type: $type | applicationId: $applicationId");
+      print(
+        "[NotificationsService] Routing => type: $type | applicationId: $applicationId",
+      );
     }
 
-    if (type == 'new_application' && applicationId != null && applicationId.isNotEmpty) {
+    if (type == 'new_application' &&
+        applicationId != null &&
+        applicationId.isNotEmpty) {
       // Recruiter receives this — go directly to Applicant Detail
-      print("[NotificationsService] Routing recruiter to ApplicantDetail: $applicationId");
+      print(
+        "[NotificationsService] Routing recruiter to ApplicantDetail: $applicationId",
+      );
       navigatorKey.currentState?.pushNamed(
         RoutesName.applicantDetail,
         arguments: applicationId,
       );
     } else if (type == 'status_update') {
       // Job Seeker receives this — go to Applications tab
-      print("[NotificationsService] Routing job seeker to Applications Tab (Index 3)");
+      print(
+        "[NotificationsService] Routing job seeker to Applications Tab (Index 3)",
+      );
       navigatorKey.currentState?.pushNamedAndRemoveUntil(
         RoutesName.dashboard,
         (route) => false,
         arguments: {'isJobSeeker': true, 'initialIndex': 3},
       );
     } else {
-      print("[NotificationsService] Unknown type: $type — No navigation performed.");
+      print(
+        "[NotificationsService] Unknown type: $type — No navigation performed.",
+      );
     }
   }
 
-
   /// --- function to show notifications --- ///
 
-
-  Future<void> showNotifications(RemoteMessage message)async{
-
+  Future<void> showNotifications(RemoteMessage message) async {
     //chanel setting
     AndroidNotificationChannel channel = AndroidNotificationChannel(
       message.notification?.android?.channelId ?? 'high_importance_channel_id',
       'High Importance Notifications',
       importance: Importance.max,
       showBadge: true,
-      playSound: true
-
+      playSound: true,
     );
 
     // android settings
-    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-      channelDescription: "High priority channel for application updates"
-    );
+    AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          importance: Importance.max,
+          priority: Priority.high,
+          playSound: true,
+          channelDescription: "High priority channel for application updates",
+        );
 
     // ios settings
 
-    DarwinNotificationDetails iosNotificationDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true
-    );
+    DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        );
 
     //merge settings
     NotificationDetails notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
-      iOS: iosNotificationDetails
+      iOS: iosNotificationDetails,
     );
 
     //show notification
-    Future.delayed(Duration.zero,(){
+    Future.delayed(Duration.zero, () {
       _flutterLocalNotificationsPlugin.show(
         id: 0,
         title: message.notification?.title.toString() ?? 'Notification',
         body: message.notification?.body.toString() ?? '',
         notificationDetails: notificationDetails,
-        payload: jsonEncode(message.data), // Encode data to be passed to onDidReceiveNotificationResponse
+        payload: jsonEncode(
+          message.data,
+        ), // Encode data to be passed to onDidReceiveNotificationResponse
       );
     });
-
-
-
   }
 
+  /// --- Ios Message --- ///
 
-
-
-
-
-/// --- Ios Message --- ///
-
-Future iosForegroundMessage()async{
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      sound: true,
-      badge: true
-    );
-}
-
+  Future iosForegroundMessage() async {
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true,
+          sound: true,
+          badge: true,
+        );
+  }
 }

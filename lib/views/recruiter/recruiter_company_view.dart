@@ -62,10 +62,7 @@ class RecruiterCompanyView extends StatelessWidget {
 
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar:AppBarWidget(title: "Company Profile",
-
-          showAppLogo: false,
-        ),
+        appBar: AppBarWidget(title: "Company Profile", showAppLogo: false),
         body: SafeArea(
           child: Container(
             decoration: BoxDecoration(
@@ -75,7 +72,6 @@ class RecruiterCompanyView extends StatelessWidget {
             ),
             child: Column(
               children: [
-
                 Expanded(
                   child: Form(
                     key: vm.formKey,
@@ -88,42 +84,43 @@ class RecruiterCompanyView extends StatelessWidget {
                           duration: const Duration(milliseconds: 500),
                           child: Row(
                             children: [
-                                ZoomIn(
-                                  duration: const Duration(milliseconds: 600),
-                                  child: Container(
-                                    width: 64,
-                                    height: 64,
-                                    decoration: BoxDecoration(
-                                      gradient: AppColors.gradientPrimary,
-                                      borderRadius: BorderRadius.circular(14),
-                                    ),
-                                    child: const Icon(
-                                      Icons.business_outlined,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
+                              ZoomIn(
+                                duration: const Duration(milliseconds: 600),
+                                child: Container(
+                                  width: 64,
+                                  height: 64,
+                                  decoration: BoxDecoration(
+                                    gradient: AppColors.gradientPrimary,
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: const Icon(
+                                    Icons.business_outlined,
+                                    color: Colors.white,
+                                    size: 32,
                                   ),
                                 ),
-                                20.w,
-                                vm.isLoading
-                                    ? CustomShimmerWidget.rectangular(
-                                        width: 150,
-                                        height: 30,
-                                        isDark: isDark,
-                                        shapeBorder: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                      )
-                                    : Text(
-                                        vm.companyName.isEmpty
-                                            ? 'Company Name'
-                                            : vm.companyName,
-                                        style: theme.textTheme.headlineMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                              ),
+                              20.w,
+                              vm.isLoading
+                                  ? CustomShimmerWidget.rectangular(
+                                      width: 150,
+                                      height: 30,
+                                      isDark: isDark,
+                                      shapeBorder: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                              ],
-                            ),
+                                    )
+                                  : Text(
+                                      vm.companyName.isEmpty
+                                          ? 'Company Name'
+                                          : vm.companyName,
+                                      style: theme.textTheme.headlineMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                            ],
+                          ),
                         ),
                         32.h,
 
@@ -157,7 +154,9 @@ class RecruiterCompanyView extends StatelessWidget {
                                         height: 50,
                                         isDark: isDark,
                                         shapeBorder: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       )
                                     : TextFormField(
@@ -169,7 +168,8 @@ class RecruiterCompanyView extends StatelessWidget {
                                         ),
                                         textInputAction: TextInputAction.next,
                                         onSaved: (v) => vm.fullName = v ?? '',
-                                        validator: (v) => (v == null || v.isEmpty)
+                                        validator: (v) =>
+                                            (v == null || v.isEmpty)
                                             ? 'Required'
                                             : null,
                                       ),
@@ -182,10 +182,11 @@ class RecruiterCompanyView extends StatelessWidget {
                                         height: 50,
                                         isDark: isDark,
                                         shapeBorder: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       )
-
                                     : TextFormField(
                                         initialValue: vm.email,
                                         readOnly: true,
@@ -197,7 +198,7 @@ class RecruiterCompanyView extends StatelessWidget {
                                         ),
                                       ),
                                 24.h,
-                                
+
                                 _FieldLabel('Company Name'),
                                 8.h,
                                 vm.isLoading
@@ -205,7 +206,9 @@ class RecruiterCompanyView extends StatelessWidget {
                                         height: 50,
                                         isDark: isDark,
                                         shapeBorder: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       )
                                     : TextFormField(
@@ -216,8 +219,10 @@ class RecruiterCompanyView extends StatelessWidget {
                                           Icons.business_outlined,
                                         ),
                                         textInputAction: TextInputAction.next,
-                                        onSaved: (v) => vm.companyName = v ?? '',
-                                        validator: (v) => (v == null || v.isEmpty)
+                                        onSaved: (v) =>
+                                            vm.companyName = v ?? '',
+                                        validator: (v) =>
+                                            (v == null || v.isEmpty)
                                             ? 'Required'
                                             : null,
                                       ),
@@ -230,7 +235,9 @@ class RecruiterCompanyView extends StatelessWidget {
                                         height: 50,
                                         isDark: isDark,
                                         shapeBorder: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                       )
                                     : TextFormField(
@@ -351,18 +358,23 @@ class RecruiterCompanyView extends StatelessWidget {
                             onPressed: vm.isLoading
                                 ? null
                                 : () async {
-                                    CustomEasyLoading.show(context, message: 'Saving Company Profile...');
+                                    CustomEasyLoading.show(
+                                      context,
+                                      message: 'Saving Company Profile...',
+                                    );
                                     final success = await vm.saveChanges();
                                     CustomEasyLoading.dismiss();
                                     if (context.mounted && success) {
                                       CustomFlushbar.showSuccess(
                                         context: context,
-                                        message: 'Company profile saved successfully!',
+                                        message:
+                                            'Company profile saved successfully!',
                                       );
                                     } else if (context.mounted) {
                                       CustomFlushbar.showError(
                                         context: context,
-                                        message: 'Failed to save profile. Please try again.',
+                                        message:
+                                            'Failed to save profile. Please try again.',
                                       );
                                     }
                                   },

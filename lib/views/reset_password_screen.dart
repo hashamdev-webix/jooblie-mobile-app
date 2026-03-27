@@ -58,7 +58,9 @@ class ResetPasswordScreen extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
-                          isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
+                          isDark
+                              ? AppColors.shadowCardDark
+                              : AppColors.shadowCardLight,
                         ],
                       ),
                       child: ChangeNotifierProvider(
@@ -104,7 +106,8 @@ class ResetPasswordScreen extends StatelessWidget {
                                     keyboardType: TextInputType.visiblePassword,
                                     textInputAction: TextInputAction.next,
                                     validator: viewModel.validatePassword,
-                                    onChanged: (value) => viewModel.setPassword(value),
+                                    onChanged: (value) =>
+                                        viewModel.setPassword(value),
                                   ),
                                   20.h,
                                   CustomTextField(
@@ -114,33 +117,41 @@ class ResetPasswordScreen extends StatelessWidget {
                                     isPassword: true,
                                     keyboardType: TextInputType.visiblePassword,
                                     textInputAction: TextInputAction.done,
-                                    validator: viewModel.validateConfirmPassword,
-                                    onChanged: (value) => viewModel.setConfirmPassword(value),
+                                    validator:
+                                        viewModel.validateConfirmPassword,
+                                    onChanged: (value) =>
+                                        viewModel.setConfirmPassword(value),
                                   ),
                                   32.h,
                                   PrimaryButton(
                                     text: 'Update Password',
                                     isLoading: viewModel.isLoading,
                                     onPressed: () async {
-                                      final result = await viewModel.updatePassword();
+                                      final result = await viewModel
+                                          .updatePassword();
                                       if (result == null && context.mounted) {
                                         CustomFlushbar.showSuccess(
                                           context: context,
-                                          message: 'Password updated successfully! ✅',
+                                          message:
+                                              'Password updated successfully! ✅',
                                         );
-                                        Future.delayed(const Duration(seconds: 2), () {
-                                          if (context.mounted) {
-                                            Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              RoutesName.login,
-                                              (route) => false,
-                                            );
-                                          }
-                                        });
+                                        Future.delayed(
+                                          const Duration(seconds: 2),
+                                          () {
+                                            if (context.mounted) {
+                                              Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                RoutesName.login,
+                                                (route) => false,
+                                              );
+                                            }
+                                          },
+                                        );
                                       } else if (context.mounted) {
                                         CustomFlushbar.showError(
                                           context: context,
-                                          message: result ?? 'Something went wrong',
+                                          message:
+                                              result ?? 'Something went wrong',
                                         );
                                       }
                                     },

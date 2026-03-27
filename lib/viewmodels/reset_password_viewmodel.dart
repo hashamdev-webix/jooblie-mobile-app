@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResetPasswordViewModel extends ChangeNotifier {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  
+
   String _password = '';
   String _confirmPassword = '';
   bool _isLoading = false;
@@ -42,7 +42,7 @@ class ResetPasswordViewModel extends ChangeNotifier {
   Future<String?> updatePassword() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      
+
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();

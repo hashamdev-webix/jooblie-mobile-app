@@ -20,10 +20,7 @@ class JobseekerProfileView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBarWidget(
-        title: "",
-        showAppLogo: false,
-      ),
+      appBar: AppBarWidget(title: "", showAppLogo: false),
       body: Container(
         decoration: BoxDecoration(
           gradient: isDark
@@ -56,8 +53,6 @@ class JobseekerProfileView extends StatelessWidget {
                         ),
                 ),
                 const SizedBox(height: 24),
-
-
               ],
             ),
           ),
@@ -70,11 +65,19 @@ class JobseekerProfileView extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-           CustomShimmerWidget.circular(width: 100, height: 100, isDark: isDark),
+          CustomShimmerWidget.circular(width: 100, height: 100, isDark: isDark),
           const SizedBox(height: 16),
-           CustomShimmerWidget.rectangular(height: 28, width: 160,isDark: isDark),
+          CustomShimmerWidget.rectangular(
+            height: 28,
+            width: 160,
+            isDark: isDark,
+          ),
           const SizedBox(height: 8),
-           CustomShimmerWidget.rectangular(height: 16, width: 100,isDark: isDark),
+          CustomShimmerWidget.rectangular(
+            height: 16,
+            width: 100,
+            isDark: isDark,
+          ),
         ],
       ),
     );
@@ -97,16 +100,36 @@ class JobseekerProfileView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (int i = 0; i < 4; i++) ...[
-             CustomShimmerWidget.rectangular(height: 16, width: 80,isDark:isDark),
+            CustomShimmerWidget.rectangular(
+              height: 16,
+              width: 80,
+              isDark: isDark,
+            ),
             const SizedBox(height: 8),
-             CustomShimmerWidget.rectangular(height: 50, width: double.infinity,isDark:isDark),
+            CustomShimmerWidget.rectangular(
+              height: 50,
+              width: double.infinity,
+              isDark: isDark,
+            ),
             const SizedBox(height: 16),
           ],
-           CustomShimmerWidget.rectangular(height: 16, width: 80,isDark:isDark),
+          CustomShimmerWidget.rectangular(
+            height: 16,
+            width: 80,
+            isDark: isDark,
+          ),
           const SizedBox(height: 8),
-           CustomShimmerWidget.rectangular(height: 100, width: double.infinity,isDark:isDark),
+          CustomShimmerWidget.rectangular(
+            height: 100,
+            width: double.infinity,
+            isDark: isDark,
+          ),
           const SizedBox(height: 24),
-           CustomShimmerWidget.rectangular(height: 54, width: double.infinity,isDark:isDark),
+          CustomShimmerWidget.rectangular(
+            height: 54,
+            width: double.infinity,
+            isDark: isDark,
+          ),
         ],
       ),
     );

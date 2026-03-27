@@ -12,18 +12,19 @@ import 'package:jooblie_app/core/sized.dart';
 import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class SettingsView extends StatelessWidget {
   final String title;
   final String subTitle;
   final String routeName;
   final bool showLeadingIcon;
 
-  const SettingsView({super.key,  this.title="My Profile",this.subTitle="Edit your personal information",
+  const SettingsView({
+    super.key,
+    this.title = "My Profile",
+    this.subTitle = "Edit your personal information",
 
-
-  this.routeName= RoutesName.profileView,
-    this.showLeadingIcon=true
+    this.routeName = RoutesName.profileView,
+    this.showLeadingIcon = true,
   });
 
   @override
@@ -46,15 +47,20 @@ class SettingsView extends StatelessWidget {
           child: Column(
             children: [
               // AppBarWidget(title: "Setting"),
-              HeaderAppBarWidget(theme: theme, isDark: isDark,
-              blackTitle: "settings",
-          showLeadingIcon: showLeadingIcon,
-          blueTitle: "",
+              HeaderAppBarWidget(
+                theme: theme,
+                isDark: isDark,
+                blackTitle: "settings",
+                showLeadingIcon: showLeadingIcon,
+                blueTitle: "",
                 showSetting: false,
               ),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   children: [
                     FadeInDown(
                       duration: const Duration(milliseconds: 400),
@@ -65,10 +71,10 @@ class SettingsView extends StatelessWidget {
                       duration: const Duration(milliseconds: 400),
                       child: _SettingsTile(
                         icon: Icons.person_outline_rounded,
-                        title:title,
+                        title: title,
                         subtitle: subTitle,
                         onTap: () {
-                          Navigator.pushNamed(context,routeName);
+                          Navigator.pushNamed(context, routeName);
                         },
                       ),
                     ),
@@ -136,11 +142,14 @@ class SettingsView extends StatelessWidget {
                         title: 'Logout',
                         subtitle: 'Sign out of your account securely',
                         onTap: () async {
-                          final authVM = Provider.of<AuthViewModel>(context, listen: false);
+                          final authVM = Provider.of<AuthViewModel>(
+                            context,
+                            listen: false,
+                          );
                           await authVM.signOut(context);
                           final prefs = await SharedPreferences.getInstance();
                           await prefs.remove('is_job_seeker');
-                          
+
                           // if (context.mounted) {
                           //   Navigator.pushNamedAndRemoveUntil(
                           //     context,
@@ -176,7 +185,7 @@ class SettingsView extends StatelessWidget {
 
   void _showThemeBottomSheet(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     if (Platform.isIOS) {
       showCupertinoModalPopup(
         context: context,
@@ -236,9 +245,9 @@ class SettingsView extends StatelessWidget {
               ),
               Text(
                 'Select Theme',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
               _ThemeOptionTile(
@@ -274,10 +283,10 @@ class _SectionHeader extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: AppColors.lightPrimary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-          ),
+        color: AppColors.lightPrimary,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.2,
+      ),
     );
   }
 }
@@ -331,10 +340,16 @@ class _SettingsTile extends StatelessWidget {
         subtitle: Text(
           subtitle,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground,
+            color: isDark
+                ? AppColors.darkMutedForeground
+                : AppColors.lightMutedForeground,
           ),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey),
+        trailing: const Icon(
+          Icons.arrow_forward_ios_rounded,
+          size: 14,
+          color: Colors.grey,
+        ),
       ),
     );
   }
@@ -358,12 +373,19 @@ class _ThemeOptionTile extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ListTile(
-      leading: Icon(icon, color: isSelected ? AppColors.lightPrimary : (isDark ? Colors.white54 : Colors.black54)),
+      leading: Icon(
+        icon,
+        color: isSelected
+            ? AppColors.lightPrimary
+            : (isDark ? Colors.white54 : Colors.black54),
+      ),
       title: Text(
         title,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppColors.lightPrimary : (isDark ? Colors.white : Colors.black),
+          color: isSelected
+              ? AppColors.lightPrimary
+              : (isDark ? Colors.white : Colors.black),
         ),
       ),
       trailing: isSelected

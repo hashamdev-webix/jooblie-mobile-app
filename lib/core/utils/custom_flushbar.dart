@@ -8,11 +8,7 @@ class CustomFlushbar {
   }) {
     Flushbar(
       message: message,
-      icon: const Icon(
-        Icons.error_outline,
-        size: 28.0,
-        color: Colors.white,
-      ),
+      icon: const Icon(Icons.error_outline, size: 28.0, color: Colors.white),
       duration: const Duration(seconds: 3),
       backgroundColor: Colors.redAccent,
       margin: const EdgeInsets.all(8),

@@ -29,7 +29,9 @@ class _LocationSearchViewState extends State<LocationSearchView> {
   void initState() {
     super.initState();
     final vm = context.read<JobSeekerJobsViewModel>();
-    _locationController = TextEditingController(text: vm.filters.location ?? '');
+    _locationController = TextEditingController(
+      text: vm.filters.location ?? '',
+    );
   }
 
   @override
@@ -51,7 +53,9 @@ class _LocationSearchViewState extends State<LocationSearchView> {
     final vm = context.watch<JobSeekerJobsViewModel>();
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -77,7 +81,9 @@ class _LocationSearchViewState extends State<LocationSearchView> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: _hasError ? AppColors.lightError : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
+                  color: _hasError
+                      ? AppColors.lightError
+                      : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                   width: 1.5,
                 ),
               ),
@@ -86,7 +92,11 @@ class _LocationSearchViewState extends State<LocationSearchView> {
                 autofocus: true,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.location_on, size: 24, color: isDark ? Colors.white70 : Colors.black87),
+                  prefixIcon: Icon(
+                    Icons.location_on,
+                    size: 24,
+                    color: isDark ? Colors.white70 : Colors.black87,
+                  ),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15),
                   hintText: 'Search city or state',
@@ -98,7 +108,11 @@ class _LocationSearchViewState extends State<LocationSearchView> {
               8.h,
               Row(
                 children: [
-                  Icon(Icons.error_rounded, color: AppColors.lightError, size: 20),
+                  Icon(
+                    Icons.error_rounded,
+                    color: AppColors.lightError,
+                    size: 20,
+                  ),
                   8.w,
                   Text(
                     'Add a valid city and state.',
@@ -114,7 +128,9 @@ class _LocationSearchViewState extends State<LocationSearchView> {
             InkWell(
               onTap: () async {
                 await vm.fetchCurrentLocation();
-                if (vm.error != null && vm.error!.isNotEmpty && context.mounted) {
+                if (vm.error != null &&
+                    vm.error!.isNotEmpty &&
+                    context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(vm.error!),
@@ -122,14 +138,18 @@ class _LocationSearchViewState extends State<LocationSearchView> {
                     ),
                   );
                 } else if (vm.filters.location != null && context.mounted) {
-                   Navigator.pop(context);
+                  Navigator.pop(context);
                 }
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Row(
                   children: [
-                    Icon(Icons.my_location_rounded, color: AppColors.lightPrimary, size: 24),
+                    Icon(
+                      Icons.my_location_rounded,
+                      color: AppColors.lightPrimary,
+                      size: 24,
+                    ),
                     16.w,
                     Text(
                       'Current Location',
@@ -147,18 +167,25 @@ class _LocationSearchViewState extends State<LocationSearchView> {
             15.h,
 
             // Popular Cities
-            ..._popularCities.map((city) => FadeInUp(
-              duration: const Duration(milliseconds: 300),
-              child: ListTile(
-                leading: Icon(Icons.location_on_outlined, color: isDark ? Colors.white54 : Colors.black45),
-                title: Text(
-                  city,
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+            ..._popularCities.map(
+              (city) => FadeInUp(
+                duration: const Duration(milliseconds: 300),
+                child: ListTile(
+                  leading: Icon(
+                    Icons.location_on_outlined,
+                    color: isDark ? Colors.white54 : Colors.black45,
+                  ),
+                  title: Text(
+                    city,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.zero,
+                  onTap: () => _onLocationSelected(city),
                 ),
-                contentPadding: EdgeInsets.zero,
-                onTap: () => _onLocationSelected(city),
               ),
-            )),
+            ),
           ],
         ),
       ),

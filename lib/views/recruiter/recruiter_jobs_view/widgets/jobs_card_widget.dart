@@ -11,11 +11,12 @@ class JobPostCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
-  const JobPostCard(
-      {super.key,
-      required this.job,
-      required this.onDelete,
-      required this.onEdit});
+  const JobPostCard({
+    super.key,
+    required this.job,
+    required this.onDelete,
+    required this.onEdit,
+  });
 
   Color _statusColor(String status) {
     switch (status.toLowerCase()) {
@@ -73,8 +74,9 @@ class JobPostCard extends StatelessWidget {
               16.h,
               Text(
                 'Update Job Status',
-                style: theme.textTheme.titleMedium
-                    ?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               8.h,
               Text(
@@ -99,18 +101,22 @@ class JobPostCard extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(bottom: 10),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? color.withValues(alpha: 0.10)
-                          : (isDark ? AppColors.darkMuted : AppColors.lightMuted),
+                          : (isDark
+                                ? AppColors.darkMuted
+                                : AppColors.lightMuted),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
                             ? color.withValues(alpha: 0.5)
                             : (isDark
-                                ? AppColors.darkBorder
-                                : AppColors.lightBorder),
+                                  ? AppColors.darkBorder
+                                  : AppColors.lightBorder),
                         width: isSelected ? 1.5 : 0.8,
                       ),
                     ),
@@ -156,9 +162,10 @@ class JobPostCard extends StatelessWidget {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+        ),
         boxShadow: [
-          isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight
+          isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
         ],
       ),
       child: Column(
@@ -171,38 +178,47 @@ class JobPostCard extends StatelessWidget {
               color: AppColors.lightPrimary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(10),
             ),
-            child:
-                Icon(Icons.work_outline, color: AppColors.lightPrimary, size: 22),
+            child: Icon(
+              Icons.work_outline,
+              color: AppColors.lightPrimary,
+              size: 22,
+            ),
           ),
           16.h,
-          Text(job.title,
-              style: theme.textTheme.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold)),
+          Text(
+            job.title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           4.h,
           Text(
             'Posted ${job.postedDate.year}-${job.postedDate.month.toString().padLeft(2, '0')}-${job.postedDate.day.toString().padLeft(2, '0')}',
             style: theme.textTheme.bodySmall?.copyWith(
-                color: isDark
-                    ? AppColors.darkMutedForeground
-                    : AppColors.lightMutedForeground),
+              color: isDark
+                  ? AppColors.darkMutedForeground
+                  : AppColors.lightMutedForeground,
+            ),
           ),
           14.h,
           Row(
             children: [
-              Icon(Icons.people_outline,
-                  size: 16,
-                  color: isDark
-                      ? AppColors.darkMutedForeground
-                      : AppColors.lightMutedForeground),
+              Icon(
+                Icons.people_outline,
+                size: 16,
+                color: isDark
+                    ? AppColors.darkMutedForeground
+                    : AppColors.lightMutedForeground,
+              ),
               6.w,
-              Text('${job.applicants}',
-                  style: theme.textTheme.bodyMedium),
+              Text('${job.applicants}', style: theme.textTheme.bodyMedium),
               20.w,
-              Icon(Icons.remove_red_eye_outlined,
-                  size: 16,
-                  color: isDark
-                      ? AppColors.darkMutedForeground
-                      : AppColors.lightMutedForeground
+              Icon(
+                Icons.remove_red_eye_outlined,
+                size: 16,
+                color: isDark
+                    ? AppColors.darkMutedForeground
+                    : AppColors.lightMutedForeground,
               ),
               6.w,
               Text('${job.views}', style: theme.textTheme.bodyMedium),
@@ -215,13 +231,16 @@ class JobPostCard extends StatelessWidget {
               GestureDetector(
                 onTap: () => _showStatusPicker(context, isDark),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color: statusColor.withValues(alpha: 0.3)),
+                      color: statusColor.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -229,10 +248,12 @@ class JobPostCard extends StatelessWidget {
                       Text(
                         job.status.isNotEmpty
                             ? job.status[0].toUpperCase() +
-                                job.status.substring(1)
+                                  job.status.substring(1)
                             : '',
                         style: theme.textTheme.labelSmall?.copyWith(
-                            color: statusColor, fontWeight: FontWeight.w600),
+                          color: statusColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       4.w,
                       Icon(Icons.expand_more, color: statusColor, size: 14),
@@ -250,11 +271,13 @@ class JobPostCard extends StatelessWidget {
                     color: isDark ? AppColors.darkMuted : AppColors.lightMuted,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.edit_outlined,
-                      size: 18,
-                      color: isDark
-                          ? AppColors.darkMutedForeground
-                          : AppColors.lightMutedForeground),
+                  child: Icon(
+                    Icons.edit_outlined,
+                    size: 18,
+                    color: isDark
+                        ? AppColors.darkMutedForeground
+                        : AppColors.lightMutedForeground,
+                  ),
                 ),
               ),
               12.w,
@@ -279,8 +302,11 @@ class JobPostCard extends StatelessWidget {
                     color: const Color(0xFFB04040).withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.delete_outline,
-                      size: 18, color: const Color(0xFFB04040)),
+                  child: Icon(
+                    Icons.delete_outline,
+                    size: 18,
+                    color: const Color(0xFFB04040),
+                  ),
                 ),
               ),
             ],

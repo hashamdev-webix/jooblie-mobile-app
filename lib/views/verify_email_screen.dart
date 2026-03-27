@@ -25,8 +25,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     super.initState();
     // Delay slightly to ensure provider is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<VerifyEmailViewModel>(context, listen: false)
-          .listenAuthentication(context);
+      Provider.of<VerifyEmailViewModel>(
+        context,
+        listen: false,
+      ).listenAuthentication(context);
     });
   }
 
@@ -94,7 +96,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   blurRadius: 10,
                                   spreadRadius: -2,
                                   offset: const Offset(0, 4),
-                                )
+                                ),
                               ],
                             ),
                             child: const Icon(
@@ -115,7 +117,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           Text(
                             'We\'ve sent a verification link to:\n${widget.email}',
                             style: theme.textTheme.bodyLarge?.copyWith(
-                              color: isDark ? Colors.white70 : AppColors.lightMutedForeground,
+                              color: isDark
+                                  ? Colors.white70
+                                  : AppColors.lightMutedForeground,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -123,24 +127,32 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.grey.shade900 : Colors.blue.shade50,
+                              color: isDark
+                                  ? Colors.grey.shade900
+                                  : Colors.blue.shade50,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: isDark ? Colors.grey.shade800 : Colors.blue.shade100,
+                                color: isDark
+                                    ? Colors.grey.shade800
+                                    : Colors.blue.shade100,
                               ),
                             ),
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.info_outline,
-                                  color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
+                                  color: isDark
+                                      ? Colors.blue.shade300
+                                      : Colors.blue.shade700,
                                 ),
                                 16.w,
                                 Expanded(
                                   child: Text(
                                     'Please click the link in the email to automatically log in. Don\'t close this screen.',
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: isDark ? Colors.blue.shade300 : Colors.blue.shade800,
+                                      color: isDark
+                                          ? Colors.blue.shade300
+                                          : Colors.blue.shade800,
                                     ),
                                   ),
                                 ),
@@ -153,7 +165,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               return PrimaryButton(
                                 text: 'Resend Verification Email',
                                 onPressed: () {
-                                  viewModel.resendVerificationEmail(context, widget.email);
+                                  viewModel.resendVerificationEmail(
+                                    context,
+                                    widget.email,
+                                  );
                                 },
                               );
                             },
@@ -170,7 +185,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                             child: Text(
                               'Back to Log In',
                               style: TextStyle(
-                                color: isDark ? Colors.white54 : AppColors.lightMutedForeground,
+                                color: isDark
+                                    ? Colors.white54
+                                    : AppColors.lightMutedForeground,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

@@ -27,12 +27,13 @@ class RecruiterJobsView extends StatelessWidget {
         child: Column(
           children: [
             HeaderAppBarWidget(
-                theme: theme,
-                isDark: isDark,
-                showSetting: false,
-                showProfileIcon: true,
-                showLeadingIcon: false),
-            
+              theme: theme,
+              isDark: isDark,
+              showSetting: false,
+              showProfileIcon: true,
+              showLeadingIcon: false,
+            ),
+
             Expanded(
               child: RefreshIndicator(
                 onRefresh: () => vm.fetchJobs(refresh: true),
@@ -63,11 +64,14 @@ class RecruiterJobsView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   HeadingTextWidget(
-                                      theme: theme, title: 'My Job Posts'),
+                                    theme: theme,
+                                    title: 'My Job Posts',
+                                  ),
                                   4.h,
                                   SubTitleWidget(
                                     theme: theme,
-                                    subTitle: 'Manage your active job listings.',
+                                    subTitle:
+                                        'Manage your active job listings.',
                                   ),
                                 ],
                               ),
@@ -80,9 +84,22 @@ class RecruiterJobsView extends StatelessWidget {
                                 icon: Icons.add,
                                 onTap: () {
                                   // Simply push a fresh view for new job or could redirect to tab
-                                  context.read<RecruiterPostJobViewModel>().formKey.currentState?.reset();
-                                  context.read<RecruiterPostJobViewModel>().editingJobId = null;
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => const RecruiterPostJobView()));
+                                  context
+                                      .read<RecruiterPostJobViewModel>()
+                                      .formKey
+                                      .currentState
+                                      ?.reset();
+                                  context
+                                          .read<RecruiterPostJobViewModel>()
+                                          .editingJobId =
+                                      null;
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const RecruiterPostJobView(),
+                                    ),
+                                  );
                                 },
                               ),
                             ),
@@ -106,9 +123,22 @@ class RecruiterJobsView extends StatelessWidget {
                           child: Center(
                             child: Column(
                               children: [
-                                Icon(Icons.work_off_outlined, size: 60, color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground),
+                                Icon(
+                                  Icons.work_off_outlined,
+                                  size: 60,
+                                  color: isDark
+                                      ? AppColors.darkMutedForeground
+                                      : AppColors.lightMutedForeground,
+                                ),
                                 16.h,
-                                Text('No jobs found.', style: theme.textTheme.bodyLarge?.copyWith(color: isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground)),
+                                Text(
+                                  'No jobs found.',
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    color: isDark
+                                        ? AppColors.darkMutedForeground
+                                        : AppColors.lightMutedForeground,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -118,7 +148,9 @@ class RecruiterJobsView extends StatelessWidget {
                           final idx = entry.key;
                           final job = entry.value;
                           return FadeInUp(
-                            delay: Duration(milliseconds: 150 + (idx % 5) * 120),
+                            delay: Duration(
+                              milliseconds: 150 + (idx % 5) * 120,
+                            ),
                             duration: const Duration(milliseconds: 500),
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 16),
@@ -126,10 +158,15 @@ class RecruiterJobsView extends StatelessWidget {
                                 job: job,
                                 onDelete: () => vm.deleteJob(job.id),
                                 onEdit: () {
-                                  context.read<RecruiterPostJobViewModel>().loadJobForEditing(job);
+                                  context
+                                      .read<RecruiterPostJobViewModel>()
+                                      .loadJobForEditing(job);
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => const RecruiterPostJobView()),
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const RecruiterPostJobView(),
+                                    ),
                                   ).then((_) {
                                     vm.fetchJobs(refresh: true);
                                   });
@@ -155,10 +192,18 @@ class RecruiterJobsView extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChips(BuildContext context, RecruiterJobsViewModel vm, bool isDark) {
+  Widget _buildFilterChips(
+    BuildContext context,
+    RecruiterJobsViewModel vm,
+    bool isDark,
+  ) {
     final filters = [
       {'label': 'All', 'status': 'all', 'icon': Icons.apps_rounded},
-      {'label': 'Active', 'status': 'active', 'icon': Icons.check_circle_outline},
+      {
+        'label': 'Active',
+        'status': 'active',
+        'icon': Icons.check_circle_outline,
+      },
       {'label': 'Draft', 'status': 'draft', 'icon': Icons.edit_outlined},
       {'label': 'Expired', 'status': 'expired', 'icon': Icons.cancel_outlined},
     ];
@@ -172,7 +217,9 @@ class RecruiterJobsView extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.only(left: idx == 0 ? 0 : 10),
             child: _filterChip(
-              context, vm, isDark,
+              context,
+              vm,
+              isDark,
               label: f['label'] as String,
               status: f['status'] as String,
               icon: f['icon'] as IconData,

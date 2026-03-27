@@ -40,7 +40,8 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       postedTime: '1 day ago',
       jobType: 'Full-time',
       tags: ['React', 'Node.js', 'PostgreSQL'],
-      description: "Join DataFlow to build the next generation of data streaming services.",
+      description:
+          "Join DataFlow to build the next generation of data streaming services.",
       requirements: ['3+ years Full Stack experience', 'Strong SQL knowledge'],
       benefits: ['Health insurance', 'Equity', 'Flexible hours'],
     ),
@@ -55,7 +56,10 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       jobType: 'Contract',
       tags: ['Vue', 'AWS', 'Architecture'],
       description: "Lead the frontend architecture for our cloud platform.",
-      requirements: ['7+ years experience', 'Experience with large-scale applications'],
+      requirements: [
+        '7+ years experience',
+        'Experience with large-scale applications',
+      ],
       benefits: ['Fully remote', 'Top tier compensation', 'Quarterly retreats'],
     ),
     JobRecommendationModel(
@@ -82,7 +86,8 @@ class JobseekerRecommendationsViewModel extends ChangeNotifier {
       postedTime: '5 days ago',
       jobType: 'Full-time',
       tags: ['Flutter', 'Dart', 'Firebase'],
-      description: "Help us build world-class cross-platform mobile applications.",
+      description:
+          "Help us build world-class cross-platform mobile applications.",
       requirements: ['2+ years Flutter experience', 'Published apps on stores'],
       benefits: ['Remote work', 'Equipment allowance', 'Health care'],
     ),

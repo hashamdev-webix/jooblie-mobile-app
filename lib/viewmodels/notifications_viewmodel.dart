@@ -31,7 +31,9 @@ class NotificationsViewModel extends ChangeNotifier {
           .order('created_at', ascending: false);
 
       final List<dynamic> data = response as List<dynamic>;
-      notifications = data.map((json) => NotificationModel.fromJson(json)).toList();
+      notifications = data
+          .map((json) => NotificationModel.fromJson(json))
+          .toList();
     } catch (e) {
       debugPrint('Error fetching notifications: $e');
       error = 'Failed to load notifications.';
@@ -47,7 +49,7 @@ class NotificationsViewModel extends ChangeNotifier {
           .from('notifications')
           .update({'is_read': true})
           .eq('id', notificationId);
-          
+
       final index = notifications.indexWhere((n) => n.id == notificationId);
       if (index != -1) {
         final old = notifications[index];
@@ -74,7 +76,7 @@ class NotificationsViewModel extends ChangeNotifier {
           .from('notifications')
           .delete()
           .eq('id', notificationId);
-          
+
       notifications.removeWhere((n) => n.id == notificationId);
       notifyListeners();
     } catch (e) {
@@ -86,13 +88,13 @@ class NotificationsViewModel extends ChangeNotifier {
     try {
       final userId = Supabase.instance.client.auth.currentUser?.id;
       if (userId == null) return;
-      
+
       await Supabase.instance.client
           .from('notifications')
           .update({'is_read': true})
           .eq('user_id', userId)
           .eq('is_read', false);
-          
+
       for (int i = 0; i < notifications.length; i++) {
         if (!notifications[i].isRead) {
           notifications[i] = NotificationModel(

@@ -53,30 +53,34 @@ class LoginViewModel extends ChangeNotifier {
   Future<String?> login() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      
+
       _isLoading = true;
       notifyListeners();
 
       final result = await authViewModel.signIn(_email, _password);
-      
+
       if (result == null && authViewModel.currentUser != null) {
-         try {
-           final profile = await Supabase.instance.client
-               .from('profiles')
-               .select('role')
-               .eq('id', authViewModel.currentUser!.id)
-               .maybeSingle();
+        try {
+          final profile = await Supabase.instance.client
+              .from('profiles')
+              .select('role')
+              .eq('id', authViewModel.currentUser!.id)
+              .maybeSingle();
 
-           final userType = profile?['role'] ?? authViewModel.currentUser!.userMetadata?['role'] ?? 'job_seeker';
-           isJobSeeker = (userType == 'job_seeker');
-         } catch (e) {
-           final userType = authViewModel.currentUser!.userMetadata?['role'] ?? 'job_seeker';
-           isJobSeeker = (userType == 'job_seeker');
-         }
+          final userType =
+              profile?['role'] ??
+              authViewModel.currentUser!.userMetadata?['role'] ??
+              'job_seeker';
+          isJobSeeker = (userType == 'job_seeker');
+        } catch (e) {
+          final userType =
+              authViewModel.currentUser!.userMetadata?['role'] ?? 'job_seeker';
+          isJobSeeker = (userType == 'job_seeker');
+        }
 
-         // Save role to SharedPreferences as backup
-         final prefs = await SharedPreferences.getInstance();
-         await prefs.setBool('is_job_seeker', isJobSeeker);
+        // Save role to SharedPreferences as backup
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('is_job_seeker', isJobSeeker);
       }
 
       _isLoading = false;

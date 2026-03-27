@@ -1,36 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/app_colors.dart';
+import 'package:jooblie_app/models/job_recommendation_model.dart';
+import 'package:jooblie_app/views/job_seeker/widgets/job_seeker_actions_helper.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/services/deep_link_service.dart';
 import '../../../../viewmodels/favorites_viewmodel.dart';
-import '../../../../models/job_recommendation_model.dart';
-import '../../../../core/app_colors.dart';
-import '../../../../services/api_service.dart';
-import '../../../../models/apply_job_request.dart';
 import '../../../../viewmodels/jobseeker_applications_viewmodel.dart';
-import '../../../../viewmodels/jobseeker_resume_viewmodel.dart';
-
-import '../../../../services/views_service.dart';
 
 class JobDetailsBottomSheet extends StatelessWidget {
   final JobRecommendationModel job;
   final bool isDark;
 
-  const JobDetailsBottomSheet({
-    Key? key,
-    required this.job,
-    required this.isDark,
-  }) : super(key: key);
+  const JobDetailsBottomSheet({required this.job, required this.isDark});
 
+  /// Shows the job details bottom sheet and records a view.
   static void show(BuildContext context, JobRecommendationModel job) {
-    ViewsService.recordJobView(job.id);
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => JobDetailsBottomSheet(job: job, isDark: isDark),
-    );
+    JobseekerActionsHelper.showJobDetails(context, job);
   }
 
   @override
@@ -289,7 +274,10 @@ class JobDetailsBottomSheet extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: (hasApplied || isLoading)
                               ? null
-                              : () => _handleApply(context, job, isDark),
+                              : () => JobseekerActionsHelper.handleApply(
+                                  context,
+                                  job,
+                                ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: hasApplied
                                 ? Colors.grey
@@ -475,216 +463,5 @@ class _BulletPoint extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-Future<void> _handleApply(
-  BuildContext context,
-  JobRecommendationModel job,
-  bool isDark,
-) async {
-  final TextEditingController coverLetterController = TextEditingController();
-
-  final bool? shouldApply = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
-      title: Text(
-        'Apply for Job',
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Write a short cover letter for ${job.title} at ${job.company}:',
-              style: TextStyle(
-                color: isDark ? Colors.white70 : Colors.black87,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: coverLetterController,
-              maxLines: 4,
-              style: TextStyle(color: isDark ? Colors.white : Colors.black),
-              decoration: InputDecoration(
-                hintText: 'I would be a great fit because...',
-                hintStyle: TextStyle(
-                  color: isDark ? Colors.white38 : Colors.black38,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Resume',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Consumer<JobseekerResumeViewModel>(
-              builder: (consumerCtx, rVm, child) {
-                if (rVm.isUploading) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                final hasResume = rVm.currentResume != null;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (hasResume) ...[
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.picture_as_pdf,
-                            color: Colors.redAccent,
-                            size: 28,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  rVm.currentResume!.fileName ?? 'Resume.pdf',
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.black87,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                if (rVm.currentResume!.fileSize.isNotEmpty)
-                                  Text(
-                                    rVm.currentResume!.fileSize,
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white54
-                                          : Colors.black54,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: () => rVm.pickAndUpload(),
-                        icon: const Icon(Icons.upload_file, size: 18),
-                        label: const Text('Change Resume'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark
-                              ? Colors.white
-                              : Colors.black87,
-                        ),
-                      ),
-                    ] else ...[
-                      const Text(
-                        'A resume is required to apply for this job.',
-                        style: TextStyle(color: Colors.redAccent, fontSize: 13),
-                      ),
-                      const SizedBox(height: 12),
-                      ElevatedButton.icon(
-                        onPressed: () => rVm.pickAndUpload(),
-                        icon: const Icon(Icons.upload_file, size: 18),
-                        label: const Text('Upload Resume'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.lightPrimary,
-                          foregroundColor: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx, false),
-          child: Text(
-            'Cancel',
-            style: TextStyle(color: AppColors.lightPrimary),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            final currentResumeVm = Provider.of<JobseekerResumeViewModel>(
-              ctx,
-              listen: false,
-            );
-            if (currentResumeVm.currentResume == null) {
-              ScaffoldMessenger.of(ctx).showSnackBar(
-                const SnackBar(
-                  content: Text('Please upload a resume first to apply.'),
-                ),
-              );
-              return;
-            }
-            Navigator.pop(ctx, true);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.lightPrimary,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-          child: const Text('Submit Application'),
-        ),
-      ],
-    ),
-  );
-
-  if (shouldApply == true) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => const Center(child: CircularProgressIndicator()),
-    );
-
-    try {
-      final request = ApplyJobRequest(coverLetter: coverLetterController.text);
-      await ApiService().applyForJob(job.id, request);
-
-      if (context.mounted) Navigator.pop(context);
-      if (context.mounted) Navigator.pop(context);
-
-      if (context.mounted) {
-        try {
-          Provider.of<JobseekerApplicationsViewModel>(
-            context,
-            listen: false,
-          ).fetchApplications();
-        } catch (e) {}
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Successfully applied to ${job.company}!')),
-        );
-      }
-    } catch (e) {
-      if (context.mounted) Navigator.pop(context);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to apply. Please try again.')),
-        );
-      }
-    }
   }
 }

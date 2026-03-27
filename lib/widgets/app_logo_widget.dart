@@ -8,14 +8,10 @@ class AppLogo extends StatelessWidget {
   final double borderRadius;
   const AppLogo({
     super.key,
-    this.width=40,
-    this.height=34,
-    this.child=const Icon(
-      Icons.work_outline,
-      color: Colors.white,
-      size: 20,
-    ),
-    this.borderRadius=8
+    this.width = 40,
+    this.height = 34,
+    this.child = const Icon(Icons.work_outline, color: Colors.white, size: 20),
+    this.borderRadius = 8,
   });
 
   @override
@@ -27,7 +23,7 @@ class AppLogo extends StatelessWidget {
         gradient: AppColors.gradientPrimary,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child:child,
+      child: child,
     );
   }
 }

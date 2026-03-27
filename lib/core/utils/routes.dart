@@ -29,23 +29,24 @@ class Routes {
       debugPrint('Deep Link for Job ID: $jobId');
       // For this demo, we can just return the dashboard or a dedicated view.
       return MaterialPageRoute(
-        builder: (_) => MainDashboardScreen(isJobSeeker: true, initialJobId: jobId),
+        builder: (_) =>
+            MainDashboardScreen(isJobSeeker: true, initialJobId: jobId),
       );
     }
 
     switch (settings.name) {
       case RoutesName.splash:
         return MaterialPageRoute(builder: (_) => SplashScreen());
-      
+
       case RoutesName.onboarding:
         return MaterialPageRoute(builder: (_) => const OnboardingView());
-      
+
       case RoutesName.login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
-      
+
       case RoutesName.signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
-      
+
       case RoutesName.dashboard:
         final args = settings.arguments as Map<String, dynamic>?;
         final isJobSeeker = args?['isJobSeeker'] ?? true;
@@ -53,12 +54,12 @@ class Routes {
         final initialJobId = args?['initialJobId'];
         return MaterialPageRoute(
           builder: (_) => MainDashboardScreen(
-            isJobSeeker: isJobSeeker, 
+            isJobSeeker: isJobSeeker,
             initialIndex: initialIndex,
             initialJobId: initialJobId,
           ),
         );
-      
+
       case RoutesName.settings:
         return MaterialPageRoute(builder: (_) => const SettingsView());
       case RoutesName.profileView:
@@ -71,11 +72,12 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const FavoritesView());
 
       case RoutesName.companyView:
-        return MaterialPageRoute(builder: (_)=>RecruiterCompanyView());
+        return MaterialPageRoute(builder: (_) => RecruiterCompanyView());
       case RoutesName.forgotPassword:
         return MaterialPageRoute(
-            builder: (BuildContext context) => const ForgotPasswordScreen());
-            
+          builder: (BuildContext context) => const ForgotPasswordScreen(),
+        );
+
       case RoutesName.verifyEmail:
         return MaterialPageRoute(
           builder: (BuildContext context) {
@@ -93,24 +95,20 @@ class Routes {
         return MaterialPageRoute(
           builder: (_) => CompanyDetailsView(company: company),
         );
-      
+
       case RoutesName.applicantDetail:
         final applicationId = settings.arguments as String;
         return MaterialPageRoute(
           builder: (_) => ApplicantDetailView(applicationId: applicationId),
         );
-        
+
       case RoutesName.notifications:
-        return MaterialPageRoute(
-          builder: (_) => const NotificationsView(),
-        );
-        
+        return MaterialPageRoute(builder: (_) => const NotificationsView());
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
-            body: Center(
-              child: Text('No route defined for ${settings.name}'),
-            ),
+            body: Center(child: Text('No route defined for ${settings.name}')),
           ),
         );
     }

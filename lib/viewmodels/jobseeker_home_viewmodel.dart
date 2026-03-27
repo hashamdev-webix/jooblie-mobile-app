@@ -3,18 +3,41 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
 import '../models/home_stats_model.dart';
 import '../models/dashboard_stats_model.dart';
+import '../repositories/jobseeker_repository.dart';
 
 class JobseekerHomeViewModel extends ChangeNotifier {
+  final JobseekerRepository _repository = JobseekerRepository();
+
   bool isLoading = false;
   String userName = '';
   String? error;
   DashboardStats? dashboardStats;
 
   List<HomeStatModel> stats = [
-    const HomeStatModel(label: 'Applications', count: 0, badge: 'Total applied', iconAsset: 'applications'),
-    const HomeStatModel(label: 'Interviews', count: 0, badge: 'Scheduled', iconAsset: 'interviews'),
-    const HomeStatModel(label: 'Saved Jobs', count: 0, badge: 'Bookmarked', iconAsset: 'saved'),
-    const HomeStatModel(label: 'Profile Views', count: 0, badge: 'From recruiters', iconAsset: 'views'),
+    const HomeStatModel(
+      label: 'Applications',
+      count: 0,
+      badge: 'Total applied',
+      iconAsset: 'applications',
+    ),
+    const HomeStatModel(
+      label: 'Interviews',
+      count: 0,
+      badge: 'Scheduled',
+      iconAsset: 'interviews',
+    ),
+    const HomeStatModel(
+      label: 'Saved Jobs',
+      count: 0,
+      badge: 'Bookmarked',
+      iconAsset: 'saved',
+    ),
+    const HomeStatModel(
+      label: 'Profile Views',
+      count: 0,
+      badge: 'From recruiters',
+      iconAsset: 'views',
+    ),
   ];
 
   List<RecentApplicationModel> recentApplications = [];
@@ -23,6 +46,7 @@ class JobseekerHomeViewModel extends ChangeNotifier {
     fetchStats();
   }
 
+  /// Fetches all stats and recent applications for the home screen.
   Future<void> fetchStats() async {
     isLoading = true;
     error = null;
@@ -36,59 +60,41 @@ class JobseekerHomeViewModel extends ChangeNotifier {
         return;
       }
 
-      // Fetch all applications for the job seeker
-      final applicationsResponse = await Supabase.instance.client
-          .from('applications')
-          .select('*, jobs!inner(*)')
-          .eq('applicant_id', user.id);
+      // Parallel data fetching for performance
+      final results = await Future.wait([
+        _repository.getApplications(user.id),
+        _repository.getProfileViewsCount(user.id),
+        _repository.getSavedJobsCount(user.id),
+        _repository.getProfileName(user.id),
+      ]);
 
-      final List<dynamic> allApps = applicationsResponse as List<dynamic>;
+      final allApps = results[0] as List<Map<String, dynamic>>;
+      final pViewsCount = results[1] as int;
+      final savedJobsCount = results[2] as int;
+      final profileName = results[3] as String?;
 
+      // 1. Process Applications
       int totalApps = allApps.length;
-      int activeApps = allApps.where((app) => app['status'] != 'Rejected' && app['status'] != 'Archived').length;
-      int interviews = allApps.where((app) => app['status'] == 'Interview').length;
+      int activeApps = allApps
+          .where(
+            (app) => app['status'] != 'Rejected' && app['status'] != 'Archived',
+          )
+          .length;
+      int interviews = allApps
+          .where((app) => app['status'] == 'Interview')
+          .length;
       int offers = allApps.where((app) => app['status'] == 'Offer').length;
 
-      // Profile views from views table
-      int pViewsCount = 0;
-      try {
-        final profileViewsResponse = await Supabase.instance.client
-            .from('views')
-            .select('id')
-            .eq('profile_id', user.id);
-        pViewsCount = (profileViewsResponse as List).length;
-      } catch (_) {}
-
-      // Fetch user name from profiles table
-      try {
-        final profile = await Supabase.instance.client
-            .from('profiles')
-            .select('full_name')
-            .eq('id', user.id)
-            .maybeSingle();
-        if (profile != null) {
-          final name = profile['full_name']?.toString() ?? '';
-          if (name.isNotEmpty) {
-            userName = name.split(' ').first;
-          } else {
-            userName = user.userMetadata?['full_name']?.toString().split(' ').first ?? 'there';
-          }
-        }
-      } catch (_) {
-        userName = user.userMetadata?['full_name']?.toString().split(' ').first ?? 'there';
+      // 2. Process User Name
+      if (profileName != null && profileName.isNotEmpty) {
+        userName = profileName.split(' ').first;
+      } else {
+        userName =
+            user.userMetadata?['full_name']?.toString().split(' ').first ??
+            'there';
       }
 
-      // Saved Jobs count
-      int savedJobsCount = 0;
-      try {
-        final savedJobsResponse = await Supabase.instance.client
-            .from('saved_jobs')
-            .select('id')
-            .eq('user_id', user.id);
-        savedJobsCount = (savedJobsResponse as List).length;
-      } catch (_) {}
-
-      // Calculate applicationsByStatus
+      // 3. Application Status Distribution
       final Map<String, int> statusCounts = {};
       for (var app in allApps) {
         final st = app['status']?.toString() ?? 'Pending';
@@ -98,12 +104,17 @@ class JobseekerHomeViewModel extends ChangeNotifier {
           .map((e) => ApplicationStatusCount(status: e.key, count: e.value))
           .toList();
 
-      // Sort recent applications
+      // 4. Recent Applications (Top 5)
       allApps.sort((a, b) {
-        final d1 = a['created_at'] != null ? DateTime.parse(a['created_at']) : DateTime.now();
-        final d2 = b['created_at'] != null ? DateTime.parse(b['created_at']) : DateTime.now();
+        final d1 = a['created_at'] != null
+            ? DateTime.parse(a['created_at'])
+            : DateTime.now();
+        final d2 = b['created_at'] != null
+            ? DateTime.parse(b['created_at'])
+            : DateTime.now();
         return d2.compareTo(d1);
       });
+
       final topApps = allApps.take(5).toList();
 
       recentApplications = topApps.map((json) {
@@ -113,9 +124,7 @@ class JobseekerHomeViewModel extends ChangeNotifier {
           try {
             final dt = DateTime.parse(json['created_at']);
             formattedDate = DateFormat('MMM d, yyyy').format(dt);
-          } catch (_) {
-            formattedDate = json['created_at'].toString().split('T')[0];
-          }
+          } catch (_) {}
         }
         return RecentApplicationModel(
           title: job['title']?.toString() ?? 'Unknown Role',
@@ -125,14 +134,18 @@ class JobseekerHomeViewModel extends ChangeNotifier {
         );
       }).toList();
 
+      // 5. Recent Activity
       final recentActs = topApps.map((a) {
         return RecentActivity(
           type: 'application',
           description: 'Applied for ${(a['jobs'] ?? {})['title'] ?? 'Job'}',
-          timestamp: a['created_at'] != null ? DateTime.tryParse(a['created_at'].toString()) ?? DateTime.now() : DateTime.now(),
+          timestamp: a['created_at'] != null
+              ? DateTime.tryParse(a['created_at'].toString()) ?? DateTime.now()
+              : DateTime.now(),
         );
       }).toList();
 
+      // 6. Final Dashboard Stats Object
       dashboardStats = DashboardStats(
         totalApplications: totalApps,
         activeApplications: activeApps,
@@ -143,19 +156,51 @@ class JobseekerHomeViewModel extends ChangeNotifier {
         recentActivities: recentActs,
       );
 
+      // 7. Stats for the Home UI tiles
       stats = [
-        HomeStatModel(label: 'Applications', count: totalApps, badge: 'Total applied', iconAsset: 'applications'),
-        HomeStatModel(label: 'Interviews', count: interviews, badge: 'Scheduled', iconAsset: 'interviews'),
-        HomeStatModel(label: 'Saved Jobs', count: savedJobsCount, badge: 'Bookmarked', iconAsset: 'saved'),
-        HomeStatModel(label: 'Profile Views', count: pViewsCount, badge: 'From recruiters', iconAsset: 'views'),
+        HomeStatModel(
+          label: 'Applications',
+          count: totalApps,
+          badge: 'Total applied',
+          iconAsset: 'applications',
+        ),
+        HomeStatModel(
+          label: 'Interviews',
+          count: interviews,
+          badge: 'Scheduled',
+          iconAsset: 'interviews',
+        ),
+        HomeStatModel(
+          label: 'Saved Jobs',
+          count: savedJobsCount,
+          badge: 'Bookmarked',
+          iconAsset: 'saved',
+        ),
+        HomeStatModel(
+          label: 'Profile Views',
+          count: pViewsCount,
+          badge: 'From recruiters',
+          iconAsset: 'views',
+        ),
       ];
-
     } catch (e, stack) {
       debugPrint('Error fetching jobseeker stats: $e\n$stack');
       error = 'Failed to load stats.';
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  /// UI logic (dialogs) should be handled by the View or a UI helper.
+  Future<void> applyForJob(String jobId, String coverLetter) async {
+    try {
+      await _repository.applyForJob(jobId, coverLetter);
+      // Optional: Refresh stats after applying
+      fetchStats();
+    } catch (e) {
+      debugPrint('Error in applyForJob logic: $e');
+      rethrow;
     }
   }
 }

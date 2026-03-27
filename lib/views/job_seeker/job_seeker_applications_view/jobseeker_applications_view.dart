@@ -35,57 +35,57 @@ class JobseekerApplicationsView extends StatelessWidget {
               child: vm.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : vm.applications.isEmpty
-                      ? Center(
-                          child: Text(
-                            "No applications found.",
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: isDark ? Colors.white70 : Colors.black54,
-                            ),
-                          ),
-                        )
-                      : ListView(
-                          padding: AppPadding.dashBoardPadding,
-                          children: [
-                            FadeInUp(
-                              duration: const Duration(milliseconds: 500),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  HeadingTextWidget(
-                                    theme: theme,
-                                    title: "My Applications",
-                                  ),
-                                  4.h,
-                                  SubTitleWidget(
-                                    theme: theme,
-                                    subTitle:
-                                        "Track all your job applications in one place.",
-                                  ),
-                                ],
-                              ),
-                            ),
-                            20.h,
-                            // ── Applications List ──
-                            ...vm.applications.asMap().entries.map((entry) {
-                              final idx = entry.key;
-                              final app = entry.value;
-                              return Column(
-                                children: [
-                                  MySlideTransition(
-                                    delay: 100 * (idx + 1),
-                                    duration: 500,
-                                    child: ApplicationCard(
-                                      application: app,
-                                      theme: theme,
-                                      isDark: isDark,
-                                    ),
-                                  ),
-                                  12.h,
-                                ],
-                              );
-                            }),
-                          ],
+                  ? Center(
+                      child: Text(
+                        "No applications found.",
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: isDark ? Colors.white70 : Colors.black54,
                         ),
+                      ),
+                    )
+                  : ListView(
+                      padding: AppPadding.dashBoardPadding,
+                      children: [
+                        FadeInUp(
+                          duration: const Duration(milliseconds: 500),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              HeadingTextWidget(
+                                theme: theme,
+                                title: "My Applications",
+                              ),
+                              4.h,
+                              SubTitleWidget(
+                                theme: theme,
+                                subTitle:
+                                    "Track all your job applications in one place.",
+                              ),
+                            ],
+                          ),
+                        ),
+                        20.h,
+                        // ── Applications List ──
+                        ...vm.applications.asMap().entries.map((entry) {
+                          final idx = entry.key;
+                          final app = entry.value;
+                          return Column(
+                            children: [
+                              MySlideTransition(
+                                delay: 100 * (idx + 1),
+                                duration: 500,
+                                child: ApplicationCard(
+                                  application: app,
+                                  theme: theme,
+                                  isDark: isDark,
+                                ),
+                              ),
+                              12.h,
+                            ],
+                          );
+                        }),
+                      ],
+                    ),
             ),
           ],
         ),

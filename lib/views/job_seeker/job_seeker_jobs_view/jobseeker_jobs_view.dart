@@ -1,5 +1,6 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_card_shimmer.dart';
 import 'package:jooblie_app/widgets/custom_home_search_bar.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
@@ -11,7 +12,6 @@ import '../../../../widgets/header_appbar_widget.dart';
 import '../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
 import 'widgets/job_card_widget.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_filter_bottom_sheet.dart';
-
 
 class JobSeekerJobsView extends StatefulWidget {
   const JobSeekerJobsView({super.key});
@@ -25,8 +25,10 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<JobSeekerJobsViewModel>(context, listen: false).fetchJobs();
-    });    super.initState();
+    });
+    super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<JobSeekerJobsViewModel>();
@@ -87,9 +89,17 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                               children: [
                                 CustomHomeSearchBar(
                                   searchHint: vm.filters.search ?? 'Search',
-                                  locationHint: vm.filters.location ?? 'City, state, zip co...',
-                                  onSearchTap: () => Navigator.pushNamed(context, RoutesName.search),
-                                  onLocationTap: () => Navigator.pushNamed(context, RoutesName.locationSearch),
+                                  locationHint:
+                                      vm.filters.location ??
+                                      'City, state, zip co...',
+                                  onSearchTap: () => Navigator.pushNamed(
+                                    context,
+                                    RoutesName.search,
+                                  ),
+                                  onLocationTap: () => Navigator.pushNamed(
+                                    context,
+                                    RoutesName.locationSearch,
+                                  ),
                                 ),
                                 10.h,
                                 Row(
@@ -98,18 +108,25 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                                       child: SizedBox(
                                         height: 48,
                                         child: OutlinedButton.icon(
-                                          onPressed: () => JobFilterBottomSheet.show(context),
+                                          onPressed: () =>
+                                              JobFilterBottomSheet.show(
+                                                context,
+                                              ),
                                           icon: Icon(
                                             Icons.filter_list_rounded,
                                             size: 20,
-                                            color: vm.filters.hasActiveFilters ? AppColors.lightPrimary : null,
+                                            color: vm.filters.hasActiveFilters
+                                                ? AppColors.lightPrimary
+                                                : null,
                                           ),
                                           label: Text(
                                             'Filters${vm.filters.hasActiveFilters ? ' (Active)' : ''}',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,
-                                              color: vm.filters.hasActiveFilters ? AppColors.lightPrimary : null,
+                                              color: vm.filters.hasActiveFilters
+                                                  ? AppColors.lightPrimary
+                                                  : null,
                                             ),
                                           ),
                                           style: OutlinedButton.styleFrom(
@@ -120,22 +137,28 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                                               color: vm.filters.hasActiveFilters
                                                   ? AppColors.lightPrimary
                                                   : (isDark
-                                                      ? AppColors.darkBorder
-                                                      : AppColors.lightBorder),
+                                                        ? AppColors.darkBorder
+                                                        : AppColors
+                                                              .lightBorder),
                                             ),
                                             shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    if (vm.filters.hasActiveFilters || vm.filters.search != null || vm.filters.location != null)
+                                    if (vm.filters.hasActiveFilters ||
+                                        vm.filters.search != null ||
+                                        vm.filters.location != null)
                                       Padding(
                                         padding: const EdgeInsets.only(left: 8),
                                         child: IconButton(
                                           onPressed: () => vm.resetFilters(),
-                                          icon: const Icon(Icons.refresh_rounded),
+                                          icon: const Icon(
+                                            Icons.refresh_rounded,
+                                          ),
                                           tooltip: 'Clear All',
                                         ),
                                       ),
@@ -146,7 +169,6 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                           ),
                         ),
                         15.h,
-
 
                         // Loading State (Shimmer)
                         if (vm.isLoading)
@@ -160,15 +182,16 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                         else if (vm.jobs.isEmpty)
                           _buildEmptyState(theme, isDark)
                         else ...[
-                          ...vm.jobs.map((job) => FadeInUp(
-                                duration: const Duration(milliseconds: 500),
-                                child: JobCardWidget(
-                                  job: job,
-                                  onTap: () {
-                                    JobDetailsBottomSheet.show(context, job);
-                                  },
-                                ),
-                              )),
+                          ...vm.jobs.map(
+                            (job) => FadeInUp(
+                              duration: const Duration(milliseconds: 500),
+                              child: JobCardWidget(
+                                job: job,
+                                onTap: () =>
+                                    JobDetailsBottomSheet.show(context, job),
+                              ),
+                            ),
+                          ),
                           if (vm.isFetchingMore)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -180,7 +203,9 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                             ),
                         ],
                         // Bottom padding for navigation bar
-                        SizedBox(height: MediaQuery.of(context).padding.bottom + 20),
+                        SizedBox(
+                          height: MediaQuery.of(context).padding.bottom + 20,
+                        ),
                       ],
                     ),
                   ),
@@ -236,4 +261,3 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
     );
   }
 }
-

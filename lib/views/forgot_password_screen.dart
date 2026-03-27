@@ -58,12 +58,17 @@ class ForgotPasswordScreen extends StatelessWidget {
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
-                          isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
+                          isDark
+                              ? AppColors.shadowCardDark
+                              : AppColors.shadowCardLight,
                         ],
                       ),
                       child: ChangeNotifierProvider(
                         create: (ctx) => ForgotPasswordViewModel(
-                          authViewModel: Provider.of<AuthViewModel>(ctx, listen: false),
+                          authViewModel: Provider.of<AuthViewModel>(
+                            ctx,
+                            listen: false,
+                          ),
                         ),
                         child: Consumer<ForgotPasswordViewModel>(
                           builder: (context, viewModel, child) {
@@ -104,24 +109,28 @@ class ForgotPasswordScreen extends StatelessWidget {
                                     keyboardType: TextInputType.emailAddress,
                                     textInputAction: TextInputAction.done,
                                     validator: viewModel.validateEmail,
-                                    onSaved: (value) => viewModel.setEmail(value ?? ''),
+                                    onSaved: (value) =>
+                                        viewModel.setEmail(value ?? ''),
                                   ),
                                   32.h,
                                   PrimaryButton(
                                     text: 'Send Reset Link',
                                     isLoading: viewModel.isLoading,
                                     onPressed: () async {
-                                      final result = await viewModel.sendResetLink();
+                                      final result = await viewModel
+                                          .sendResetLink();
                                       if (result == null && context.mounted) {
                                         CustomFlushbar.showSuccess(
                                           context: context,
-                                          message: 'Reset link sent! Check your email.',
+                                          message:
+                                              'Reset link sent! Check your email.',
                                         );
                                         // Optional: Navigate back after some delay or show success state
                                       } else if (context.mounted) {
                                         CustomFlushbar.showError(
                                           context: context,
-                                          message: result ?? 'Something went wrong',
+                                          message:
+                                              result ?? 'Something went wrong',
                                         );
                                       }
                                     },

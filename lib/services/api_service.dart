@@ -25,33 +25,37 @@ class ApiService {
     return {'status': 'success', 'token': 'dummy_token'};
   }
 
-  Future<Map<String, dynamic>> applyForJob(String jobId, ApplyJobRequest request) async {
+  Future<Map<String, dynamic>> applyForJob(
+    String jobId,
+    ApplyJobRequest request,
+  ) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) {
       throw Exception("User is not authenticated");
     }
 
     String? resumeUrl = request.resumeUrl;
-    
+
     // If not provided in request, fetch from profile
     if (resumeUrl == null) {
-       final profileData = await Supabase.instance.client
+      final profileData = await Supabase.instance.client
           .from('profiles')
           .select('resume_path')
           .eq('id', user.id)
           .maybeSingle();
-          
-       resumeUrl = profileData?['resume_path'];
+
+      resumeUrl = profileData?['resume_path'];
     }
 
     if (resumeUrl == null) {
-       throw Exception("Please upload a resume before applying");
+      throw Exception("Please upload a resume before applying");
     }
 
     // Ensure resumes/ prefix is present as requested by the user
-    final String formattedResumeUrl = resumeUrl.startsWith('resumes/') 
-        ? resumeUrl : 'resumes/$resumeUrl';
-    
+    final String formattedResumeUrl = resumeUrl.startsWith('resumes/')
+        ? resumeUrl
+        : 'resumes/$resumeUrl';
+
     final Map<String, dynamic> payload = {
       'job_id': jobId,
       'applicant_id': user.id,
@@ -66,7 +70,7 @@ class ApiService {
         .insert(payload)
         .select('id')
         .single();
-        
+
     final applicationId = appResponse['id'];
 
     // 2. Notifications Logic for Recruiter
@@ -88,7 +92,7 @@ class ApiService {
             .select('full_name')
             .eq('id', user.id)
             .maybeSingle();
-            
+
         final applicantName = applicantProfile?['full_name'] ?? 'A candidate';
 
         final title = 'New Application Received';
@@ -116,27 +120,24 @@ class ApiService {
           if (deviceToken != null && deviceToken.toString().isNotEmpty) {
             // Send FCM HTTP v1 Request
             final GetServerKey getServerKey = GetServerKey();
-            final String accessToken = await getServerKey.getServerKeyToken(); 
-            
+            final String accessToken = await getServerKey.getServerKeyToken();
+
             final dio = Dio();
             dio.options.headers['Content-Type'] = 'application/json';
             dio.options.headers['Authorization'] = 'Bearer $accessToken';
-            
+
             await dio.post(
               'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
               data: {
                 'message': {
                   'token': deviceToken,
-                  'notification': {
-                    'title': title,
-                    'body': body,
-                  },
+                  'notification': {'title': title, 'body': body},
                   'data': {
                     'type': 'new_application',
                     'applicationId': applicationId,
                     'targetUserId': recruiterId,
-                  }
-                }
+                  },
+                },
               },
             );
           }
@@ -151,18 +152,22 @@ class ApiService {
       // 1. Fetch Job and Recruiter Info
       final jobData = await Supabase.instance.client
           .from('jobs')
-          .select('title, recruiter_id, profiles!jobs_recruiter_id_fkey(full_name, userDeviceToken)')
+          .select(
+            'title, recruiter_id, profiles!jobs_recruiter_id_fkey(full_name, userDeviceToken)',
+          )
           .eq('id', jobId)
           .maybeSingle();
 
       if (jobData != null) {
         final recruiterId = jobData['recruiter_id'];
         final jobTitle = jobData['title'];
-        final applicantName = (await Supabase.instance.client
-            .from('profiles')
-            .select('full_name')
-            .eq('id', user.id)
-            .maybeSingle())?['full_name'] ?? 'A candidate';
+        final applicantName =
+            (await Supabase.instance.client
+                .from('profiles')
+                .select('full_name')
+                .eq('id', user.id)
+                .maybeSingle())?['full_name'] ??
+            'A candidate';
 
         final title = 'New Application';
         final body = '$applicantName applied for $jobTitle';
@@ -183,11 +188,11 @@ class ApiService {
           try {
             final GetServerKey getServerKey = GetServerKey();
             final String accessToken = await getServerKey.getServerKeyToken();
-            
+
             final dio = Dio();
             dio.options.headers['Content-Type'] = 'application/json';
             dio.options.headers['Authorization'] = 'Bearer $accessToken';
-            
+
             await dio.post(
               'https://fcm.googleapis.com/v1/projects/jooblienotifactions/messages:send',
               data: {
@@ -198,8 +203,8 @@ class ApiService {
                     'type': 'new_application',
                     'jobId': jobId,
                     'targetUserId': recruiterId,
-                  }
-                }
+                  },
+                },
               },
             );
           } catch (e) {
@@ -211,6 +216,9 @@ class ApiService {
       print("Error in application notification trigger: $e");
     }
 
-    return {'status': 'success', 'message': 'Application submitted successfully'};
+    return {
+      'status': 'success',
+      'message': 'Application submitted successfully',
+    };
   }
 }

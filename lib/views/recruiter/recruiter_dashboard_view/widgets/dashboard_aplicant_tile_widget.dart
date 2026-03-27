@@ -21,12 +21,14 @@ class DashboardApplicantTileWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Record the profile view when the recruiter taps on the applicant card
-        context.read<RecruiterDashboardViewModel>().recordProfileView(applicant.applicantId);
-        
+        context.read<RecruiterDashboardViewModel>().recordProfileView(
+          applicant.applicantId,
+        );
+
         // Navigate to applicant detail view
         Navigator.pushNamed(
-          context, 
-          RoutesName.applicantDetail, 
+          context,
+          RoutesName.applicantDetail,
           arguments: applicant.applicationId,
         ).then((_) {
           // Refresh dashboard data when returning from detail view
@@ -81,19 +83,24 @@ class DashboardApplicantTileWidget extends StatelessWidget {
                                 onTap: () async {
                                   if (applicant.resumeUrl != null) {
                                     await detailVm.downloadAndOpenResume(
-                                      applicant.resumeUrl!, 
+                                      applicant.resumeUrl!,
                                       '${applicant.name.replaceAll(' ', '_')}_Resume.pdf',
                                     );
                                   }
                                 },
-                                child: detailVm.isDownloading 
-                                  ? const SizedBox(
-                                      width: 16, 
-                                      height: 16, 
-                                      child: CircularProgressIndicator(strokeWidth: 1),
-                                    )
-                                  : Icon(Icons.picture_as_pdf_outlined, 
-                                      size: 16, color: AppColors.lightPrimary),
+                                child: detailVm.isDownloading
+                                    ? const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 1,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.picture_as_pdf_outlined,
+                                        size: 16,
+                                        color: AppColors.lightPrimary,
+                                      ),
                               );
                             },
                           ),
@@ -103,9 +110,9 @@ class DashboardApplicantTileWidget extends StatelessWidget {
                   ),
                   4.h,
                   Text(
-                    applicant.jobTitle != null 
-                      ? 'Applied for: ${applicant.jobTitle}'
-                      : applicant.role,
+                    applicant.jobTitle != null
+                        ? 'Applied for: ${applicant.jobTitle}'
+                        : applicant.role,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isDark
                           ? AppColors.darkMutedForeground
@@ -118,18 +125,26 @@ class DashboardApplicantTileWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: (applicant.status == 'Rejected' ? Colors.red : AppColors.lightSecondary)
-                    .withOpacity(0.15),
+                color:
+                    (applicant.status == 'Rejected'
+                            ? Colors.red
+                            : AppColors.lightSecondary)
+                        .withOpacity(0.15),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: (applicant.status == 'Rejected' ? Colors.red : AppColors.lightSecondary)
-                      .withOpacity(0.4),
+                  color:
+                      (applicant.status == 'Rejected'
+                              ? Colors.red
+                              : AppColors.lightSecondary)
+                          .withOpacity(0.4),
                 ),
               ),
               child: Text(
                 applicant.status ?? 'Pending',
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: applicant.status == 'Rejected' ? Colors.red : AppColors.lightSecondary,
+                  color: applicant.status == 'Rejected'
+                      ? Colors.red
+                      : AppColors.lightSecondary,
                   fontWeight: FontWeight.w600,
                   fontSize: 10,
                 ),

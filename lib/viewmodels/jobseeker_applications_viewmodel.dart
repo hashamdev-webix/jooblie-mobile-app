@@ -7,7 +7,7 @@ import '../models/job_recommendation_model.dart';
 class JobseekerApplicationsViewModel extends ChangeNotifier {
   List<JobApplicationModel> applications = [];
   bool isLoading = false;
-  
+
   JobseekerApplicationsViewModel() {
     fetchApplications();
   }
@@ -36,7 +36,7 @@ class JobseekerApplicationsViewModel extends ChangeNotifier {
 
       applications = (response as List).map((json) {
         final job = json['jobs'] ?? {};
-        
+
         String formattedDate = '';
         if (json['created_at'] != null) {
           try {
@@ -55,7 +55,9 @@ class JobseekerApplicationsViewModel extends ChangeNotifier {
           location: job['location']?.toString() ?? 'Unknown Location',
           date: formattedDate,
           status: json['status']?.toString() ?? 'Applied',
-          jobData: JobRecommendationModel.fromJson(Map<String, dynamic>.from(job)),
+          jobData: JobRecommendationModel.fromJson(
+            Map<String, dynamic>.from(job),
+          ),
         );
       }).toList();
     } catch (e) {
@@ -66,4 +68,3 @@ class JobseekerApplicationsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-

@@ -28,8 +28,8 @@ class NotificationModel {
       type: json['type']?.toString(),
       referenceId: json['reference_id']?.toString(),
       isRead: json['is_read'] == true,
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
           : DateTime.now(),
     );
   }

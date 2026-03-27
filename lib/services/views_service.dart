@@ -49,7 +49,9 @@ class ViewsService {
           'profile_id': profileId,
           'viewer_id': viewerId,
         });
-        debugPrint('Profile view recorded: profile=$profileId, viewer=$viewerId');
+        debugPrint(
+          'Profile view recorded: profile=$profileId, viewer=$viewerId',
+        );
       }
     } catch (e) {
       debugPrint('Error recording profile view: $e');

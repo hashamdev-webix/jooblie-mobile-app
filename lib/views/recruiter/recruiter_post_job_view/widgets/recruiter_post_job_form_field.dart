@@ -6,7 +6,11 @@ class RecruiterPostJobFormField extends StatelessWidget {
   final String label;
   final Widget child;
 
-  const RecruiterPostJobFormField({super.key, required this.label, required this.child});
+  const RecruiterPostJobFormField({
+    super.key,
+    required this.label,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,7 @@ class RecruiterPostJobFormField extends StatelessWidget {
           ),
         ),
         8.h,
-        child, 
+        child,
       ],
     );
   }

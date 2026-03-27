@@ -32,10 +32,11 @@ class JobseekerProfileViewModel extends ChangeNotifier {
 
   JobseekerProfileViewModel() {
     _initControllers();
-    
+
     // Listen to Auth State to handle login/logout clearing
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (data.event == AuthChangeEvent.signedIn || data.event == AuthChangeEvent.initialSession) {
+      if (data.event == AuthChangeEvent.signedIn ||
+          data.event == AuthChangeEvent.initialSession) {
         if (Supabase.instance.client.auth.currentUser != null) {
           _initProfile();
         }
@@ -81,7 +82,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       // 2. Fetch from Profiles table as secondary verification
       final profileData = await Supabase.instance.client
           .from('profiles')
-          .select() 
+          .select()
           .eq('id', user.id)
           .maybeSingle();
 
@@ -89,7 +90,8 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       final String? fullName =
           profileData?['full_name'] ?? metadata?['full_name'];
       final String email = user.email ?? metadata?['email'] ?? '';
-      final String? location = profileData?['location'] ?? metadata?['location'];
+      final String? location =
+          profileData?['location'] ?? metadata?['location'];
       final String? jobTitle =
           profileData?['job_title'] ?? metadata?['job_title'];
       final String? about = profileData?['about'] ?? metadata?['about'];
@@ -104,19 +106,45 @@ class JobseekerProfileViewModel extends ChangeNotifier {
             if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
               final decoded = jsonDecode(trimmed);
               if (decoded is List) {
-                skills = decoded.map((e) => e.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
+                skills = decoded
+                    .map(
+                      (e) => e
+                          .toString()
+                          .trim()
+                          .replaceAll('"', '')
+                          .replaceAll("'", ''),
+                    )
+                    .toList();
               }
             } else {
               // Fallback to comma-separated parsing
-              skills = trimmed.split(',').map((e) => e.trim().replaceAll('"', '').replaceAll("'", '')).where((e) => e.isNotEmpty).toList();
+              skills = trimmed
+                  .split(',')
+                  .map((e) => e.trim().replaceAll('"', '').replaceAll("'", ''))
+                  .where((e) => e.isNotEmpty)
+                  .toList();
             }
           } catch (e) {
             // Final fallback: just strip brackets and quotes
-            String cleaned = rawSkills.replaceAll('[', '').replaceAll(']', '').replaceAll('"', '').replaceAll("'", '').trim();
-            skills = cleaned.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+            String cleaned = rawSkills
+                .replaceAll('[', '')
+                .replaceAll(']', '')
+                .replaceAll('"', '')
+                .replaceAll("'", '')
+                .trim();
+            skills = cleaned
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
           }
         } else if (rawSkills is List) {
-          skills = rawSkills.map((e) => e.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
+          skills = rawSkills
+              .map(
+                (e) =>
+                    e.toString().trim().replaceAll('"', '').replaceAll("'", ''),
+              )
+              .toList();
         }
       }
 

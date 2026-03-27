@@ -12,7 +12,9 @@ class NoInternetScreen extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -27,7 +29,7 @@ class NoInternetScreen extends StatelessWidget {
                   color: isDark ? Colors.white38 : Colors.black26,
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Title
                 Text(
                   'No internet connection',
@@ -39,7 +41,7 @@ class NoInternetScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Subtitle
                 Text(
                   "It looks like you're offline. Check your connection and tap to refresh.",
@@ -51,7 +53,7 @@ class NoInternetScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 32),
-                
+
                 // Refresh Button
                 SizedBox(
                   width: 160,

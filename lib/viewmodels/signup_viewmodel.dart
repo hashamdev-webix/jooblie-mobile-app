@@ -87,7 +87,7 @@ class SignupViewModel extends ChangeNotifier {
   Future<String?> register() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      
+
       _isLoading = true;
       notifyListeners();
 
@@ -95,14 +95,18 @@ class SignupViewModel extends ChangeNotifier {
         'full_name': _fullName.trim(),
         'role': _isJobSeeker ? 'job_seeker' : 'recruiter',
       };
-      
+
       if (!_isJobSeeker) {
         data['company_name'] = _companyName.trim();
       } else {
         data['company_name'] = null;
       }
 
-      final result = await authViewModel.signUp(_email.trim(), _password.trim(), data);
+      final result = await authViewModel.signUp(
+        _email.trim(),
+        _password.trim(),
+        data,
+      );
 
       if (result == null || result == 'verify_email') {
         // Save to SharedPreferences

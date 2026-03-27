@@ -49,11 +49,16 @@ class JobPost {
       salaryCurrency: json['salary_currency'],
       description: json['description'],
       requirements: json['requirements'],
-      skills: (json['skills'] as List<dynamic>?)
-              ?.map((e) => e.toString().trim().replaceAll('"', '').replaceAll("'", ''))
-              .toList() ?? [],
-      postedDate: json['created_at'] != null 
-          ? DateTime.parse(json['created_at']) 
+      skills:
+          (json['skills'] as List<dynamic>?)
+              ?.map(
+                (e) =>
+                    e.toString().trim().replaceAll('"', '').replaceAll("'", ''),
+              )
+              .toList() ??
+          [],
+      postedDate: json['created_at'] != null
+          ? DateTime.parse(json['created_at'])
           : DateTime.now(),
       applicants: json['applicants'] ?? 0,
       views: json['views'] ?? 0,
@@ -88,15 +93,17 @@ class RecentApplicant {
 
   factory RecentApplicant.fromJson(Map<String, dynamic> json) {
     // 1. Check for profile data at top level (denormalized) OR in joined object
-    final String fullName = json['full_name']?.toString() ?? 
-                            json['profiles']?['full_name']?.toString() ?? 
-                            json['profiles']?['name']?.toString() ?? 
-                            'Unknown Applicant';
-                            
-    final String role = json['job_title']?.toString() ?? 
-                        json['profiles']?['job_title']?.toString() ?? 
-                        json['profiles']?['role']?.toString() ?? 
-                        'Job Seeker';
+    final String fullName =
+        json['full_name']?.toString() ??
+        json['profiles']?['full_name']?.toString() ??
+        json['profiles']?['name']?.toString() ??
+        'Unknown Applicant';
+
+    final String role =
+        json['job_title']?.toString() ??
+        json['profiles']?['job_title']?.toString() ??
+        json['profiles']?['role']?.toString() ??
+        'Job Seeker';
 
     // Defensive check for jobs
     Map<String, dynamic> job = {};
@@ -112,12 +119,15 @@ class RecentApplicant {
 
     return RecentApplicant(
       applicationId: json['id']?.toString() ?? '',
-      applicantId: json['applicant_id']?.toString() ?? 
-                   json['profiles']?['id']?.toString() ?? '',
+      applicantId:
+          json['applicant_id']?.toString() ??
+          json['profiles']?['id']?.toString() ??
+          '',
       name: fullName,
       role: role,
-      avatarInitial: fullName.isNotEmpty && fullName != 'Unknown Applicant' 
-          ? fullName[0].toUpperCase() : '?',
+      avatarInitial: fullName.isNotEmpty && fullName != 'Unknown Applicant'
+          ? fullName[0].toUpperCase()
+          : '?',
       jobTitle: appliedJob,
       status: appStatus ?? 'Pending',
       resumeUrl: resume,
@@ -161,7 +171,8 @@ class ApplicationDetail {
     Map<String, dynamic> profile = {};
     if (json['profiles'] is Map) {
       profile = json['profiles'] as Map<String, dynamic>;
-    } else if (json['profiles'] is List && (json['profiles'] as List).isNotEmpty) {
+    } else if (json['profiles'] is List &&
+        (json['profiles'] as List).isNotEmpty) {
       profile = (json['profiles'] as List).first as Map<String, dynamic>;
     }
 
@@ -177,17 +188,32 @@ class ApplicationDetail {
     List<String> skillsList = [];
     final rawSkills = profile['skills'];
     if (rawSkills is List) {
-      skillsList = rawSkills.map((s) => s.toString().trim().replaceAll('"', '').replaceAll("'", '')).toList();
+      skillsList = rawSkills
+          .map(
+            (s) => s.toString().trim().replaceAll('"', '').replaceAll("'", ''),
+          )
+          .toList();
     } else if (rawSkills is String && rawSkills.isNotEmpty) {
-      skillsList = rawSkills.split(',').map((s) => s.trim().replaceAll('"', '').replaceAll("'", '')).where((s) => s.isNotEmpty).toList();
+      skillsList = rawSkills
+          .split(',')
+          .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
 
     return ApplicationDetail(
       applicationId: json['id']?.toString() ?? '',
-      applicantId: json['applicant_id']?.toString() ?? profile['id']?.toString() ?? '',
-      name: profile['full_name']?.toString() ?? profile['name']?.toString() ?? 'Unknown',
+      applicantId:
+          json['applicant_id']?.toString() ?? profile['id']?.toString() ?? '',
+      name:
+          profile['full_name']?.toString() ??
+          profile['name']?.toString() ??
+          'Unknown',
       email: profile['email']?.toString() ?? '',
-      role: profile['job_title']?.toString() ?? profile['role']?.toString() ?? 'Job Seeker',
+      role:
+          profile['job_title']?.toString() ??
+          profile['role']?.toString() ??
+          'Job Seeker',
       avatarUrl: profile['avatar_url']?.toString(),
       location: profile['location']?.toString() ?? 'Unknown',
       about: profile['about']?.toString() ?? '',

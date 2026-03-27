@@ -26,7 +26,9 @@ class JobCardShimmer extends StatelessWidget {
             height: 48,
             width: 48,
             isDark: isDark,
-            shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shapeBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           const SizedBox(height: 16),
 
@@ -48,29 +50,37 @@ class JobCardShimmer extends StatelessWidget {
 
           // Tags
           Row(
-            children: List.generate(3, (i) => Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: CustomShimmerWidget.rectangular(
-                height: 24,
-                width: 60,
-                isDark: isDark,
-                shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            children: List.generate(
+              3,
+              (i) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: CustomShimmerWidget.rectangular(
+                  height: 24,
+                  width: 60,
+                  isDark: isDark,
+                  shapeBorder: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
               ),
-            )),
+            ),
           ),
           const SizedBox(height: 16),
 
           // Details Row
           Row(
-            children: List.generate(3, (i) => Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: CustomShimmerWidget.rectangular(
-                  height: 12,
-                  isDark: isDark,
+            children: List.generate(
+              3,
+              (i) => Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: CustomShimmerWidget.rectangular(
+                    height: 12,
+                    isDark: isDark,
+                  ),
                 ),
               ),
-            )),
+            ),
           ),
         ],
       ),

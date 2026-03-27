@@ -8,7 +8,7 @@ class AppColors {
       HSLColor.fromAHSL(1.0, h, s / 100, l / 100).toColor();
 
   // Root / Light Mode
-  static final Color primaryColor=Color(0xff3C84F6);
+  static final Color primaryColor = Color(0xff3C84F6);
   static final Color lightBackground = _hsl(0, 0, 100);
   static final Color lightForeground = _hsl(222, 47, 11);
   static final Color lightCard = _hsl(0, 0, 100);
@@ -54,7 +54,10 @@ class AppColors {
   );
 
   static final LinearGradient lightGradientBackground = LinearGradient(
-    colors: [lightBackground, _hsl(210, 40, 96)], // slightly muted background end
+    colors: [
+      lightBackground,
+      _hsl(210, 40, 96),
+    ], // slightly muted background end
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -67,15 +70,15 @@ class AppColors {
 
   // Shadows
   static BoxShadow get shadowCardLight => BoxShadow(
-        color: Colors.black.withValues(alpha: 0.1),
-        blurRadius: 42,
-        spreadRadius: 1,
-        offset: const Offset(0, 4),
-      );
+    color: Colors.black.withValues(alpha: 0.1),
+    blurRadius: 42,
+    spreadRadius: 1,
+    offset: const Offset(0, 4),
+  );
 
   static BoxShadow get shadowCardDark => BoxShadow(
-        color: Colors.black.withValues(alpha: 0.3),
-        blurRadius: 32,
-        offset: const Offset(0, 8),
-      );
+    color: Colors.black.withValues(alpha: 0.3),
+    blurRadius: 32,
+    offset: const Offset(0, 8),
+  );
 }

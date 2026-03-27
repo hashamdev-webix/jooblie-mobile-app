@@ -8,12 +8,14 @@ class Sized {
   static Widget w(double width) => SizedBox(width: width);
 
   // Returns a responsive height SizedBox based on screen percentage
-  static Widget resH(double percentage) => SizedBox(height: Responsive.h(percentage));
+  static Widget resH(double percentage) =>
+      SizedBox(height: Responsive.h(percentage));
   // Returns a responsive width SizedBox based on screen percentage
-  static Widget resW(double percentage) => SizedBox(width: Responsive.w(percentage));
+  static Widget resW(double percentage) =>
+      SizedBox(width: Responsive.w(percentage));
 }
 
-// Extension to allow usage like 20.h or 15.w for fixed sizes, 
+// Extension to allow usage like 20.h or 15.w for fixed sizes,
 // and 5.resH / 10.resW for responsive percentages
 extension SizedExtension on num {
   SizedBox get h => SizedBox(height: toDouble());
@@ -22,8 +24,11 @@ extension SizedExtension on num {
   SizedBox get resW => SizedBox(width: Responsive.w(toDouble()));
 }
 
-class AppPadding{
-
-  static EdgeInsetsGeometry dashBoardPadding= const EdgeInsets.fromLTRB(15, 5, 15, 100);
-
+class AppPadding {
+  static EdgeInsetsGeometry dashBoardPadding = const EdgeInsets.fromLTRB(
+    15,
+    5,
+    15,
+    100,
+  );
 }

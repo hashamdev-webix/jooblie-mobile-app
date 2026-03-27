@@ -28,20 +28,22 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1500),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
     // Navigate after 3 seconds with session and onboarding logic
     Future.delayed(const Duration(seconds: 3), () async {
       final prefs = await SharedPreferences.getInstance();
-      
+
       final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
       if (!hasSeenOnboarding) {
         if (mounted) {
@@ -60,11 +62,13 @@ class _SplashScreenState extends State<SplashScreen>
           final isJobSeeker = userType != null
               ? (userType == 'job_seeker')
               : (prefs.getBool('is_job_seeker') ?? true);
-              
+
           if (mounted) {
-            Navigator.pushReplacementNamed(context, RoutesName.dashboard, arguments: {
-              'isJobSeeker': isJobSeeker,
-            });
+            Navigator.pushReplacementNamed(
+              context,
+              RoutesName.dashboard,
+              arguments: {'isJobSeeker': isJobSeeker},
+            );
           }
           return;
         }
@@ -129,14 +133,18 @@ class _SplashScreenState extends State<SplashScreen>
                         'Jooblie',
                         style: theme.textTheme.displaySmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.lightForeground,
+                          color: isDark
+                              ? Colors.white
+                              : AppColors.lightForeground,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Find your next adventure',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isDark ? Colors.white70 : AppColors.lightMutedForeground,
+                          color: isDark
+                              ? Colors.white70
+                              : AppColors.lightMutedForeground,
                         ),
                       ),
                     ],

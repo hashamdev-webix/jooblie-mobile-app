@@ -33,18 +33,14 @@ import 'package:jooblie_app/viewmodels/notifications_viewmodel.dart';
 import 'package:jooblie_app/services/notifications_service.dart';
 
 @pragma('vm:entry-point')
-Future<void> _firebaseBackgroundHandler(RemoteMessage message) async{
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
@@ -63,17 +59,21 @@ FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
           ChangeNotifierProvider(create: (_) => AppThemeProvider()),
           ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
           ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
-          ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
-          ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
-          ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
-          ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel()),
-          ChangeNotifierProvider(create: (_)=>CompaniesViewModel()),
-          ChangeNotifierProvider(create: (_)=>JobseekerHomeViewModel()),
-          ChangeNotifierProvider(create: (_)=>JobseekerApplicationsViewModel()),
-          ChangeNotifierProvider(create: (_)=>JobseekerRecommendationsViewModel()),
-          ChangeNotifierProvider(create: (_)=>JobseekerResumeViewModel()),
-          ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel()),
-          ChangeNotifierProvider(create: (_)=>JobSeekerJobsViewModel()),
+          ChangeNotifierProvider(create: (_) => RecruiterJobsViewModel()),
+          ChangeNotifierProvider(create: (_) => RecruiterDashboardViewModel()),
+          ChangeNotifierProvider(create: (_) => RecruiterPostJobViewModel()),
+          ChangeNotifierProvider(create: (_) => RecruiterCompanyViewModel()),
+          ChangeNotifierProvider(create: (_) => CompaniesViewModel()),
+          ChangeNotifierProvider(create: (_) => JobseekerHomeViewModel()),
+          ChangeNotifierProvider(
+            create: (_) => JobseekerApplicationsViewModel(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => JobseekerRecommendationsViewModel(),
+          ),
+          ChangeNotifierProvider(create: (_) => JobseekerResumeViewModel()),
+          ChangeNotifierProvider(create: (_) => JobseekerProfileViewModel()),
+          ChangeNotifierProvider(create: (_) => JobSeekerJobsViewModel()),
           ChangeNotifierProvider(create: (_) => VerifyEmailViewModel()),
           ChangeNotifierProvider(create: (_) => ApplicantDetailViewModel()),
           ChangeNotifierProvider(create: (_) => NotificationsViewModel()),
@@ -108,13 +108,9 @@ class _AppRestartWrapperState extends State<AppRestartWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyedSubtree(
-      key: key,
-      child: widget.child,
-    );
+    return KeyedSubtree(key: key, child: widget.child);
   }
 }
-
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -130,7 +126,7 @@ class _JooblieAppState extends State<JooblieApp> {
   void initState() {
     super.initState();
     _setupAuthListener();
-    
+
     // Initialize push notifications globally
     final notificationsService = NotificationsService();
     notificationsService.requestNotificationPermission();
@@ -141,9 +137,10 @@ class _JooblieAppState extends State<JooblieApp> {
   void _setupAuthListener() {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
-      
+
       // Auto-sync token on login or session start
-      if (event == AuthChangeEvent.signedIn || event == AuthChangeEvent.initialSession) {
+      if (event == AuthChangeEvent.signedIn ||
+          event == AuthChangeEvent.initialSession) {
         NotificationsService().syncTokenToSupabase();
       }
 
@@ -164,14 +161,17 @@ class _JooblieAppState extends State<JooblieApp> {
 
     return Consumer<AppThemeProvider>(
       builder: (context, themeProvider, child) {
-        final isDark = themeProvider.themeMode == ThemeMode.dark || 
-                      (themeProvider.themeMode == ThemeMode.system && 
-                       MediaQuery.of(context).platformBrightness == Brightness.dark);
+        final isDark =
+            themeProvider.themeMode == ThemeMode.dark ||
+            (themeProvider.themeMode == ThemeMode.system &&
+                MediaQuery.of(context).platformBrightness == Brightness.dark);
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
-            statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+            statusBarIconBrightness: isDark
+                ? Brightness.light
+                : Brightness.dark,
             statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
           ),
           child: MaterialApp(

@@ -64,19 +64,32 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
 
   Widget _buildShimmerStats(bool isDark) {
     return Column(
-      children: List.generate(4, (i) => Column(
-        children: [
-          CustomShimmerWidget.rectangular(height: 80, isDark: isDark,
-            shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-          12.h,
-        ],
-      )),
+      children: List.generate(
+        4,
+        (i) => Column(
+          children: [
+            CustomShimmerWidget.rectangular(
+              height: 80,
+              isDark: isDark,
+              shapeBorder: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            12.h,
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildShimmerRecent(bool isDark) {
-    return CustomShimmerWidget.rectangular(height: 220, isDark: isDark,
-      shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)));
+    return CustomShimmerWidget.rectangular(
+      height: 220,
+      isDark: isDark,
+      shapeBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
   }
 
   @override
@@ -97,7 +110,12 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              HeaderAppBarWidget(theme: theme, isDark: isDark, blackTitle: 'Job', blueTitle: 'lie'),
+              HeaderAppBarWidget(
+                theme: theme,
+                isDark: isDark,
+                blackTitle: 'Job',
+                blueTitle: 'lie',
+              ),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: vm.fetchStats,
@@ -147,7 +165,10 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
                                   label: stat.label,
                                   change: stat.badge,
                                   onTap: stat.label == 'Saved Jobs'
-                                      ? () => Navigator.pushNamed(context, RoutesName.favorites)
+                                      ? () => Navigator.pushNamed(
+                                          context,
+                                          RoutesName.favorites,
+                                        )
                                       : null,
                                 ),
                               ),
@@ -173,14 +194,19 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
                             itemBuilder: (context, dynamic item, idx) {
                               if (item == null) {
                                 return Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   child: Center(
                                     child: Text(
                                       'No applications yet.\nStart applying to jobs!',
                                       textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: isDark ? AppColors.darkMuted : Colors.grey[500],
-                                      ),
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            color: isDark
+                                                ? AppColors.darkMuted
+                                                : Colors.grey[500],
+                                          ),
                                     ),
                                   ),
                                 );
@@ -207,17 +233,27 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
     );
   }
 
-  Widget _buildErrorWidget(JobseekerHomeViewModel vm, ThemeData theme, bool isDark) {
+  Widget _buildErrorWidget(
+    JobseekerHomeViewModel vm,
+    ThemeData theme,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24),
       child: Column(
         children: [
-          Icon(Icons.wifi_off_rounded, size: 48,
-              color: isDark ? AppColors.darkMuted : Colors.grey),
+          Icon(
+            Icons.wifi_off_rounded,
+            size: 48,
+            color: isDark ? AppColors.darkMuted : Colors.grey,
+          ),
           12.h,
-          Text('Could not load stats.',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                  color: isDark ? AppColors.darkMuted : Colors.grey[600])),
+          Text(
+            'Could not load stats.',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isDark ? AppColors.darkMuted : Colors.grey[600],
+            ),
+          ),
           12.h,
           ElevatedButton.icon(
             onPressed: vm.fetchStats,
@@ -226,7 +262,9 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.lightPrimary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],

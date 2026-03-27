@@ -92,11 +92,18 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
       }
 
       final position = await Geolocator.getCurrentPosition();
-      final placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-      
+      final placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
       if (placemarks.isNotEmpty) {
         final placemark = placemarks.first;
-        final city = placemark.locality ?? placemark.subAdministrativeArea ?? placemark.administrativeArea ?? 'My Location';
+        final city =
+            placemark.locality ??
+            placemark.subAdministrativeArea ??
+            placemark.administrativeArea ??
+            'My Location';
         setLocation(city);
       } else {
         setLocation('My Location');
@@ -137,14 +144,16 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
           'title.ilike.%$search%,'
           'company_name.ilike.%$search%,'
           'description.ilike.%$search%,'
-          'location.ilike.%$search%'
+          'location.ilike.%$search%',
         );
       }
 
       // 3. FILTERS (Server-side AND filtering)
-      
+
       // Location (Specific filter if not already searched)
-      if (_filters.location != null && _filters.location != 'My Location' && _filters.location!.isNotEmpty) {
+      if (_filters.location != null &&
+          _filters.location != 'My Location' &&
+          _filters.location!.isNotEmpty) {
         queryBuilder = queryBuilder.ilike('location', '%${_filters.location}%');
       }
 
@@ -178,7 +187,10 @@ class JobSeekerJobsViewModel extends ChangeNotifier {
 
       // Map to models (No client-side filtering anymore)
       final List<JobRecommendationModel> newJobs = data
-          .map((json) => JobRecommendationModel.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) =>
+                JobRecommendationModel.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       if (data.length < _limit) hasMore = false;

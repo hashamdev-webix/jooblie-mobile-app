@@ -7,7 +7,7 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   ForgotPasswordViewModel({required this.authViewModel});
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  
+
   String _email = '';
   bool _isLoading = false;
   String? _successMessage;
@@ -34,13 +34,13 @@ class ForgotPasswordViewModel extends ChangeNotifier {
   Future<String?> sendResetLink() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      
+
       _isLoading = true;
       _successMessage = null;
       notifyListeners();
 
       final result = await authViewModel.resetPassword(_email);
-      
+
       _isLoading = false;
       if (result == null) {
         _successMessage = 'Password reset link has been sent to your email! ✅';

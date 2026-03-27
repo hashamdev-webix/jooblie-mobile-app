@@ -28,18 +28,18 @@ class CreateJobRequest {
   });
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'company_name': companyName,
-        'status': 'active',
-        'description': description,
-        'requirements': requirements,
-        'location': location,
-        'job_type': jobType,
-        'skills': skills,
-        'experience': experience,
-        if (salaryMin != null) 'salary_min': salaryMin,
-        if (salaryMax != null) 'salary_max': salaryMax,
-        if (salaryCurrency != null) 'salary_currency': salaryCurrency,
-        if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
-      };
+    'title': title,
+    'company_name': companyName,
+    'status': 'active',
+    'description': description,
+    'requirements': requirements,
+    'location': location,
+    'job_type': jobType,
+    'skills': skills,
+    'experience': experience,
+    if (salaryMin != null) 'salary_min': salaryMin,
+    if (salaryMax != null) 'salary_max': salaryMax,
+    if (salaryCurrency != null) 'salary_currency': salaryCurrency,
+    if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
+  };
 }

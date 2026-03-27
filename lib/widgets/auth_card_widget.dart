@@ -6,7 +6,7 @@ class AuthCardWidget extends StatelessWidget {
     super.key,
     required this.cardWidth,
     required this.theme,
-  required this.child
+    required this.child,
     // required this.isDark,
   });
 
@@ -26,18 +26,16 @@ class AuthCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.cardColor,
         border: Border.all(
-          color:theme.brightness == Brightness.dark ? Colors.black12: Colors.grey.shade100,
+          color: theme.brightness == Brightness.dark
+              ? Colors.black12
+              : Colors.grey.shade100,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-
-
           isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
-
-
         ],
       ),
-      child:child,
+      child: child,
     );
   }
 }

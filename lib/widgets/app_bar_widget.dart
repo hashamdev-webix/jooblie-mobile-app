@@ -77,9 +77,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
         children: [
           showAppLogo ? AppLogo() : SizedBox.shrink(),
           10.w,
-          GradientStyleTextWidget(title: title,
-          fontSize: 20,
-          ),
+          GradientStyleTextWidget(title: title, fontSize: 20),
           // Text(
           //   title,
           //   style: Theme.of(context).textTheme.titleMedium!.copyWith(

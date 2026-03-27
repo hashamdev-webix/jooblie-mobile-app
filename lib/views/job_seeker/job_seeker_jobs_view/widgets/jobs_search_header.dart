@@ -22,21 +22,11 @@ class JobsSearchHeader extends StatelessWidget {
       child: Column(
         children: [
           // Search Jobs Input
-          _buildInput(
-            context,
-            Icons.search,
-            'Search jobs...',
-            isDark,
-          ),
+          _buildInput(context, Icons.search, 'Search jobs...', isDark),
           const SizedBox(height: 12),
 
           // Location Input
-          _buildInput(
-            context,
-            Icons.location_on_outlined,
-            'Location',
-            isDark,
-          ),
+          _buildInput(context, Icons.location_on_outlined, 'Location', isDark),
           const SizedBox(height: 16),
 
           // Filters Button
@@ -66,12 +56,19 @@ class JobsSearchHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildInput(BuildContext context, IconData icon, String hint, bool isDark) {
+  Widget _buildInput(
+    BuildContext context,
+    IconData icon,
+    String hint,
+    bool isDark,
+  ) {
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xffF8FAFC),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.05)
+            : const Color(0xffF8FAFC),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(

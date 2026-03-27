@@ -7,21 +7,29 @@ class VerifyEmailViewModel extends ChangeNotifier {
   StreamSubscription<AuthState>? _authStateSubscription;
 
   void listenAuthentication(BuildContext context) {
-    _authStateSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      final session = data.session;
-      if (session != null) {
-        final user = session.user;
-        if (user.emailConfirmedAt != null) {
-          // If confirmed, route them through the splash logic which reads local prefs correctly
-          if (context.mounted) {
-            Navigator.pushNamedAndRemoveUntil(context, RoutesName.splash, (route) => false);
+    _authStateSubscription = Supabase.instance.client.auth.onAuthStateChange
+        .listen((data) {
+          final session = data.session;
+          if (session != null) {
+            final user = session.user;
+            if (user.emailConfirmedAt != null) {
+              // If confirmed, route them through the splash logic which reads local prefs correctly
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  RoutesName.splash,
+                  (route) => false,
+                );
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
-  Future<void> resendVerificationEmail(BuildContext context, String email) async {
+  Future<void> resendVerificationEmail(
+    BuildContext context,
+    String email,
+  ) async {
     try {
       await Supabase.instance.client.auth.resend(
         type: OtpType.signup,
@@ -29,14 +37,16 @@ class VerifyEmailViewModel extends ChangeNotifier {
       );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Verification email resent successfully!')),
+          const SnackBar(
+            content: Text('Verification email resent successfully!'),
+          ),
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to resend email: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to resend email: $e')));
       }
     }
   }

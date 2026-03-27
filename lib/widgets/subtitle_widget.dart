@@ -5,9 +5,9 @@ class SubTitleWidget extends StatelessWidget {
   final String subTitle;
   const SubTitleWidget({
     super.key,
-    required this.theme, required this.subTitle,
+    required this.theme,
+    required this.subTitle,
   });
-
 
   @override
   Widget build(BuildContext context) {

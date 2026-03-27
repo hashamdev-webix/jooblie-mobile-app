@@ -91,7 +91,13 @@ class LoginScreen extends StatelessWidget {
                                       ],
                                     ),
                                     child: ChangeNotifierProvider(
-                                      create: (ctx) => LoginViewModel(authViewModel: Provider.of<AuthViewModel>(ctx, listen: false)),
+                                      create: (ctx) => LoginViewModel(
+                                        authViewModel:
+                                            Provider.of<AuthViewModel>(
+                                              ctx,
+                                              listen: false,
+                                            ),
+                                      ),
                                       child: Consumer<LoginViewModel>(
                                         builder: (context, viewModel, child) {
                                           return Form(
@@ -163,19 +169,23 @@ class LoginScreen extends StatelessWidget {
                                                 ),
                                                 8.h,
                                                 Align(
-                                                  alignment: Alignment.centerRight,
+                                                  alignment:
+                                                      Alignment.centerRight,
                                                   child: TextButton(
                                                     onPressed: () {
                                                       Navigator.pushNamed(
                                                         context,
-                                                        RoutesName.forgotPassword,
+                                                        RoutesName
+                                                            .forgotPassword,
                                                       );
                                                     },
                                                     child: Text(
                                                       'Forgot Password?',
                                                       style: TextStyle(
-                                                        color: AppColors.lightPrimary,
-                                                        fontWeight: FontWeight.w600,
+                                                        color: AppColors
+                                                            .lightPrimary,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                         fontSize: 13,
                                                       ),
                                                     ),
@@ -189,24 +199,32 @@ class LoginScreen extends StatelessWidget {
                                                   onPressed: () async {
                                                     final result =
                                                         await viewModel.login();
-                                                      if (result == null &&
-                                                          context.mounted) {
-                                                        Fluttertoast.showToast(msg: "Login successful!");
-                                                        
-                                                        if (context.mounted) {
-                                                          Navigator.pushReplacementNamed(
-                                                            context,
-                                                            RoutesName.dashboard,
-                                                            arguments: {
-                                                              'isJobSeeker': viewModel.isJobSeeker,
-                                                            },
-                                                          );
-                                                        }
-                                                      } else if (context.mounted) {
-                                                        CustomFlushbar.showError(
-                                                          context: context, 
-                                                          message: result ?? 'Login failed',
+                                                    if (result == null &&
+                                                        context.mounted) {
+                                                      Fluttertoast.showToast(
+                                                        msg:
+                                                            "Login successful!",
+                                                      );
+
+                                                      if (context.mounted) {
+                                                        Navigator.pushReplacementNamed(
+                                                          context,
+                                                          RoutesName.dashboard,
+                                                          arguments: {
+                                                            'isJobSeeker':
+                                                                viewModel
+                                                                    .isJobSeeker,
+                                                          },
                                                         );
+                                                      }
+                                                    } else if (context
+                                                        .mounted) {
+                                                      CustomFlushbar.showError(
+                                                        context: context,
+                                                        message:
+                                                            result ??
+                                                            'Login failed',
+                                                      );
                                                     }
                                                   },
                                                 ),

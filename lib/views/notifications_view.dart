@@ -27,7 +27,9 @@ class _NotificationsViewState extends State<NotificationsView> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBackground : AppColors.lightBackground,
+      backgroundColor: isDark
+          ? AppColors.darkBackground
+          : AppColors.lightBackground,
       appBar: AppBar(
         title: const Text('Notifications'),
         centerTitle: true,
@@ -56,11 +58,17 @@ class _NotificationsViewState extends State<NotificationsView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.notifications_off_outlined, size: 64, color: Colors.grey[400]),
+                  Icon(
+                    Icons.notifications_off_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
                   16.h,
                   Text(
                     'No notifications yet',
-                    style: theme.textTheme.titleMedium?.copyWith(color: Colors.grey),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
@@ -83,12 +91,19 @@ class _NotificationsViewState extends State<NotificationsView> {
                     color: Colors.red.shade400,
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 20),
-                    child: const Icon(Icons.delete_outline, color: Colors.white, size: 28),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                   ),
                   onDismissed: (direction) {
                     vm.deleteNotification(notification.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Notification deleted'), duration: Duration(seconds: 2)),
+                      const SnackBar(
+                        content: Text('Notification deleted'),
+                        duration: Duration(seconds: 2),
+                      ),
                     );
                   },
                   child: InkWell(
@@ -96,105 +111,126 @@ class _NotificationsViewState extends State<NotificationsView> {
                       if (isUnread) {
                         vm.markAsRead(notification.id);
                       }
-                      
+
                       final type = notification.type;
                       var refId = notification.referenceId;
 
                       // Routing Logic Based on Type
                       if (type == null) {
-                         // Fallback for older notifications
-                         if (notification.title.toLowerCase().contains('application')) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              RoutesName.dashboard,
-                              (route) => false,
-                              arguments: {'isJobSeeker': true, 'initialIndex': 3},
-                            );
-                         }
+                        // Fallback for older notifications
+                        if (notification.title.toLowerCase().contains(
+                          'application',
+                        )) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            RoutesName.dashboard,
+                            (route) => false,
+                            arguments: {'isJobSeeker': true, 'initialIndex': 3},
+                          );
+                        }
                       } else if (type == 'status_update') {
-                         Navigator.pushNamedAndRemoveUntil(
-                           context,
-                           RoutesName.dashboard,
-                           (route) => false,
-                           arguments: {'isJobSeeker': true, 'initialIndex': 3},
-                         );
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          RoutesName.dashboard,
+                          (route) => false,
+                          arguments: {'isJobSeeker': true, 'initialIndex': 3},
+                        );
                       } else if (type == 'new_application' && refId != null) {
-                         // Some data sources return quoted strings, strip if necessary
-                         refId = refId.replaceAll('"', '').trim();
-                         Navigator.pushNamed(
-                           context,
-                           RoutesName.applicantDetail,
-                           arguments: refId,
-                         );
+                        // Some data sources return quoted strings, strip if necessary
+                        refId = refId.replaceAll('"', '').trim();
+                        Navigator.pushNamed(
+                          context,
+                          RoutesName.applicantDetail,
+                          arguments: refId,
+                        );
                       }
                     },
-                  child: Container(
-                    color: isUnread 
-                        ? (isDark ? AppColors.lightPrimary.withOpacity(0.1) : Colors.blue.withOpacity(0.05)) 
-                        : Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: isUnread 
-                                ? AppColors.lightPrimary.withOpacity(0.1) 
-                                : (isDark ? AppColors.darkMuted : Colors.grey[200]),
-                            shape: BoxShape.circle,
+                    child: Container(
+                      color: isUnread
+                          ? (isDark
+                                ? AppColors.lightPrimary.withOpacity(0.1)
+                                : Colors.blue.withOpacity(0.05))
+                          : Colors.transparent,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isUnread
+                                  ? AppColors.lightPrimary.withOpacity(0.1)
+                                  : (isDark
+                                        ? AppColors.darkMuted
+                                        : Colors.grey[200]),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              isUnread
+                                  ? Icons.notifications_active_rounded
+                                  : Icons.notifications_none_rounded,
+                              color: isUnread
+                                  ? AppColors.lightPrimary
+                                  : Colors.grey,
+                              size: 24,
+                            ),
                           ),
-                          child: Icon(
-                            isUnread ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
-                            color: isUnread ? AppColors.lightPrimary : Colors.grey,
-                            size: 24,
-                          ),
-                        ),
-                        16.w,
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      notification.title,
-                                      style: theme.textTheme.titleMedium?.copyWith(
-                                        fontWeight: isUnread ? FontWeight.bold : FontWeight.w500,
+                          16.w,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        notification.title,
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              fontWeight: isUnread
+                                                  ? FontWeight.bold
+                                                  : FontWeight.w500,
+                                            ),
                                       ),
                                     ),
-                                  ),
-                                  if (isUnread)
-                                    Container(
-                                      width: 8,
-                                      height: 8,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.lightPrimary,
-                                        shape: BoxShape.circle,
+                                    if (isUnread)
+                                      Container(
+                                        width: 8,
+                                        height: 8,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.lightPrimary,
+                                          shape: BoxShape.circle,
+                                        ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                              4.h,
-                              Text(
-                                notification.body,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: isDark ? Colors.white70 : Colors.black87,
+                                  ],
                                 ),
-                              ),
-                              8.h,
-                              Text(
-                                _timeAgo(notification.createdAt),
-                                style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
-                              ),
-                            ],
+                                4.h,
+                                Text(
+                                  notification.body,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : Colors.black87,
+                                  ),
+                                ),
+                                8.h,
+                                Text(
+                                  _timeAgo(notification.createdAt),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                   ), // closing InkWell
                 ); // closing Dismissible
               },

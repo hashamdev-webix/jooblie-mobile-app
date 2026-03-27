@@ -19,7 +19,9 @@ class NetworkService extends ChangeNotifier with WidgetsBindingObserver {
   void _initConnectivity() {
     checkConnection();
 
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
+    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((
+      results,
+    ) {
       if (results.contains(ConnectivityResult.none)) {
         _updateConnectionStatus(false);
       } else {
@@ -27,7 +29,9 @@ class NetworkService extends ChangeNotifier with WidgetsBindingObserver {
       }
     });
 
-    _internetSubscription = InternetConnection().onStatusChange.listen((status) {
+    _internetSubscription = InternetConnection().onStatusChange.listen((
+      status,
+    ) {
       final hasInternet = status == InternetStatus.connected;
       _updateConnectionStatus(hasInternet);
     });
@@ -60,7 +64,8 @@ class NetworkService extends ChangeNotifier with WidgetsBindingObserver {
       // Small debounce before reporting "no internet" to avoid false positives on resume or transient state
       _debounceTimer?.cancel();
       _debounceTimer = Timer(const Duration(seconds: 2), () async {
-        bool stillDisconnected = !(await InternetConnection().hasInternetAccess);
+        bool stillDisconnected =
+            !(await InternetConnection().hasInternetAccess);
         if (stillDisconnected && _isConnected) {
           _isConnected = false;
           notifyListeners();

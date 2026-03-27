@@ -32,7 +32,11 @@ class CompaniesView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               HeaderAppBarWidget(
-                  theme: theme, isDark: isDark, blackTitle: 'Job', blueTitle: 'lie'),
+                theme: theme,
+                isDark: isDark,
+                blackTitle: 'Job',
+                blueTitle: 'lie',
+              ),
               Expanded(
                 child: Consumer<CompaniesViewModel>(
                   builder: (context, vm, child) {
@@ -44,7 +48,11 @@ class CompaniesView extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.error_outline, size: 48, color: Colors.red[400]),
+                            Icon(
+                              Icons.error_outline,
+                              size: 48,
+                              color: Colors.red[400],
+                            ),
                             16.h,
                             Text(vm.error!, style: theme.textTheme.bodyLarge),
                             16.h,
@@ -59,27 +67,37 @@ class CompaniesView extends StatelessWidget {
 
                     if (vm.companies.isEmpty) {
                       return RefreshIndicator(
-                         onRefresh: vm.fetchCompanies,
+                        onRefresh: vm.fetchCompanies,
                         child: ListView(
-                          children:[
-                             SizedBox(
-                               height: MediaQuery.of(context).size.height * 0.6,
-                               child: Center(
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.6,
+                              child: Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.business_center_outlined, size: 64, color: isDark ? AppColors.darkMuted : Colors.grey[400]),
+                                    Icon(
+                                      Icons.business_center_outlined,
+                                      size: 64,
+                                      color: isDark
+                                          ? AppColors.darkMuted
+                                          : Colors.grey[400],
+                                    ),
                                     16.h,
-                                    Text('No companies hiring right now.', 
-                                      style: theme.textTheme.bodyLarge?.copyWith(
-                                        color: isDark ? AppColors.darkMutedForeground : Colors.grey[600],
-                                      )
+                                    Text(
+                                      'No companies hiring right now.',
+                                      style: theme.textTheme.bodyLarge
+                                          ?.copyWith(
+                                            color: isDark
+                                                ? AppColors.darkMutedForeground
+                                                : Colors.grey[600],
+                                          ),
                                     ),
                                   ],
                                 ),
+                              ),
                             ),
-                             ),
-                          ]
+                          ],
                         ),
                       );
                     }
@@ -98,19 +116,33 @@ class CompaniesView extends StatelessWidget {
                                 RichText(
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
-                                    style: theme.textTheme.headlineMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: isDark ? Colors.white : Colors.black,
-                                    ),
+                                    style: theme.textTheme.headlineMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
                                     children: [
                                       const TextSpan(text: 'Top '),
                                       TextSpan(
                                         text: 'Companies',
                                         style: TextStyle(
                                           foreground: Paint()
-                                            ..shader = const LinearGradient(
-                                              colors: [Colors.blue, Colors.cyan],
-                                            ).createShader(const Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                                            ..shader =
+                                                const LinearGradient(
+                                                  colors: [
+                                                    Colors.blue,
+                                                    Colors.cyan,
+                                                  ],
+                                                ).createShader(
+                                                  const Rect.fromLTWH(
+                                                    0.0,
+                                                    0.0,
+                                                    200.0,
+                                                    70.0,
+                                                  ),
+                                                ),
                                         ),
                                       ),
                                       const TextSpan(text: ' Hiring'),
@@ -119,12 +151,16 @@ class CompaniesView extends StatelessWidget {
                                 ),
                                 12.h,
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
                                   child: Text(
                                     'Explore leading companies and discover amazing career opportunities.',
                                     textAlign: TextAlign.center,
                                     style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: isDark ? AppColors.darkMutedForeground : Colors.grey[600],
+                                      color: isDark
+                                          ? AppColors.darkMutedForeground
+                                          : Colors.grey[600],
                                     ),
                                   ),
                                 ),
@@ -174,27 +210,36 @@ class CompaniesView extends StatelessWidget {
                 height: 32,
                 width: 250,
                 isDark: isDark,
-                shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shapeBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               12.h,
               CustomShimmerWidget.rectangular(
                 height: 16,
                 width: 280,
                 isDark: isDark,
-                shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                shapeBorder: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
               ),
             ],
           ),
         ),
         32.h,
-        ...List.generate(5, (index) => Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: CustomShimmerWidget.rectangular(
-            height: 180,
-            isDark: isDark,
-            shapeBorder: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        ...List.generate(
+          5,
+          (index) => Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: CustomShimmerWidget.rectangular(
+              height: 180,
+              isDark: isDark,
+              shapeBorder: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -235,13 +280,22 @@ class CompanyCard extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.blue.withOpacity(0.1) : Colors.blue.withOpacity(0.05),
+                  color: isDark
+                      ? Colors.blue.withOpacity(0.1)
+                      : Colors.blue.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.business_rounded, color: Colors.blue, size: 30),
+                child: const Icon(
+                  Icons.business_rounded,
+                  color: Colors.blue,
+                  size: 30,
+                ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.cyan.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(100),
@@ -280,7 +334,11 @@ class CompanyCard extends StatelessWidget {
           16.h,
           Row(
             children: [
-              Icon(Icons.location_on_outlined, size: 16, color: Colors.blue[400]),
+              Icon(
+                Icons.location_on_outlined,
+                size: 16,
+                color: Colors.blue[400],
+              ),
               6.w,
               Expanded(
                 child: Text(

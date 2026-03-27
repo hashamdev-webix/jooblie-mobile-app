@@ -23,23 +23,22 @@ class CurrentResumeCardWidget extends StatelessWidget {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-          isDark ? AppColors.darkBorder : AppColors.lightBorder,
+          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
         ),
         boxShadow: [
-          isDark
-              ? AppColors.shadowCardDark
-              : AppColors.shadowCardLight,
+          isDark ? AppColors.shadowCardDark : AppColors.shadowCardLight,
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Current Resume',
-              style: theme.textTheme.titleLarge!.copyWith(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold
-              )),
+          Text(
+            'Current Resume',
+            style: theme.textTheme.titleLarge!.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 16),
           Container(
             margin: const EdgeInsets.only(bottom: 10),
@@ -56,12 +55,14 @@ class CurrentResumeCardWidget extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.lightPrimary
-                        .withValues(alpha: 0.1),
+                    color: AppColors.lightPrimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.insert_drive_file_outlined,
-                      color: AppColors.lightPrimary, size: 20),
+                  child: Icon(
+                    Icons.insert_drive_file_outlined,
+                    color: AppColors.lightPrimary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -73,15 +74,16 @@ class CurrentResumeCardWidget extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Uploaded ${vm.currentResume!.uploadDate} • ${vm.currentResume!.fileSize}',
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontSize: 12),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -99,19 +101,23 @@ class CurrentResumeCardWidget extends StatelessWidget {
                         ),
                       )
                     : IconButton(
-                        icon: Icon(Bootstrap.cloud_download,
-                            size: 20,
-                            color: isDark
-                                ? AppColors.darkMutedForeground
-                                : AppColors.lightMutedForeground),
+                        icon: Icon(
+                          Bootstrap.cloud_download,
+                          size: 20,
+                          color: isDark
+                              ? AppColors.darkMutedForeground
+                              : AppColors.lightMutedForeground,
+                        ),
                         onPressed: vm.downloadResume,
                       ),
                 IconButton(
-                  icon: Icon(Bootstrap.trash,
-                      size: 20,
-                      color: isDark
-                          ? AppColors.darkMutedForeground
-                          : AppColors.lightMutedForeground),
+                  icon: Icon(
+                    Bootstrap.trash,
+                    size: 20,
+                    color: isDark
+                        ? AppColors.darkMutedForeground
+                        : AppColors.lightMutedForeground,
+                  ),
                   onPressed: vm.deleteResume,
                 ),
               ],
@@ -127,17 +133,19 @@ class CurrentResumeCardWidget extends StatelessWidget {
               color: AppColors.lightSecondary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppColors.lightSecondary
-                    .withValues(alpha: 0.3),
+                color: AppColors.lightSecondary.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('✨ ',
-                    style: TextStyle(
-                        color: AppColors.lightSecondary,
-                        fontSize: 14)),
+                Text(
+                  '✨ ',
+                  style: TextStyle(
+                    color: AppColors.lightSecondary,
+                    fontSize: 14,
+                  ),
+                ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,8 +161,9 @@ class CurrentResumeCardWidget extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         vm.currentResume!.aiMessage,
-                        style: theme.textTheme.bodyMedium
-                            ?.copyWith(fontSize: 12),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),

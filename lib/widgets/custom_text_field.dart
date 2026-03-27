@@ -66,7 +66,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           validator: widget.validator,
           onSaved: widget.onSaved,
           style: theme.textTheme.labelLarge,
-          onChanged:widget.onChanged ,
+          onChanged: widget.onChanged,
           decoration: InputDecoration(
             hintText: widget.hintText,
             prefixIcon: Icon(widget.prefixIcon, size: 20),
