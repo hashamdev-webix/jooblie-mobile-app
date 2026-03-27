@@ -54,32 +54,65 @@ FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
   final supabaseService = SupabaseService();
   final authRepository = AuthRepository(supabaseService);
 
-    runApp(
-      MultiProvider(
+  runApp(
+    AppRestartWrapper(
+      child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => NetworkService()),
           ChangeNotifierProvider(create: (_) => AuthViewModel(authRepository)),
           ChangeNotifierProvider(create: (_) => AppThemeProvider()),
-        ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
-        ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
-        ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
-        ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
-        ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
-        ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel()),
-        ChangeNotifierProvider(create: (_)=>CompaniesViewModel()),
-        ChangeNotifierProvider(create: (_)=>JobseekerHomeViewModel()),
-        ChangeNotifierProvider(create: (_)=>JobseekerApplicationsViewModel()),
-        ChangeNotifierProvider(create: (_)=>JobseekerRecommendationsViewModel()),
-        ChangeNotifierProvider(create: (_)=>JobseekerResumeViewModel()),
-        ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel()),
-        ChangeNotifierProvider(create: (_)=>JobSeekerJobsViewModel()),
-        ChangeNotifierProvider(create: (_) => VerifyEmailViewModel()),
-        ChangeNotifierProvider(create: (_) => ApplicantDetailViewModel()),
-        ChangeNotifierProvider(create: (_) => NotificationsViewModel()),
-      ],
-      child: const JooblieApp(),
+          ChangeNotifierProvider(create: (_) => OnboardingViewModel()),
+          ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
+          ChangeNotifierProvider(create: (_)=>RecruiterJobsViewModel()),
+          ChangeNotifierProvider(create: (_)=>RecruiterDashboardViewModel()),
+          ChangeNotifierProvider(create: (_)=>RecruiterPostJobViewModel()),
+          ChangeNotifierProvider(create: (_)=>RecruiterCompanyViewModel()),
+          ChangeNotifierProvider(create: (_)=>CompaniesViewModel()),
+          ChangeNotifierProvider(create: (_)=>JobseekerHomeViewModel()),
+          ChangeNotifierProvider(create: (_)=>JobseekerApplicationsViewModel()),
+          ChangeNotifierProvider(create: (_)=>JobseekerRecommendationsViewModel()),
+          ChangeNotifierProvider(create: (_)=>JobseekerResumeViewModel()),
+          ChangeNotifierProvider(create: (_)=>JobseekerProfileViewModel()),
+          ChangeNotifierProvider(create: (_)=>JobSeekerJobsViewModel()),
+          ChangeNotifierProvider(create: (_) => VerifyEmailViewModel()),
+          ChangeNotifierProvider(create: (_) => ApplicantDetailViewModel()),
+          ChangeNotifierProvider(create: (_) => NotificationsViewModel()),
+        ],
+        child: const JooblieApp(),
+      ),
     ),
   );
+}
+
+class AppRestartWrapper extends StatefulWidget {
+  final Widget child;
+
+  const AppRestartWrapper({super.key, required this.child});
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_AppRestartWrapperState>()?.restartApp();
+  }
+
+  @override
+  State<AppRestartWrapper> createState() => _AppRestartWrapperState();
+}
+
+class _AppRestartWrapperState extends State<AppRestartWrapper> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
+    );
+  }
 }
 
 

@@ -51,6 +51,8 @@ class ResetPasswordViewModel extends ChangeNotifier {
         await Supabase.instance.client.auth.updateUser(
           UserAttributes(password: _password),
         );
+        // Destroy the recovery session so they are forced to log in manually
+        await Supabase.instance.client.auth.signOut();
         _isLoading = false;
         notifyListeners();
         return null; // Success

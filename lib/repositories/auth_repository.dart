@@ -3,6 +3,7 @@ import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/services/supabase_service.dart';
 import 'package:jooblie_app/services/notifications_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:jooblie_app/main.dart';
 
 class AuthRepository {
   final SupabaseService _supabaseService;
@@ -73,11 +74,10 @@ class AuthRepository {
 
   Future<void> signOut(BuildContext context) async {
     await _client.auth.signOut();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      RoutesName.login,
-      (route) => false,
-    );
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, RoutesName.login, (route)=>false);
+      AppRestartWrapper.restartApp(context);
+    }
   }
 
   Future<void> resetPassword(String email) async {
