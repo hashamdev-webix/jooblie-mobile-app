@@ -213,15 +213,31 @@ class JobPostCard extends StatelessWidget {
               6.w,
               Text('${job.applicants}', style: theme.textTheme.bodyMedium),
               20.w,
-              Icon(
-                Icons.remove_red_eye_outlined,
-                size: 16,
-                color: isDark
-                    ? AppColors.darkMutedForeground
-                    : AppColors.lightMutedForeground,
+              GestureDetector(
+                onTap: () => context
+                    .read<RecruiterDashboardViewModel>()
+                    .navigateToJobInsights(context, job.id, job.title),
+                child: Tooltip(
+                  message: 'View detailed insights',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.remove_red_eye_outlined,
+                        size: 16,
+                        color: AppColors.lightPrimary, // Highlight as tappable
+                      ),
+                      6.w,
+                      Text(
+                        '${job.views}',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.lightPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              6.w,
-              Text('${job.views}', style: theme.textTheme.bodyMedium),
             ],
           ),
           14.h,

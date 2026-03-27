@@ -37,6 +37,31 @@ class JobseekerRepository {
   }
 
   /// Fetches the total number of profile views for the job seeker.
+  /// Fetches total views for all jobs the user has applied to.
+  Future<int> getAppliedJobViewsCount(String userId) async {
+    try {
+      // 1. Get IDs of jobs the user applied to
+      final apps = await _client
+          .from('applications')
+          .select('job_id')
+          .eq('applicant_id', userId);
+      
+      final jobIds = (apps as List).map((a) => a['job_id'].toString()).toList();
+      if (jobIds.isEmpty) return 0;
+
+      // 2. Count total views for these jobs
+      final viewsResponse = await _client
+          .from('views')
+          .select('id')
+          .inFilter('job_id', jobIds);
+      
+      return (viewsResponse as List).length;
+    } catch (e) {
+      print('Error fetching applied job views: $e');
+      return 0;
+    }
+  }
+
   Future<int> getProfileViewsCount(String userId) async {
     try {
       final response = await _client
@@ -47,6 +72,21 @@ class JobseekerRepository {
     } catch (e) {
       debugPrint('Error fetching profile views count: $e');
       return 0;
+    }
+  }
+
+  /// Fetches detailed profile views with metadata snapshot.
+  Future<List<Map<String, dynamic>>> getDetailedProfileViews(String userId) async {
+    try {
+      final response = await _client
+          .from('views')
+          .select('*')
+          .eq('profile_id', userId)
+          .order('last_viewed_at', ascending: false);
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      debugPrint('Error fetching detailed profile views: $e');
+      return [];
     }
   }
 

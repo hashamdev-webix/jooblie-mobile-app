@@ -71,6 +71,14 @@ class ProfileFormCardWidget extends StatelessWidget {
             isDark: isDark,
           ),
           const SizedBox(height: 16),
+          ProfileFieldWidget(
+            label: 'Industry',
+            controller: jobSeekerProfileViewModel.industryController,
+            icon: Icons.business_outlined,
+            theme: theme,
+            isDark: isDark,
+          ),
+          const SizedBox(height: 16),
 
           // Bio (multiline)
           Text(
@@ -131,6 +139,38 @@ class ProfileFormCardWidget extends StatelessWidget {
           // Skill chips (auto-parsed)
           if (jobSeekerProfileViewModel.parsedSkills.isNotEmpty)
             SkillChipWidget(viewModel: jobSeekerProfileViewModel),
+          const SizedBox(height: 24),
+
+          // Private Mode Toggle
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkMuted : AppColors.lightMuted,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+              ),
+            ),
+            child: SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Private Mode',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(
+                'Show as "Anonymous" when viewing profiles',
+                style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+              ),
+              value: jobSeekerProfileViewModel.profile.isPrivateMode,
+              onChanged: (val) {
+                jobSeekerProfileViewModel.setIsPrivateMode(val);
+              },
+              activeColor: AppColors.lightPrimary,
+            ),
+          ),
           const SizedBox(height: 24),
 
           // Save Button

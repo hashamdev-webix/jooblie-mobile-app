@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:flutter/material.dart';
@@ -179,12 +180,20 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> recordProfileView(String applicantId) async {
-    await ViewsService.recordProfileView(applicantId);
+  Future<void> recordProfileView(String applicantId, {String? applicationId}) async {
+    await ViewsService.recordProfileView(applicantId, applicationId: applicationId);
   }
 
   Future<void> recordJobView(String jobId) async {
     await ViewsService.recordJobView(jobId);
+  }
+
+  void navigateToJobInsights(BuildContext context, String jobId, String jobTitle) {
+    Navigator.pushNamed(
+      context,
+      RoutesName.jobInsights,
+      arguments: {'jobId': jobId, 'jobTitle': jobTitle},
+    );
   }
 }
 
@@ -199,6 +208,7 @@ class ApplicantDetailViewModel extends ChangeNotifier {
   Future<void> fetchApplicationDetail(
     String applicationId, {
     bool showLoading = true,
+    bool recordView = true,
   }) async {
     if (showLoading) {
       isLoading = true;
@@ -231,10 +241,15 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
       application = ApplicationDetail.fromJson(data);
 
-      try {
-        await ViewsService.recordProfileView(application!.applicantId);
-      } catch (e) {
-        debugPrint('Error triggering profile view record: $e');
+      if (recordView) {
+        try {
+          await ViewsService.recordProfileView(
+            application!.applicantId,
+            applicationId: applicationId,
+          );
+        } catch (e) {
+          debugPrint('Error triggering profile view record: $e');
+        }
       }
     } catch (e) {
       debugPrint('Error fetching application detail: $e');
@@ -344,7 +359,11 @@ class ApplicantDetailViewModel extends ChangeNotifier {
         debugPrint('❌ [Notifications] General Error: $generalError');
       }
 
-      await fetchApplicationDetail(appId, showLoading: false);
+      await fetchApplicationDetail(
+        appId,
+        showLoading: false,
+        recordView: false,
+      );
 
       if (application?.status == newStatus) {
         debugPrint('Update Verified: Status is now $newStatus');

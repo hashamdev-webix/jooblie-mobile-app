@@ -12,6 +12,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
   late final TextEditingController jobTitleController;
   late final TextEditingController aboutController;
   late final TextEditingController skillsController;
+  late final TextEditingController industryController;
 
   JobseekerProfileModel _profile = const JobseekerProfileModel(
     fullName: '',
@@ -67,6 +68,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
     emailController = TextEditingController(text: _profile.email);
     locationController = TextEditingController(text: _profile.location);
     jobTitleController = TextEditingController(text: _profile.jobTitle);
+    industryController = TextEditingController(text: _profile.industry);
     aboutController = TextEditingController(text: _profile.about);
     skillsController = TextEditingController(text: _profile.skills.join(', '));
   }
@@ -162,6 +164,8 @@ class JobseekerProfileViewModel extends ChangeNotifier {
         about: about ?? _profile.about,
         skills: skills ?? _profile.skills,
         avatarUrl: avatarUrl,
+        isPrivateMode: profileData?['is_private_mode'] ?? false,
+        industry: profileData?['industry'],
       );
 
       // Update controllers with fresh data
@@ -169,6 +173,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
       emailController.text = _profile.email;
       locationController.text = _profile.location;
       jobTitleController.text = _profile.jobTitle;
+      industryController.text = _profile.industry ?? '';
       aboutController.text = _profile.about;
       skillsController.text = _profile.skills.join(', ');
 
@@ -220,6 +225,11 @@ class JobseekerProfileViewModel extends ChangeNotifier {
   File? get pickedImage => _pickedImage;
 
   bool get isImageRemoved => _isImageRemoved;
+
+  void setIsPrivateMode(bool value) {
+    _profile = _profile.copyWith(isPrivateMode: value);
+    notifyListeners();
+  }
 
   void _onSkillsChanged() {
     notifyListeners();
@@ -315,6 +325,8 @@ class JobseekerProfileViewModel extends ChangeNotifier {
         'location': locationController.text.trim(),
         'job_title': jobTitleController.text.trim(),
         'about': aboutController.text.trim(),
+        'industry': industryController.text.trim(),
+        'is_private_mode': _profile.isPrivateMode,
         'skills': parsedSkills,
         'avatar_url': finalAvatarUrl,
       };
@@ -332,6 +344,8 @@ class JobseekerProfileViewModel extends ChangeNotifier {
             'avatar_url': finalAvatarUrl,
             'location': locationController.text.trim(),
             'about': aboutController.text.trim(),
+            'industry': industryController.text.trim(),
+            'is_private_mode': _profile.isPrivateMode,
             'skills': parsedSkills,
           })
           .eq('id', user.id);
@@ -343,6 +357,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
         location: locationController.text.trim(),
         jobTitle: jobTitleController.text.trim(),
         about: aboutController.text.trim(),
+        industry: industryController.text.trim(),
         skills: parsedSkills,
         avatarUrl: finalAvatarUrl,
       );
@@ -370,6 +385,7 @@ class JobseekerProfileViewModel extends ChangeNotifier {
     jobTitleController.dispose();
     aboutController.dispose();
     skillsController.dispose();
+    industryController.dispose();
     super.dispose();
   }
 }

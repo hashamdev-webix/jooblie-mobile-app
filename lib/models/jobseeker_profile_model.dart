@@ -6,6 +6,8 @@ class JobseekerProfileModel {
   final String about;
   final List<String> skills;
   final String? avatarUrl;
+  final bool isPrivateMode;
+  final String? industry;
 
   const JobseekerProfileModel({
     required this.fullName,
@@ -15,6 +17,8 @@ class JobseekerProfileModel {
     required this.about,
     required this.skills,
     this.avatarUrl,
+    this.isPrivateMode = false,
+    this.industry,
   });
 
   JobseekerProfileModel copyWith({
@@ -25,6 +29,8 @@ class JobseekerProfileModel {
     String? about,
     List<String>? skills,
     String? avatarUrl,
+    bool? isPrivateMode,
+    String? industry,
   }) {
     return JobseekerProfileModel(
       fullName: fullName ?? this.fullName,
@@ -34,6 +40,8 @@ class JobseekerProfileModel {
       about: about ?? this.about,
       skills: skills ?? this.skills,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      isPrivateMode: isPrivateMode ?? this.isPrivateMode,
+      industry: industry ?? this.industry,
     );
   }
 }

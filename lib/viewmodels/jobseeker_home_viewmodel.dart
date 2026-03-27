@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:intl/intl.dart';
+import '../core/utils/routes_name.dart';
 import '../models/home_stats_model.dart';
 import '../models/dashboard_stats_model.dart';
 import '../repositories/jobseeker_repository.dart';
@@ -66,12 +67,14 @@ class JobseekerHomeViewModel extends ChangeNotifier {
         _repository.getProfileViewsCount(user.id),
         _repository.getSavedJobsCount(user.id),
         _repository.getProfileName(user.id),
+        _repository.getAppliedJobViewsCount(user.id),
       ]);
 
       final allApps = results[0] as List<Map<String, dynamic>>;
       final pViewsCount = results[1] as int;
       final savedJobsCount = results[2] as int;
       final profileName = results[3] as String?;
+      final appliedJobViewsCount = results[4] as int;
 
       // 1. Process Applications
       int totalApps = allApps.length;
@@ -177,6 +180,12 @@ class JobseekerHomeViewModel extends ChangeNotifier {
           iconAsset: 'saved',
         ),
         HomeStatModel(
+          label: 'Job Views',
+          count: appliedJobViewsCount,
+          badge: 'Of your applied jobs',
+          iconAsset: 'jobs_views', // New icon asset name
+        ),
+        HomeStatModel(
           label: 'Profile Views',
           count: pViewsCount,
           badge: 'From recruiters',
@@ -201,6 +210,33 @@ class JobseekerHomeViewModel extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error in applyForJob logic: $e');
       rethrow;
+    }
+  }
+
+  void navigateToJobInsights(BuildContext context) async {
+    final user = Supabase.instance.client.auth.currentUser;
+    if (user == null) return;
+    
+    // For a JobSeeker, we'll show insights for their LATEST application
+    // or a summary. For now, let's find the most recent job they applied to.
+    try {
+      final lastApp = await _repository.getApplications(user.id);
+      if (lastApp.isNotEmpty) {
+        final jobId = lastApp.first['job_id'];
+        final jobTitle = lastApp.first['jobs']['title'];
+        
+        Navigator.pushNamed(
+          context,
+          RoutesName.jobInsights,
+          arguments: {'jobId': jobId, 'jobTitle': jobTitle},
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Apply to jobs to see their view insights!')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error navigating to job insights: $e');
     }
   }
 }

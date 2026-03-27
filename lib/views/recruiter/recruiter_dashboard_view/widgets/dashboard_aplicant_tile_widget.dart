@@ -20,11 +20,6 @@ class DashboardApplicantTileWidget extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        // Record the profile view when the recruiter taps on the applicant card
-        context.read<RecruiterDashboardViewModel>().recordProfileView(
-          applicant.applicantId,
-        );
-
         // Navigate to applicant detail view
         Navigator.pushNamed(
           context,

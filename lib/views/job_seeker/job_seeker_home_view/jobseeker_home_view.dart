@@ -42,6 +42,8 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
         return Icons.star_border_rounded;
       case 'views':
         return Icons.remove_red_eye_outlined;
+      case 'jobs_views':
+        return Icons.insights_outlined;
       default:
         return Icons.bar_chart;
     }
@@ -164,12 +166,31 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
                                   value: '${stat.count}',
                                   label: stat.label,
                                   change: stat.badge,
-                                  onTap: stat.label == 'Saved Jobs'
-                                      ? () => Navigator.pushNamed(
-                                          context,
-                                          RoutesName.favorites,
-                                        )
-                                      : null,
+                                  onTap: () {
+                                    if (stat.label == 'Saved Jobs') {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.favorites,
+                                      );
+                                    } else if (stat.label == 'Profile Views') {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.profileInsights,
+                                      );
+                                    } else if (stat.label == 'Job Views') {
+                                      vm.navigateToJobInsights(context);
+                                    } else if (stat.label == 'Applications' ||
+                                        stat.label == 'Interviews') {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.dashboard,
+                                        arguments: {
+                                          'isJobSeeker': true,
+                                          'initialIndex': 3,
+                                        },
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                               12.h,

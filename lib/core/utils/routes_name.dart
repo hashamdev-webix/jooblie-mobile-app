@@ -17,4 +17,6 @@ class RoutesName {
   static const String companyDetails = 'company_details_view';
   static const String applicantDetail = 'applicant_detail_view';
   static const String notifications = 'notifications_view';
+  static const String profileInsights = 'profile_insights_view';
+  static const String jobInsights = 'job_insights_view';
 }
