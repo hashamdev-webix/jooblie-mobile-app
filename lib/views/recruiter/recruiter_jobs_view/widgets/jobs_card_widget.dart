@@ -202,7 +202,8 @@ class JobPostCard extends StatelessWidget {
                   size: 16,
                   color: isDark
                       ? AppColors.darkMutedForeground
-                      : AppColors.lightMutedForeground),
+                      : AppColors.lightMutedForeground
+              ),
               6.w,
               Text('${job.views}', style: theme.textTheme.bodyMedium),
             ],
