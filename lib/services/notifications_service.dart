@@ -58,8 +58,24 @@ class NotificationsService {
       sound: true,
     );
 
+    if (Platform.isIOS) {
+      String? apnsToken = await messaging.getAPNSToken();
+      if (apnsToken == null) {
+        await Future.delayed(const Duration(seconds: 3));
+        apnsToken = await messaging.getAPNSToken();
+      }
+      if (apnsToken == null) {
+         if (kDebugMode) {
+           print("APNS Token is null. Ensure Push Notifications are enabled in Xcode.");
+         }
+         return "";
+      }
+    }
+
     String? token = await messaging.getToken();
-    print("Notifications Device Token ==> $token");
+    if (kDebugMode) {
+      print("Notifications Device Token ==> $token");
+    }
     
     // Sync to Supabase if user is logged in
     await syncTokenToSupabase();
@@ -72,6 +88,20 @@ class NotificationsService {
     try {
       final user = Supabase.instance.client.auth.currentUser;
       if (user == null) return;
+
+      if (Platform.isIOS) {
+        String? apnsToken = await messaging.getAPNSToken();
+        if (apnsToken == null) {
+          await Future.delayed(const Duration(seconds: 3));
+          apnsToken = await messaging.getAPNSToken();
+        }
+        if (apnsToken == null) {
+          if (kDebugMode) {
+            print("APNS Token is null, skipping FCM token fetch to prevent crash.");
+          }
+          return;
+        }
+      }
 
       String? token = await messaging.getToken();
       if (token != null && token.isNotEmpty) {
