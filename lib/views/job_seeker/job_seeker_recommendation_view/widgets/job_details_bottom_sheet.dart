@@ -9,6 +9,8 @@ import '../../../../models/apply_job_request.dart';
 import '../../../../viewmodels/jobseeker_applications_viewmodel.dart';
 import '../../../../viewmodels/jobseeker_resume_viewmodel.dart';
 
+import '../../../../services/views_service.dart';
+
 class JobDetailsBottomSheet extends StatelessWidget {
   final JobRecommendationModel job;
   final bool isDark;
@@ -20,6 +22,8 @@ class JobDetailsBottomSheet extends StatelessWidget {
   }) : super(key: key);
 
   static void show(BuildContext context, JobRecommendationModel job) {
+    ViewsService.recordJobView(job.id);
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
@@ -42,12 +46,10 @@ class JobDetailsBottomSheet extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Main Scrollable Content
           Positioned.fill(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
               children: [
-                // Header Area with Back Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -59,7 +61,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    // Drag Handle
                     Container(
                       width: 40,
                       height: 5,
@@ -68,16 +69,14 @@ class JobDetailsBottomSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    const SizedBox(width: 48), // Spacer to balance the back button
+                    const SizedBox(width: 48),
                   ],
                 ),
                 const SizedBox(height: 12),
 
-                // Header Top Row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Icon
                     Container(
                       width: 50,
                       height: 50,
@@ -87,13 +86,11 @@ class JobDetailsBottomSheet extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.business,
-                        // Assuming business icon, screenshot had a building/document icon
                         color: AppColors.lightPrimary,
                         size: 28,
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // Title and Company
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,7 +116,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Map & Salary
                 Row(
                   children: [
                     Icon(
@@ -150,7 +146,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
 
-                // Time Posted & FullTime
                 Row(
                   children: [
                     Icon(
@@ -182,14 +177,15 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Action Buttons
                 Consumer<FavoritesViewModel>(
                   builder: (context, favViewModel, child) {
                     final isFavorite = favViewModel.isFavorite(job.id);
                     return Row(
                       children: [
                         _IconBtn(
-                          icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                          icon: isFavorite
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           isDark: isDark,
                           iconColor: isFavorite ? Colors.red : null,
                           onTap: () => favViewModel.toggleFavorite(job),
@@ -201,9 +197,16 @@ class JobDetailsBottomSheet extends StatelessWidget {
                               icon: Icons.share_outlined,
                               isDark: isDark,
                               onTap: () {
-                                final box = btnCtx.findRenderObject() as RenderBox?;
-                                final rect = box != null ? box.localToGlobal(Offset.zero) & box.size : null;
-                                DeepLinkService.shareJob(job.title, job.id, sharePositionOrigin: rect);
+                                final box =
+                                    btnCtx.findRenderObject() as RenderBox?;
+                                final rect = box != null
+                                    ? box.localToGlobal(Offset.zero) & box.size
+                                    : null;
+                                DeepLinkService.shareJob(
+                                  job.title,
+                                  job.id,
+                                  sharePositionOrigin: rect,
+                                );
                               },
                             );
                           },
@@ -214,7 +217,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                // Tags
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
@@ -222,7 +224,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Description
                 _SectionTitle('Description', theme),
                 const SizedBox(height: 8),
                 Text(
@@ -234,7 +235,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Requirements
                 _SectionTitle('Requirements', theme),
                 const SizedBox(height: 8),
                 ...job.requirements.map(
@@ -242,20 +242,17 @@ class JobDetailsBottomSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Benefits
                 _SectionTitle('Benefits', theme),
                 const SizedBox(height: 8),
                 ...job.benefits.map(
                   (ben) => _BulletPoint(text: ben, isDark: isDark),
                 ),
 
-                // Extra padding for scroll space
                 const SizedBox(height: 40),
               ],
             ),
           ),
 
-          // Bottom Action Bar
           Positioned(
             left: 0,
             right: 0,
@@ -298,8 +295,12 @@ class JobDetailsBottomSheet extends StatelessWidget {
                                 ? Colors.grey
                                 : AppColors.lightPrimary,
                             foregroundColor: Colors.white,
-                            disabledBackgroundColor: isDark ? Colors.grey.shade800 : Colors.grey.shade400,
-                            disabledForegroundColor: isDark ? Colors.white54 : Colors.white70,
+                            disabledBackgroundColor: isDark
+                                ? Colors.grey.shade800
+                                : Colors.grey.shade400,
+                            disabledForegroundColor: isDark
+                                ? Colors.white54
+                                : Colors.white70,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -335,7 +336,9 @@ class JobDetailsBottomSheet extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: () => favViewModel.toggleFavorite(job),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: isDark ? Colors.white : Colors.black87,
+                            foregroundColor: isDark
+                                ? Colors.white
+                                : Colors.black87,
                             side: BorderSide(
                               color: isDark ? Colors.white24 : Colors.black26,
                             ),
@@ -475,21 +478,33 @@ class _BulletPoint extends StatelessWidget {
   }
 }
 
-Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool isDark) async {
+Future<void> _handleApply(
+  BuildContext context,
+  JobRecommendationModel job,
+  bool isDark,
+) async {
   final TextEditingController coverLetterController = TextEditingController();
-  
+
   final bool? shouldApply = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
       backgroundColor: isDark ? AppColors.darkCard : AppColors.lightCard,
-      title: Text('Apply for Job', style: TextStyle(color: isDark ? Colors.white : Colors.black)),
+      title: Text(
+        'Apply for Job',
+        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Write a short cover letter for ${job.title} at ${job.company}:',
-               style: TextStyle(color: isDark ? Colors.white70 : Colors.black87, fontSize: 14)),
+            Text(
+              'Write a short cover letter for ${job.title} at ${job.company}:',
+              style: TextStyle(
+                color: isDark ? Colors.white70 : Colors.black87,
+                fontSize: 14,
+              ),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: coverLetterController,
@@ -497,12 +512,23 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
               style: TextStyle(color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 hintText: 'I would be a great fit because...',
-                hintStyle: TextStyle(color: isDark ? Colors.white38 : Colors.black38),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                hintStyle: TextStyle(
+                  color: isDark ? Colors.white38 : Colors.black38,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 24),
-            Text('Resume', style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black, fontSize: 16)),
+            Text(
+              'Resume',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+                fontSize: 16,
+              ),
+            ),
             const SizedBox(height: 8),
             Consumer<JobseekerResumeViewModel>(
               builder: (consumerCtx, rVm, child) {
@@ -512,7 +538,7 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                
+
                 final hasResume = rVm.currentResume != null;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -520,7 +546,11 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
                     if (hasResume) ...[
                       Row(
                         children: [
-                          const Icon(Icons.picture_as_pdf, color: Colors.redAccent, size: 28),
+                          const Icon(
+                            Icons.picture_as_pdf,
+                            color: Colors.redAccent,
+                            size: 28,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -528,14 +558,24 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
                               children: [
                                 Text(
                                   rVm.currentResume!.fileName ?? 'Resume.pdf',
-                                  style: TextStyle(color: isDark ? Colors.white : Colors.black87, fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white
+                                        : Colors.black87,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 if (rVm.currentResume!.fileSize.isNotEmpty)
                                   Text(
                                     rVm.currentResume!.fileSize,
-                                    style: TextStyle(color: isDark ? Colors.white54 : Colors.black54, fontSize: 12),
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white54
+                                          : Colors.black54,
+                                      fontSize: 12,
+                                    ),
                                   ),
                               ],
                             ),
@@ -548,12 +588,16 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
                         icon: const Icon(Icons.upload_file, size: 18),
                         label: const Text('Change Resume'),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark ? Colors.white : Colors.black87,
+                          foregroundColor: isDark
+                              ? Colors.white
+                              : Colors.black87,
                         ),
                       ),
                     ] else ...[
-                      const Text('A resume is required to apply for this job.', 
-                           style: TextStyle(color: Colors.redAccent, fontSize: 13)),
+                      const Text(
+                        'A resume is required to apply for this job.',
+                        style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                      ),
                       const SizedBox(height: 12),
                       ElevatedButton.icon(
                         onPressed: () => rVm.pickAndUpload(),
@@ -575,23 +619,33 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: Text('Cancel', style: TextStyle(color: AppColors.lightPrimary)),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: AppColors.lightPrimary),
+          ),
         ),
         ElevatedButton(
           onPressed: () {
-             final currentResumeVm = Provider.of<JobseekerResumeViewModel>(ctx, listen: false);
-             if (currentResumeVm.currentResume == null) {
-                ScaffoldMessenger.of(ctx).showSnackBar(
-                  const SnackBar(content: Text('Please upload a resume first to apply.')),
-                );
-                return;
-             }
-             Navigator.pop(ctx, true);
+            final currentResumeVm = Provider.of<JobseekerResumeViewModel>(
+              ctx,
+              listen: false,
+            );
+            if (currentResumeVm.currentResume == null) {
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                const SnackBar(
+                  content: Text('Please upload a resume first to apply.'),
+                ),
+              );
+              return;
+            }
+            Navigator.pop(ctx, true);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.lightPrimary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: const Text('Submit Application'),
         ),
@@ -609,24 +663,27 @@ Future<void> _handleApply(BuildContext context, JobRecommendationModel job, bool
     try {
       final request = ApplyJobRequest(coverLetter: coverLetterController.text);
       await ApiService().applyForJob(job.id, request);
-      
-      if (context.mounted) Navigator.pop(context); // pop loading
-      if (context.mounted) Navigator.pop(context); // pop bottom sheet
-      
+
+      if (context.mounted) Navigator.pop(context);
+      if (context.mounted) Navigator.pop(context);
+
       if (context.mounted) {
-         try {
-           Provider.of<JobseekerApplicationsViewModel>(context, listen: false).fetchApplications();
-         } catch(e) { }
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Successfully applied to ${job.company}!')),
-         );
+        try {
+          Provider.of<JobseekerApplicationsViewModel>(
+            context,
+            listen: false,
+          ).fetchApplications();
+        } catch (e) {}
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Successfully applied to ${job.company}!')),
+        );
       }
     } catch (e) {
       if (context.mounted) Navigator.pop(context);
       if (context.mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Failed to apply. Please try again.')),
-         );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to apply. Please try again.')),
+        );
       }
     }
   }
