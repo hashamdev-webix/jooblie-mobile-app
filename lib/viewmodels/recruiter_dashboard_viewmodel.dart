@@ -8,12 +8,12 @@ import '../models/job_post_model.dart';
 import '../models/create_job_request_model.dart';
 import '../models/recruiter_stats_model.dart';
 import 'package:jooblie_app/services/get_service_key.dart';
+import 'package:jooblie_app/services/views_service.dart';
 
 class RecruiterDashboardViewModel extends ChangeNotifier {
   bool isLoading = false;
   String? error;
 
-  // Stats
   int activeJobs = 0;
   int totalApplicants = 0;
   int jobViews = 0;
@@ -38,7 +38,6 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         return;
       }
 
-      // 1. Fetch all jobs for this recruiter
       final jobsResponse = await Supabase.instance.client
           .from('jobs')
           .select()
@@ -46,25 +45,25 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
 
       final List<dynamic> allJobs = jobsResponse as List<dynamic>;
 
-      // Show ALL jobs in the count for now, as requested (no status filter)
-      activeJobs = allJobs.length; 
+      activeJobs = allJobs.length;
 
-      // 2. Fetch ALL applications for this recruiter's jobs to get accurate total count and hire rate
       final allAppsResponse = await Supabase.instance.client
           .from('applications')
-          .select('status, jobs!inner(recruiter_id)')
+          .select('job_id, status, jobs!inner(recruiter_id)')
           .eq('jobs.recruiter_id', userId);
           
       final List<dynamic> allApps = allAppsResponse as List<dynamic>;
       totalApplicants = allApps.length;
+
+      for (var job in allJobs) {
+        job['applicants'] = allApps.where((a) => a['job_id'].toString() == job['id'].toString()).length;
+      }
       
       final hiredCount = allApps.where((a) => a['status'] == 'Hired').length;
       hireRate = totalApplicants > 0 ? (hiredCount / totalApplicants) * 100 : 0.0;
 
-      // 3. Fetch UNIQUE views for ALL jobs of this recruiter from the 'views' table
       int totalUniqueJobViews = 0;
       try {
-        // Diagnostic: Check columns of views table
         try {
           final testResult = await Supabase.instance.client.from('views').select().limit(1);
           if (testResult.isNotEmpty) {
@@ -72,33 +71,22 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
           }
         } catch (_) {}
 
-        final jobIds = allJobs.map((j) => j['id']).toList();
+        final jobIds = allJobs.map((j) => j['id'].toString()).toList();
         if (jobIds.isNotEmpty) {
-          final viewsResponse = await Supabase.instance.client
-              .from('views')
-              .select('job_id, viewer_id')
-              .inFilter('job_id', jobIds);
-          
-          final List<dynamic> allViews = viewsResponse as List<dynamic>;
-          
-          // Count unique viewers across all jobs (as a total)
-          final uniqueViewers = allViews.map((v) => v['viewer_id']).toSet();
-          totalUniqueJobViews = uniqueViewers.length;
+          final jobViewCounts = await ViewsService.getJobViews(jobIds);
 
-          // Also count per-job for top jobs logic
+          totalUniqueJobViews = jobViewCounts.values.fold(0, (sum, count) => sum + count);
+
           for (var job in allJobs) {
-            final jobViews = allViews.where((v) => v['job_id'] == job['id']).toList();
-            job['unique_views_count'] = jobViews.map((v) => v['viewer_id']).toSet().length;
+            job['unique_views_count'] = jobViewCounts[job['id'].toString()] ?? 0;
           }
         }
       } catch (e) {
         debugPrint('Error fetching unique job views: $e');
-        // Fallback to legacy views if views table fails or is empty
         totalUniqueJobViews = allJobs.fold<int>(0, (sum, j) => sum + ((j['views'] ?? 0) as int));
       }
       jobViews = totalUniqueJobViews;
 
-      // 4. Recent applicants: fetch from applications table joining profile info
       try {
         final applicantsResponse = await Supabase.instance.client
             .from('applications')
@@ -113,8 +101,7 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         recentApplicants = appList.map((a) {
           try {
             final data = Map<String, dynamic>.from(a as Map);
-            
-            // Resolve full public URL for resume path
+
             final String? resUrl = data['resume_url']?.toString();
             if (resUrl != null && !resUrl.startsWith('http')) {
               final String path = resUrl.startsWith('resumes/') 
@@ -138,7 +125,6 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
         recentApplicants = [];
       }
 
-      // 5. Top performing jobs (sort by applicants then views)
       final sortedJobs = List<dynamic>.from(allJobs);
       sortedJobs.sort((a, b) {
         int cmp = ((b['applicants'] ?? 0) as int).compareTo((a['applicants'] ?? 0) as int);
@@ -167,67 +153,11 @@ class RecruiterDashboardViewModel extends ChangeNotifier {
   }
 
   Future<void> recordProfileView(String applicantId) async {
-    try {
-      final viewerId = Supabase.instance.client.auth.currentUser?.id;
-      if (viewerId == null) return;
-
-      // Don't record if viewing own profile (rare for recruiter)
-      if (viewerId == applicantId) return;
-
-      // Check if this viewer already viewed this profile to ensure uniqueness in the table
-      // though the user wants to count unique, recording multiple is also fine but let's be efficient
-      final existingView = await Supabase.instance.client
-          .from('views')
-          .select('id')
-          .eq('profile_id', applicantId)
-          .eq('viewer_id', viewerId)
-          .maybeSingle();
-
-      if (existingView == null) {
-        await Supabase.instance.client.from('views').insert({
-          'profile_id': applicantId,
-          'viewer_id': viewerId,
-        });
-        debugPrint('Profile view recorded: applicant=$applicantId, viewer=$viewerId');
-      }
-    } catch (e) {
-      debugPrint('Error recording profile view: $e');
-    }
+    await ViewsService.recordProfileView(applicantId);
   }
 
   Future<void> recordJobView(String jobId) async {
-    try {
-      final viewerId = Supabase.instance.client.auth.currentUser?.id;
-      if (viewerId == null) return;
-
-      // Check for existing view
-      final existingView = await Supabase.instance.client
-          .from('views')
-          .select('id')
-          .eq('job_id', jobId)
-          .eq('viewer_id', viewerId)
-          .maybeSingle();
-
-      if (existingView == null) {
-        await Supabase.instance.client.from('views').insert({
-          'job_id': jobId,
-          'viewer_id': viewerId,
-        });
-        debugPrint('Job view recorded: job=$jobId, viewer=$viewerId');
-        
-        // Optionally update the legacy views counter in the jobs table
-        // But the requirement is to use the views table.
-      }
-    } catch (e) {
-      debugPrint('Error recording job view: $e');
-      // Diagnostic: Check columns on failure
-      try {
-        final testResult = await Supabase.instance.client.from('views').select().limit(1);
-        if (testResult.isNotEmpty) {
-          debugPrint('DIAGNOSTIC (recordJobView) - Columns: ${testResult.first.keys.toList()}');
-        }
-      } catch (_) {}
-    }
+    await ViewsService.recordJobView(jobId);
   }
 }
 
@@ -252,12 +182,10 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
       final data = Map<String, dynamic>.from(response);
       debugPrint('Raw Application Data: $data');
-      
-      // Resolve full public URL for resume if resume_url is a path
+
       final String? resumeUrl = data['resume_url']?.toString();
       if (resumeUrl != null && !resumeUrl.startsWith('http')) {
-        // Strip 'resumes/' prefix if present because we are using .from('resumes')
-        final String path = resumeUrl.startsWith('resumes/') 
+        final String path = resumeUrl.startsWith('resumes/')
             ? resumeUrl.replaceFirst('resumes/', '') 
             : resumeUrl;
             
@@ -270,10 +198,8 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
       application = ApplicationDetail.fromJson(data);
 
-      // Record profile view by the recruiter
       try {
-        final recruiterDashboardVM = RecruiterDashboardViewModel();
-        await recruiterDashboardVM.recordProfileView(application!.applicantId);
+        await ViewsService.recordProfileView(application!.applicantId);
       } catch (e) {
         debugPrint('Error triggering profile view record: $e');
       }
@@ -295,9 +221,7 @@ class ApplicantDetailViewModel extends ChangeNotifier {
     try {
       final appId = application!.applicationId;
       debugPrint('Supabase Update Attempt: table=applications, id=$appId, newStatus=$newStatus');
-      
-      // Attempt update WITHOUT .select() first to see if it throws an error
-      // select() after an update can sometimes fail due to specific RLS select policies
+
       await Supabase.instance.client
           .from('applications')
           .update({'status': newStatus})
@@ -305,8 +229,7 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
       debugPrint('Supabase Update Command Sent Successfully');
 
-        // Add Notification Logic
-        try {
+      try {
           final applicantId = application!.applicantId;
           final jobTitle = application!.jobTitle;
           final title = 'Application Update';
@@ -314,7 +237,6 @@ class ApplicantDetailViewModel extends ChangeNotifier {
 
           debugPrint('🔔 [Notifications] Starting notification process for user $applicantId');
 
-          // 1. Save Notification to Supabase (Optional for Push)
           try {
             await Supabase.instance.client.from('notifications').insert({
               'user_id': applicantId,
@@ -325,10 +247,8 @@ class ApplicantDetailViewModel extends ChangeNotifier {
             debugPrint('✅ [Notifications] Saved to DB');
           } catch (dbError) {
             debugPrint('⚠️ [Notifications] Failed to save to DB: $dbError');
-            // We continue with Push Notification even if DB save fails
           }
 
-          // 2. Fetch Device Token and Send FCM
           try {
             final profileResponse = await Supabase.instance.client
                 .from('profiles')
@@ -379,10 +299,8 @@ class ApplicantDetailViewModel extends ChangeNotifier {
           debugPrint('❌ [Notifications] General Error: $generalError');
         }
 
-      // Fetch updated data to reflect in UI and verify update
       await fetchApplicationDetail(appId);
-      
-      // Verify if the status actually changed
+
       if (application?.status == newStatus) {
         debugPrint('Update Verified: Status is now $newStatus');
         return true;
@@ -406,7 +324,6 @@ class ApplicantDetailViewModel extends ChangeNotifier {
       notifyListeners();
 
       final tempDir = await getTemporaryDirectory();
-      // Ensure unique filename to avoid conflicts, or just use the provided one
       final String savePath = '${tempDir.path}/$fileName';
 
       final dio = Dio();
@@ -425,7 +342,6 @@ class ApplicantDetailViewModel extends ChangeNotifier {
       downloadProgress = 0.0;
       notifyListeners();
 
-      // Open the downloaded file
       await OpenFilex.open(savePath);
     } catch (e) {
       debugPrint('Error downloading resume: $e');
@@ -443,7 +359,7 @@ class RecruiterJobsViewModel extends ChangeNotifier {
   bool hasMore = true;
   int _page = 0;
   final int _limit = 10;
-  String currentFilter = 'all'; // all, active, expired, draft
+  String currentFilter = 'all';
 
   RecruiterJobsViewModel() {
     fetchJobs(refresh: true);
@@ -492,6 +408,29 @@ class RecruiterJobsViewModel extends ChangeNotifier {
           .range(_page * _limit, (_page + 1) * _limit - 1);
 
       final List<dynamic> data = response as List<dynamic>;
+
+      final List<String> jobIds = data.map((j) => j['id'].toString()).toList();
+      
+      if (jobIds.isNotEmpty) {
+        final results = await Future.wait([
+          ViewsService.getJobViews(jobIds),
+          ViewsService.getJobApplicants(jobIds),
+        ]);
+        
+        final jobViewCounts = results[0] as Map<String, int>;
+        final jobAppCounts = results[1] as Map<String, int>;
+
+        for (var json in data) {
+          final jobId = json['id'].toString();
+          if (jobViewCounts.containsKey(jobId)) {
+            json['views'] = jobViewCounts[jobId];
+          }
+          if (jobAppCounts.containsKey(jobId)) {
+            json['applicants'] = jobAppCounts[jobId];
+          }
+        }
+      }
+
       final newJobs = data.map((json) => JobPost.fromJson(json)).toList();
 
       if (newJobs.length < _limit) {
@@ -635,9 +574,8 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
       formKey.currentState?.save();
       isLoading = true;
       notifyListeners();
-      
-        // Fetch Recruiter Company Name from Profile before publishing
-        final user = Supabase.instance.client.auth.currentUser;
+
+      final user = Supabase.instance.client.auth.currentUser;
         if (user != null) {
           final profileData = await Supabase.instance.client
               .from('profiles')
@@ -752,8 +690,7 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
             .maybeSingle();
             
         final metadata = user.userMetadata;
-        
-        // Use profileData first, fallback to metadata
+
         final cName = profileData?['company_name'] ?? metadata?['company_name'];
         if (cName != null && cName.toString().isNotEmpty) companyName = cName.toString();
 
@@ -823,13 +760,11 @@ class RecruiterCompanyViewModel extends ChangeNotifier {
           'industry': industry,
           'about': about,
         };
-        
-        // 1. Update user metadata
+
         await Supabase.instance.client.auth.updateUser(
           UserAttributes(data: metadata),
         );
 
-        // 2. Update profiles table
         await Supabase.instance.client
             .from('profiles')
             .update(metadata)
