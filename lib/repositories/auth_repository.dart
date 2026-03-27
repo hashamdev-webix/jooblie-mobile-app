@@ -21,6 +21,7 @@ class AuthRepository {
       email: email,
       password: password,
       data: data,
+      emailRedirectTo: 'myapp://signup',
     );
   }
 
