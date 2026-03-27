@@ -114,7 +114,14 @@ class _LocationSearchViewState extends State<LocationSearchView> {
             InkWell(
               onTap: () async {
                 await vm.fetchCurrentLocation();
-                if (vm.filters.location != null) {
+                if (vm.error != null && vm.error!.isNotEmpty && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(vm.error!),
+                      backgroundColor: AppColors.lightError,
+                    ),
+                  );
+                } else if (vm.filters.location != null && context.mounted) {
                    Navigator.pop(context);
                 }
               },

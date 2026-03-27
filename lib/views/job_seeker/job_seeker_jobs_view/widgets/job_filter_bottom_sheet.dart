@@ -69,10 +69,10 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
           Wrap(
             spacing: 8,
             children: [
-              _buildChip('Full-time', 'full-time'),
-              _buildChip('Part-time', 'part-time'),
-              _buildChip('Contract', 'contract'),
-              _buildChip('Remote', 'remote'),
+              _buildChip('Full-time', 'Full-time'),
+              _buildChip('Part-time', 'Part-time'),
+              _buildChip('Contract', 'Contract'),
+              _buildChip('Remote', 'Remote'),
             ],
           ),
           24.h,
@@ -83,9 +83,9 @@ class _JobFilterBottomSheetState extends State<JobFilterBottomSheet> {
           Wrap(
             spacing: 8,
             children: [
-              _buildExpChip('Entry', 'entry'),
-              _buildExpChip('Intermediate', 'mid'),
-              _buildExpChip('Senior', 'senior'),
+              _buildExpChip('Entry', 'Junior'),
+              _buildExpChip('Intermediate', 'Mid-level'),
+              _buildExpChip('Senior', 'Senior'),
             ],
           ),
           24.h,

@@ -28,7 +28,6 @@ class _TabItem {
   const _TabItem({required this.label, required this.selectedIcon, required this.unselectedIcon});
 }
 
-// ─── Custom Bottom Nav Bar (LinkedIn / Indeed style) ─────────────────────────
 class _PremiumBottomNav extends StatelessWidget {
   final int currentIndex;
   final List<_TabItem> items;
