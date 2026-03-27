@@ -193,12 +193,18 @@ class ApplicantDetailViewModel extends ChangeNotifier {
   bool isLoading = false;
   String? error;
   bool isDownloading = false;
+  bool isUpdatingStatus = false;
   double downloadProgress = 0.0;
 
-  Future<void> fetchApplicationDetail(String applicationId) async {
-    isLoading = true;
+  Future<void> fetchApplicationDetail(
+    String applicationId, {
+    bool showLoading = true,
+  }) async {
+    if (showLoading) {
+      isLoading = true;
+      notifyListeners();
+    }
     error = null;
-    notifyListeners();
 
     try {
       final response = await Supabase.instance.client
@@ -240,12 +246,15 @@ class ApplicantDetailViewModel extends ChangeNotifier {
   }
 
   Future<bool> updateStatus(String newStatus) async {
-    if (application == null) {
-      debugPrint('Update Status Failed: No application loaded');
+    if (application == null || isUpdatingStatus) {
+      debugPrint('Update Status Cancelled: Already updating or no application');
       return false;
     }
 
     try {
+      isUpdatingStatus = true;
+      notifyListeners();
+
       final appId = application!.applicationId;
       debugPrint(
         'Supabase Update Attempt: table=applications, id=$appId, newStatus=$newStatus',
@@ -335,7 +344,7 @@ class ApplicantDetailViewModel extends ChangeNotifier {
         debugPrint('❌ [Notifications] General Error: $generalError');
       }
 
-      await fetchApplicationDetail(appId);
+      await fetchApplicationDetail(appId, showLoading: false);
 
       if (application?.status == newStatus) {
         debugPrint('Update Verified: Status is now $newStatus');
@@ -346,12 +355,9 @@ class ApplicantDetailViewModel extends ChangeNotifier {
         );
         return false;
       }
-    } catch (e) {
-      debugPrint('Postgrest Error updating status: $e');
-      if (e is PostgrestException) {
-        debugPrint('Details: ${e.message}, Hint: ${e.hint}, Code: ${e.code}');
-      }
-      return false;
+    } finally {
+      isUpdatingStatus = false;
+      notifyListeners();
     }
   }
 

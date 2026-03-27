@@ -6,6 +6,8 @@ import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'package:jooblie_app/widgets/custom_shimmer_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class ApplicantDetailView extends StatefulWidget {
   final String applicationId;
@@ -36,33 +38,54 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
       appBar: AppBar(title: const Text('Applicant Details'), centerTitle: true),
       body: Consumer<ApplicantDetailViewModel>(
         builder: (context, vm, child) {
-          if (vm.isLoading) {
-            return _buildShimmerLoading(context, isDark);
-          }
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: vm.isLoading && vm.application == null
+                ? _buildShimmerLoading(context, isDark)
+                : vm.error != null
+                    ? Center(key: const ValueKey('error'), child: Text(vm.error!))
+                    : vm.application == null
+                        ? const Center(
+                            key: ValueKey('empty'),
+                            child: Text('No details found.'),
+                          )
+                        : _buildMainContent(vm, vm.application!, theme, isDark),
+          );
+        },
+      ),
+    );
+  }
 
-          if (vm.error != null) {
-            return Center(child: Text(vm.error!));
-          }
+  Widget _buildMainContent(
+    ApplicantDetailViewModel vm,
+    ApplicationDetail app,
+    ThemeData theme,
+    bool isDark,
+  ) {
+    return SingleChildScrollView(
+      key: const ValueKey('content'),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Profile Info
+          FadeInDown(
+            duration: const Duration(milliseconds: 500),
+            child: _buildProfileHeader(app, theme, isDark),
+          ),
+          24.h,
 
-          final app = vm.application;
-          if (app == null) {
-            return const Center(child: Text('No details found.'));
-          }
+          // Status Selector
+          _buildStatusSection(vm, app, theme, isDark),
+          24.h,
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
+          // Job Details
+          FadeInLeft(
+            duration: const Duration(milliseconds: 500),
+            delay: const Duration(milliseconds: 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header Profile Info
-                _buildProfileHeader(app, theme, isDark),
-                24.h,
-
-                // Status Selector
-                _buildStatusSection(vm, app, theme, isDark),
-                24.h,
-
-                // Job Details
                 _buildSectionTitle('Applied Job', theme),
                 Text(
                   app.jobTitle,
@@ -70,10 +93,19 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                24.h,
+              ],
+            ),
+          ),
+          24.h,
 
-                // Cover Letter
-                if (app.coverLetter != null && app.coverLetter!.isNotEmpty) ...[
+          // Cover Letter
+          if (app.coverLetter != null && app.coverLetter!.isNotEmpty) ...[
+            FadeInLeft(
+              duration: const Duration(milliseconds: 500),
+              delay: const Duration(milliseconds: 200),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   _buildSectionTitle('Cover Letter', theme),
                   Container(
                     width: double.infinity,
@@ -84,9 +116,7 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                           : Colors.grey[50],
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: isDark
-                            ? AppColors.darkBorder
-                            : Colors.grey[200]!,
+                        color: isDark ? AppColors.darkBorder : Colors.grey[200]!,
                       ),
                     ),
                     child: Text(
@@ -94,26 +124,43 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                       style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                     ),
                   ),
-                  24.h,
                 ],
+              ),
+            ),
+            24.h,
+          ],
 
-                // Resume
-                _buildSectionTitle('Resume', theme),
-                _buildResumeCard(app, theme, isDark),
-                24.h,
+          // Resume
+          _buildResumeCard(app, theme, isDark),
+          24.h,
 
-                // About
-                if (app.about.isNotEmpty) ...[
+          // About
+          if (app.about.isNotEmpty) ...[
+            FadeInUp(
+              duration: const Duration(milliseconds: 500),
+              delay: const Duration(milliseconds: 400),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   _buildSectionTitle('About', theme),
                   Text(
                     app.about,
                     style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                   ),
-                  24.h,
                 ],
+              ),
+            ),
+            24.h,
+          ],
 
-                // Skills
-                if (app.skills.isNotEmpty) ...[
+          // Skills
+          if (app.skills.isNotEmpty) ...[
+            FadeInUp(
+              duration: const Duration(milliseconds: 500),
+              delay: const Duration(milliseconds: 500),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   _buildSectionTitle('Skills', theme),
                   Wrap(
                     spacing: 8,
@@ -122,12 +169,12 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
                         .map((skill) => _buildSkillChip(skill, theme, isDark))
                         .toList(),
                   ),
-                  40.h,
                 ],
-              ],
+              ),
             ),
-          );
-        },
+            40.h,
+          ],
+        ],
       ),
     );
   }
@@ -270,53 +317,125 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
 
   Widget _buildStatusSection(
     ApplicantDetailViewModel vm,
-    app,
+    ApplicationDetail app,
     ThemeData theme,
     bool isDark,
   ) {
     final statuses = ['Pending', 'Interview', 'Rejected', 'Offer', 'Hired'];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Application Status', theme),
-        8.h,
-        Wrap(
-          spacing: 10,
-          children: statuses.map((s) {
-            final isSelected = app.status == s;
-            return ChoiceChip(
-              label: Text(s),
-              selected: isSelected,
-              onSelected: (selected) async {
-                if (selected && app.status != s) {
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
-                  final success = await vm.updateStatus(s);
+    return FadeInDown(
+      duration: const Duration(milliseconds: 600),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildSectionTitle('Application Status', theme),
+              if (vm.isUpdatingStatus)
+                 SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.lightPrimary),
+                  ),
+                ),
+            ],
+          ),
+          8.h,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: statuses.map((s) {
+                final isSelected = app.status == s;
+                final statusColor = _getStatusColor(s);
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: AbsorbPointer(
+                    absorbing: vm.isUpdatingStatus,
+                    child: InkWell(
+                      onTap: () async {
+                      if (app.status != s) {
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        final success = await vm.updateStatus(s);
 
-                  scaffoldMessenger.showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        success
-                            ? 'Status updated to $s'
-                            : 'Failed to update status',
+                        if (mounted) {
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                success
+                                    ? 'Status updated to $s'
+                                    : 'Failed to update status',
+                              ),
+                              backgroundColor:
+                                  success ? Colors.green : Colors.red,
+                              duration: const Duration(seconds: 2),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(30),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
                       ),
-                      backgroundColor: success ? Colors.green : Colors.red,
-                      duration: const Duration(seconds: 2),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? statusColor.withOpacity(0.15)
+                            : isDark
+                                ? AppColors.darkMuted
+                                : Colors.grey[50],
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                          color: isSelected
+                              ? statusColor
+                              : isDark
+                                  ? AppColors.darkBorder
+                                  : Colors.grey[200]!,
+                          width: isSelected ? 2 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (isSelected) ...[
+                            Icon(
+                              Icons.check_circle_rounded,
+                              size: 16,
+                              color: statusColor,
+                            ),
+                            6.w,
+                          ],
+                          Text(
+                            s,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? statusColor
+                                  : (isDark ? Colors.white70 : Colors.black87),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                }
-              },
-              selectedColor: _getStatusColor(s).withOpacity(0.2),
-              labelStyle: TextStyle(
-                color: isSelected
-                    ? _getStatusColor(s)
-                    : (isDark ? Colors.white70 : Colors.black87),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+                  ),
+                  ));
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -325,69 +444,144 @@ class _ApplicantDetailViewState extends State<ApplicantDetailView> {
       return const Text('No resume uploaded.');
     }
 
-    return Consumer<ApplicantDetailViewModel>(
-      builder: (context, vm, child) {
-        return InkWell(
-          onTap: vm.isDownloading
-              ? null
-              : () => vm.downloadAndOpenResume(
-                  app.resumeUrl!,
-                  '${app.name.replaceAll(' ', '_')}_Resume.pdf',
+    return FadeInUp(
+      duration: const Duration(milliseconds: 600),
+      delay: const Duration(milliseconds: 300),
+      child: Consumer<ApplicantDetailViewModel>(
+        builder: (context, vm, child) {
+          return InkWell(
+            onTap: vm.isDownloading
+                ? null
+                : () => vm.downloadAndOpenResume(
+                      app.resumeUrl!,
+                      '${app.name.replaceAll(' ', '_')}_Resume.pdf',
+                    ),
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              height: 120,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkMuted : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? AppColors.darkBorder : Colors.grey[200]!,
+                  width: 1.5,
                 ),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.lightPrimary.withOpacity(0.3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.picture_as_pdf, color: Colors.red, size: 32),
-                12.w,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Resume.pdf', style: theme.textTheme.titleSmall),
-                      if (vm.isDownloading)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: LinearProgressIndicator(
-                            value: vm.downloadProgress,
-                            backgroundColor: Colors.grey[200],
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.lightPrimary,
+              child: Row(
+                children: [
+                  // Document Placeholder (The "Thumbnail")
+                  Container(
+                    width: 80,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.black26 : Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Icon(
+                          Bootstrap.file_earmark_pdf_fill,
+                          color: Colors.red.shade400,
+                          size: 40,
+                        ),
+                      Positioned(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade400,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'PDF',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        )
-                      else
+                        ),
+                      ],
+                    ),
+                  ),
+                  16.w,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          'Tap to download and open',
+                          '${app.name.split(' ').first}_Resume.pdf',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        4.h,
+                        Text(
+                          vm.isDownloading
+                              ? 'Downloading... ${(vm.downloadProgress * 100).toInt()}%'
+                              : 'Last updated: ${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey,
+                            color: vm.isDownloading ? AppColors.lightPrimary : Colors.grey,
+                            fontWeight: vm.isDownloading ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
-                    ],
+                        if (vm.isDownloading) ...[
+                          10.h,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: vm.downloadProgress > 0 ? vm.downloadProgress : null,
+                              minHeight: 4,
+                              backgroundColor: Colors.grey[200],
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.lightPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
-                ),
-                vm.isDownloading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(
-                        Icons.download_rounded,
-                        size: 20,
-                        color: Colors.grey,
-                      ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightPrimary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: vm.isDownloading
+                        ?  SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.lightPrimary),
+                            ),
+                          )
+                        : Icon(
+                            Bootstrap.download,
+                            size: 18,
+                            color: AppColors.lightPrimary,
+                          ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
