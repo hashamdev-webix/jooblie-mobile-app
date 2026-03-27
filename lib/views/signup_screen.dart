@@ -137,6 +137,7 @@ class SignupScreen extends StatelessWidget {
                                               ),
                                               24.h,
                                               CustomTextField(
+                                                enabled: !viewModel.isLoading,
                                                 label: 'Full Name',
                                                 hintText: 'John Doe',
                                                 prefixIcon:
@@ -161,6 +162,7 @@ class SignupScreen extends StatelessWidget {
                                                               bottom: 20.0,
                                                             ),
                                                         child: CustomTextField(
+                                                          enabled: !viewModel.isLoading,
                                                           label: 'Company Name',
                                                           hintText:
                                                               'Your Company',
@@ -181,6 +183,7 @@ class SignupScreen extends StatelessWidget {
                                                     : const SizedBox.shrink(),
                                               ),
                                               CustomTextField(
+                                                enabled: !viewModel.isLoading,
                                                 label: 'Email',
                                                 hintText: 'you@example.com',
                                                 prefixIcon: Icons.mail_outline,
@@ -195,6 +198,7 @@ class SignupScreen extends StatelessWidget {
                                               ),
                                               20.h,
                                               CustomTextField(
+                                                enabled: !viewModel.isLoading,
                                                 label: 'Password',
                                                 hintText: '••••••••',
                                                 prefixIcon: Icons.lock_outline,

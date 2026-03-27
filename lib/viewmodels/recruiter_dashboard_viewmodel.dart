@@ -587,6 +587,23 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
     'Manager',
   ];
 
+  void clear() {
+    editingJobId = null;
+    jobTitle = '';
+    companyName = '';
+    location = '';
+    salaryMin = '';
+    salaryMax = '';
+    salaryCurrency = 'USD';
+    requirements = '';
+    jobType = 'Full-time';
+    experienceLevel = 'Junior';
+    description = '';
+    skills = '';
+    formKey.currentState?.reset();
+    notifyListeners();
+  }
+
   void setJobType(String value) {
     jobType = value;
     notifyListeners();

@@ -132,6 +132,7 @@ class LoginScreen extends StatelessWidget {
                                                 ),
                                                 32.h,
                                                 CustomTextField(
+                                                  enabled: !viewModel.isLoading,
                                                   label: 'Email',
                                                   hintText: 'you@example.com',
                                                   prefixIcon:
@@ -147,7 +148,7 @@ class LoginScreen extends StatelessWidget {
                                                 ),
                                                 20.h,
                                                 CustomTextField(
-
+                                                  enabled: !viewModel.isLoading,
                                                   label: 'Password',
                                                   hintText: '••••••••',
                                                   prefixIcon:

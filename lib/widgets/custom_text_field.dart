@@ -13,7 +13,9 @@ class CustomTextField extends StatefulWidget {
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
   final FocusNode? focusNode;
-final void Function(String)? onChanged;
+  final void Function(String)? onChanged;
+  final bool enabled;
+
   const CustomTextField({
     super.key,
     required this.label,
@@ -27,7 +29,8 @@ final void Function(String)? onChanged;
     this.textInputAction,
     this.onFieldSubmitted,
     this.focusNode,
-    this.onChanged
+    this.onChanged,
+    this.enabled = true,
   });
 
   @override
@@ -53,6 +56,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         8.h,
         TextFormField(
+          enabled: widget.enabled,
           controller: widget.controller,
           obscureText: widget.isPassword ? _obscureText : false,
           keyboardType: widget.keyboardType,

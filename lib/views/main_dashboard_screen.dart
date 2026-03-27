@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/models/job_recommendation_model.dart';
+import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
@@ -259,6 +260,10 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
             if (widget.isJobSeeker && index == 0 && !wasOnHome) {
               Provider.of<JobseekerHomeViewModel>(context, listen: false).fetchStats();
               Provider.of<FavoritesViewModel>(context, listen: false).fetchFavoriteJobs();
+            }
+            // Clear the post job form when navigating to the 'Post Job' tab (index 2) via the bottom nav bar
+            if (!widget.isJobSeeker && index == 2) {
+              Provider.of<RecruiterPostJobViewModel>(context, listen: false).clear();
             }
           },
         ),
