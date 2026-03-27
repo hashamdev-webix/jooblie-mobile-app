@@ -136,38 +136,40 @@ class ResetPasswordScreen extends StatelessWidget {
                                   PrimaryButton(
                                     text: 'Update Password',
                                     isLoading: viewModel.isLoading,
-                                      onPressed: () async {
-                                        final result = await viewModel.updatePassword();
+                                    onPressed: () async {
+                                      final result = await viewModel
+                                          .updatePassword();
 
-                                        if (result == null && context.mounted) {
+                                      if (result == null && context.mounted) {
+                                        await Supabase.instance.client.auth
+                                            .signOut();
 
-                                          // ✅ STEP 1: Force logout (VERY IMPORTANT)
-                                          await Supabase.instance.client.auth.signOut();
+                                        CustomFlushbar.showSuccess(
+                                          context: context,
+                                          message:
+                                              'Password updated successfully! ✅',
+                                        );
 
-                                          // ✅ STEP 2: Success message
-                                          CustomFlushbar.showSuccess(
-                                            context: context,
-                                            message: 'Password updated successfully! ✅',
-                                          );
-
-                                          // ✅ STEP 3: Navigate to login (clean stack)
-                                          Future.delayed(const Duration(seconds: 2), () {
+                                        Future.delayed(
+                                          const Duration(seconds: 2),
+                                          () {
                                             if (context.mounted) {
                                               Navigator.pushNamedAndRemoveUntil(
                                                 context,
                                                 RoutesName.login,
-                                                    (route) => false,
+                                                (route) => false,
                                               );
                                             }
-                                          });
-
-                                        } else if (context.mounted) {
-                                          CustomFlushbar.showError(
-                                            context: context,
-                                            message: result ?? 'Something went wrong',
-                                          );
-                                        }
+                                          },
+                                        );
+                                      } else if (context.mounted) {
+                                        CustomFlushbar.showError(
+                                          context: context,
+                                          message:
+                                              result ?? 'Something went wrong',
+                                        );
                                       }
+                                    },
                                     // onPressed: () async {
                                     //   final result = await viewModel
                                     //       .updatePassword();
