@@ -49,11 +49,11 @@ class JobseekerHomeViewModel extends ChangeNotifier {
       int interviews = allApps.where((app) => app['status'] == 'Interview').length;
       int offers = allApps.where((app) => app['status'] == 'Offer').length;
 
-      // Profile views from profile_views table
+      // Profile views from views table
       int pViewsCount = 0;
       try {
         final profileViewsResponse = await Supabase.instance.client
-            .from('profile_views')
+            .from('views')
             .select('id')
             .eq('profile_id', user.id);
         pViewsCount = (profileViewsResponse as List).length;
