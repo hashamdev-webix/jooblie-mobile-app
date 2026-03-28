@@ -27,6 +27,7 @@ import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/verify_email_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/companies_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/recruiter_dashboard_viewmodel.dart';
+import 'package:jooblie_app/viewmodels/recruiter_stats_detail_viewmodel.dart';
 import 'package:jooblie_app/services/network_service.dart';
 import 'package:jooblie_app/views/no_internet_screen.dart';
 import 'package:jooblie_app/viewmodels/notifications_viewmodel.dart';
@@ -61,6 +62,7 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (_) => FavoritesViewModel()),
           ChangeNotifierProvider(create: (_) => RecruiterJobsViewModel()),
           ChangeNotifierProvider(create: (_) => RecruiterDashboardViewModel()),
+          ChangeNotifierProvider(create: (_) => RecruiterStatsDetailViewModel()),
           ChangeNotifierProvider(create: (_) => RecruiterPostJobViewModel()),
           ChangeNotifierProvider(create: (_) => RecruiterCompanyViewModel()),
           ChangeNotifierProvider(create: (_) => CompaniesViewModel()),
