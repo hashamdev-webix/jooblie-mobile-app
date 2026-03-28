@@ -149,15 +149,18 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                                           "jobTitle": "All Job Views",
                                         },
                                       );
-                                    } else if (stat["label"] == "Active Jobs") {
-                                      Navigator.pushNamed(
-                                        context,
-                                        RoutesName.recruiterJobsScreen,
-                                        arguments: {
-                                          "showLeadingBackButton": true,
-                                        },
-                                      );
-                                    } else if (stat["label"] ==
+                                    } 
+                                    // else if (stat["label"] == "Active Jobs") {
+                                    //   Navigator.pushNamed(
+                                    //     context,
+                                    //     RoutesName.recruiterJobsScreen,
+                                    //     arguments: {
+                                    //       "showLeadingBackButton": true,
+                                    //       "initialFilter": "active",
+                                    //     },
+                                    //   );
+                                    // }
+                                    else if (stat["label"] ==
                                         "Total Applicants") {
                                       Navigator.pushNamed(
                                         context,
