@@ -1,8 +1,7 @@
 import 'package:animate_do/animate_do.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/services/fcm_service.dart';
-import 'package:jooblie_app/services/get_service_key.dart';
 import 'package:jooblie_app/services/notifications_service.dart';
 import 'package:jooblie_app/views/recruiter/recruiter_dashboard_view/widgets/stat_card_widget.dart';
 import 'package:jooblie_app/widgets/custom_shimmer_widget.dart';
@@ -140,6 +139,18 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                                   value: stat["value"] as String,
                                   label: stat["label"] as String,
                                   change: stat["change"] as String,
+                                  onTap: stat["label"] as String == "Job Views"
+                                      ? () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            RoutesName.jobInsights,
+                                            arguments: {
+                                              "jobId": "all",
+                                              "jobTitle": "All Job Views",
+                                            },
+                                          );
+                                        }
+                                      : null,
                                 ),
                               ),
                               12.h,
