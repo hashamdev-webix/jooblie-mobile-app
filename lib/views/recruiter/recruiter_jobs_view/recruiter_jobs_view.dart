@@ -83,7 +83,6 @@ class RecruiterJobsView extends StatelessWidget {
                                 btnText: 'New job',
                                 icon: Icons.add,
                                 onTap: () {
-                                  // Simply push a fresh view for new job or could redirect to tab
                                   context
                                       .read<RecruiterPostJobViewModel>()
                                       .formKey
