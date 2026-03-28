@@ -139,18 +139,32 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                                   value: stat["value"] as String,
                                   label: stat["label"] as String,
                                   change: stat["change"] as String,
-                                  onTap: stat["label"] as String == "Job Views"
-                                      ? () {
-                                          Navigator.pushNamed(
-                                            context,
-                                            RoutesName.jobInsights,
-                                            arguments: {
-                                              "jobId": "all",
-                                              "jobTitle": "All Job Views",
-                                            },
-                                          );
-                                        }
-                                      : null,
+                                  onTap: () {
+                                    if (stat["label"] == "Job Views") {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.jobInsights,
+                                        arguments: {
+                                          "jobId": "all",
+                                          "jobTitle": "All Job Views",
+                                        },
+                                      );
+                                    } else if (stat["label"] == "Active Jobs") {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.recruiterJobsScreen,
+                                        arguments: {
+                                          "showLeadingBackButton": true,
+                                        },
+                                      );
+                                    } else if (stat["label"] ==
+                                        "Total Applicants") {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.totalApplicants,
+                                      );
+                                    }
+                                  },
                                 ),
                               ),
                               12.h,
