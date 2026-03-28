@@ -12,14 +12,19 @@ import '../../../core/app_colors.dart';
 import '../../../viewmodels/jobseeker_applications_viewmodel.dart';
 
 class JobseekerApplicationsView extends StatelessWidget {
-  const JobseekerApplicationsView();
+  final bool showLeadingBackButton;
+  final String? statusFilter;
+  const JobseekerApplicationsView({super.key, this.showLeadingBackButton = false, this.statusFilter});
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<JobseekerApplicationsViewModel>();
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
+    final filteredApplications = vm.applications.where((app) {
+      if (statusFilter == null) return true;
+      return app.status == statusFilter;
+    }).toList();
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -29,12 +34,12 @@ class JobseekerApplicationsView extends StatelessWidget {
         ),
         child: Column(
           children: [
-            HeaderAppBarWidget(theme: theme, isDark: isDark),
+            HeaderAppBarWidget(theme: theme, isDark: isDark,showLeadingIcon: showLeadingBackButton),
 
             Expanded(
               child: vm.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : vm.applications.isEmpty
+                  : filteredApplications.isEmpty
                   ? Center(
                       child: Text(
                         "No applications found.",
@@ -66,7 +71,7 @@ class JobseekerApplicationsView extends StatelessWidget {
                         ),
                         20.h,
                         // ── Applications List ──
-                        ...vm.applications.asMap().entries.map((entry) {
+                        ...filteredApplications.asMap().entries.map((entry) {
                           final idx = entry.key;
                           final app = entry.value;
                           return Column(

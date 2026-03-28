@@ -19,4 +19,5 @@ class RoutesName {
   static const String notifications = 'notifications_view';
   static const String profileInsights = 'profile_insights_view';
   static const String jobInsights = 'job_insights_view';
+  static const String applicationScreen= 'application_screen';
 }

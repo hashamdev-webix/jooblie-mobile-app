@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/my_slide_animation.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_applications_view/jobseeker_applications_view.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_home_view/widgets/job_seeker_home_tile_widget.dart';
 import 'package:jooblie_app/widgets/custom_shimmer_widget.dart';
 import 'package:jooblie_app/widgets/header_appbar_widget.dart';
@@ -181,16 +182,34 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
                                     // else if (stat.label == 'Job Views') {
                                     //   vm.navigateToJobInsights(context);
                                     // }
-                                    else if (stat.label == 'Applications' ||
-                                        stat.label == 'Interviews') {
+                                    else if (stat.label == 'Interviews') {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.applicationScreen,
+                                        arguments: {
+                                          "filterStatus": "Interview",
+                                          "showLeadingBackButton": true,
+                                        },
+                                      );
+
                                       // Navigator.pushNamed(
                                       //   context,
-                                      //   RoutesName.dashboard,
-                                      //   arguments: {
-                                      //     'isJobSeeker': true,
-                                      //     'initialIndex': 3,
-                                      //   },
+                                      //   RoutesName.applicationScreen,
+                                      //
+                                      //
+                                      //   // arguments: {
+                                      //   //   'isJobSeeker': true,
+                                      //   //   'initialIndex': 3,
+                                      //   // },
                                       // );
+                                    } else if (stat.label == 'Applications') {
+                                      Navigator.pushNamed(
+                                        context,
+                                        RoutesName.applicationScreen,
+                                        arguments: {
+                                          "showLeadingBackButton": true,
+                                        },
+                                      );
                                     }
                                   },
                                 ),

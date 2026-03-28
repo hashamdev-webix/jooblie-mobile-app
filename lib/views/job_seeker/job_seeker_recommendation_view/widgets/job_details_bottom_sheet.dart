@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/app_colors.dart';
+import 'package:jooblie_app/core/sized.dart';
 import 'package:jooblie_app/models/job_recommendation_model.dart';
 import 'package:jooblie_app/views/job_seeker/widgets/job_seeker_actions_helper.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,6 @@ class JobDetailsBottomSheet extends StatelessWidget {
 
   const JobDetailsBottomSheet({required this.job, required this.isDark});
 
-  /// Shows the job details bottom sheet and records a view.
   static void show(BuildContext context, JobRecommendationModel job) {
     JobseekerActionsHelper.showJobDetails(context, job);
   }
@@ -54,10 +54,10 @@ class JobDetailsBottomSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    const SizedBox(width: 48),
+                    48.w,
                   ],
                 ),
-                const SizedBox(height: 12),
+                12.h,
 
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,7 +75,7 @@ class JobDetailsBottomSheet extends StatelessWidget {
                         size: 28,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    15.w,
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +87,8 @@ class JobDetailsBottomSheet extends StatelessWidget {
                               height: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+
+                          4.h,
                           Text(
                             job.company,
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -99,7 +100,8 @@ class JobDetailsBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+
+                16.h,
 
                 Row(
                   children: [
@@ -108,14 +110,16 @@ class JobDetailsBottomSheet extends StatelessWidget {
                       size: 16,
                       color: isDark ? Colors.white60 : Colors.black54,
                     ),
-                    const SizedBox(width: 4),
+
+                    4.w,
                     Text(
                       job.location,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: isDark ? Colors.white60 : Colors.black54,
                       ),
                     ),
-                    const SizedBox(width: 16),
+
+                    16.w,
                     Icon(
                       Icons.attach_money,
                       size: 16,
@@ -129,7 +133,7 @@ class JobDetailsBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                8.h,
 
                 Row(
                   children: [
@@ -138,19 +142,23 @@ class JobDetailsBottomSheet extends StatelessWidget {
                       size: 16,
                       color: isDark ? Colors.white60 : Colors.black54,
                     ),
-                    const SizedBox(width: 4),
+
+                    4.w,
                     Text(
                       job.postedTime,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: isDark ? Colors.white60 : Colors.black54,
                       ),
                     ),
-                    const SizedBox(width: 16),
+
+                    16.w,
                     Icon(
                       Icons.work_outline,
                       size: 16,
                       color: isDark ? Colors.white60 : Colors.black54,
                     ),
+
+                    4.w,
                     const SizedBox(width: 4),
                     Text(
                       job.jobType,
@@ -160,7 +168,8 @@ class JobDetailsBottomSheet extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+
+                16.h,
 
                 Consumer<FavoritesViewModel>(
                   builder: (context, favViewModel, child) {
@@ -175,7 +184,7 @@ class JobDetailsBottomSheet extends StatelessWidget {
                           iconColor: isFavorite ? Colors.red : null,
                           onTap: () => favViewModel.toggleFavorite(job),
                         ),
-                        const SizedBox(width: 12),
+                        12.w,
                         Builder(
                           builder: (btnCtx) {
                             return _IconBtn(
@@ -200,17 +209,19 @@ class JobDetailsBottomSheet extends StatelessWidget {
                     );
                   },
                 ),
-                const SizedBox(height: 20),
+
+                20.h,
 
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
                   children: job.tags.map((tag) => _TagChip(tag: tag)).toList(),
                 ),
-                const SizedBox(height: 24),
+
+                24.h,
 
                 _SectionTitle('Description', theme),
-                const SizedBox(height: 8),
+                8.h,
                 Text(
                   job.description,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -218,22 +229,22 @@ class JobDetailsBottomSheet extends StatelessWidget {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 24),
+                24.h,
 
                 _SectionTitle('Requirements', theme),
-                const SizedBox(height: 8),
+                8.h,
                 ...job.requirements.map(
                   (req) => _BulletPoint(text: req, isDark: isDark),
                 ),
-                const SizedBox(height: 24),
 
-                _SectionTitle('Benefits', theme),
-                const SizedBox(height: 8),
-                ...job.benefits.map(
-                  (ben) => _BulletPoint(text: ben, isDark: isDark),
-                ),
+                // const SizedBox(height: 24),
 
-                const SizedBox(height: 40),
+                // _SectionTitle('Benefits', theme),
+                // const SizedBox(height: 8),
+                // ...job.benefits.map(
+                //   (ben) => _BulletPoint(text: ben, isDark: isDark),
+                // ),
+                40.h,
               ],
             ),
           ),

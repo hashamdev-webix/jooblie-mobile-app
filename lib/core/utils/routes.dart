@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_applications_view/jobseeker_applications_view.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_profile_view/jobseeker_profile_view.dart';
 import 'package:jooblie_app/views/login_screen.dart';
 import 'package:jooblie_app/views/main_dashboard_screen.dart';
@@ -127,6 +128,15 @@ class Routes {
             jobTitle: args['jobTitle'],
           ),
         );
+      case RoutesName.applicationScreen:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(builder: (_)=>JobseekerApplicationsView(
+
+          statusFilter: args["filterStatus"],
+          showLeadingBackButton: args["showLeadingBackButton"],
+
+        ));
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
