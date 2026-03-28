@@ -27,7 +27,6 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
   @override
   void initState() {
     super.initState();
-    // Refresh data every time the Home tab is shown
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<JobseekerHomeViewModel>(context, listen: false).fetchStats();
     });
