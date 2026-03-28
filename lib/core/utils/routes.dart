@@ -6,6 +6,7 @@ import 'package:jooblie_app/views/auth_views/login_screen_view.dart';
 import 'package:jooblie_app/views/main_dashboard_screen.dart';
 import 'package:jooblie_app/views/recruiter/recruiter_company_view.dart';
 import 'package:jooblie_app/views/auth_views/signup_screen_view.dart';
+import 'package:jooblie_app/views/recruiter/recruiter_jobs_view/recruiter_jobs_view.dart';
 import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/search_view.dart';
@@ -22,6 +23,8 @@ import 'package:jooblie_app/views/notifications_view.dart';
 
 import 'package:jooblie_app/views/job_seeker/profile_insights_view.dart';
 import 'package:jooblie_app/views/recruiter/job_view_insights_view.dart';
+import 'package:jooblie_app/views/recruiter/recruiter_stats_views/active_jobs_view.dart';
+import 'package:jooblie_app/views/recruiter/recruiter_stats_views/total_applicants_view.dart';
 
 class Routes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -136,6 +139,17 @@ class Routes {
           showLeadingBackButton: args["showLeadingBackButton"],
 
         ));
+
+      case RoutesName.recruiterJobsScreen:
+        final args = settings.arguments as Map<String, dynamic>;
+
+        return MaterialPageRoute(builder: (_) =>  RecruiterJobsView(
+showLeadingBackButton: args["showLeadingBackButton"]
+
+        ));
+
+      case RoutesName.totalApplicants:
+        return MaterialPageRoute(builder: (_) => const TotalApplicantsView());
 
       default:
         return MaterialPageRoute(
