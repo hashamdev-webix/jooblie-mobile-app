@@ -20,4 +20,7 @@ class RoutesName {
   static const String profileInsights = 'profile_insights_view';
   static const String jobInsights = 'job_insights_view';
   static const String applicationScreen= 'application_screen';
+  // static const String activeJobs = 'active_jobs_view';
+  static const String totalApplicants = 'total_applicants_view';
+  static const String recruiterJobsScreen ="recruiter_jobs_screen";
 }
