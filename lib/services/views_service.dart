@@ -156,11 +156,9 @@ class ViewsService {
       final Map<String, int> counts = {};
 
       for (var jobId in jobIds) {
-        final uniqueViewers = allViews
+        counts[jobId] = allViews
             .where((v) => v['job_id'].toString() == jobId)
-            .map((v) => v['viewer_id'])
-            .toSet();
-        counts[jobId] = uniqueViewers.length;
+            .length;
       }
       return counts;
     } catch (e) {
