@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/utils/app_strings.dart';
 import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
 import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,7 +32,7 @@ class LoginScreenView extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: const AppBarWidget(
-          title: 'Jooblie',
+          title: AppStrings.appName,
           backGroundColor: Color(0xffFFFFFF),
           showLeadingIcon: false,
         ),
@@ -48,7 +50,6 @@ class LoginScreenView extends StatelessWidget {
                 onTap: () => FocusScope.of(context).unfocus(),
                 child: Container(
                   width: double.infinity,
-                  // height: double.infinity,
                   decoration: BoxDecoration(
                     gradient: isDark
                         ? AppColors.darkGradientBackground
@@ -67,7 +68,6 @@ class LoginScreenView extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // AppLogo(),
                                 FadeSlideUp(
                                   duration: const Duration(milliseconds: 800),
                                   yOffset: 30.0,
@@ -104,23 +104,7 @@ class LoginScreenView extends StatelessWidget {
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Container(
-                                                  width: 64,
-                                                  height: 64,
-                                                  decoration: BoxDecoration(
-                                                    gradient: AppColors
-                                                        .gradientPrimary,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          16,
-                                                        ),
-                                                  ),
-                                                  child: const Icon(
-                                                    Icons.work_outline,
-                                                    color: Colors.white,
-                                                    size: 32,
-                                                  ),
-                                                ),
+                                                AppLogo(width: 64, height: 64),
                                                 24.h,
                                                 Text(
                                                   'Welcome Back',
@@ -250,15 +234,6 @@ class LoginScreenView extends StatelessWidget {
                                                             title: "Sign Up",
                                                             fontSize: 13,
                                                           ),
-                                                      // child: Text(
-                                                      //   'Sign up',
-                                                      //   style: TextStyle(
-                                                      //     color: AppColors.lightPrimary,
-                                                      //     fontWeight: FontWeight.w600,
-                                                      //     fontSize: theme
-                                                      //         .textTheme.bodyMedium?.fontSize,
-                                                      //   ),
-                                                      // ),
                                                     ),
                                                   ],
                                                 ),

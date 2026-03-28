@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/sized.dart';
+import 'package:jooblie_app/core/utils/app_strings.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
 
 import '../core/app_colors.dart';
 import '../core/utils/routes_name.dart';
@@ -62,7 +65,8 @@ class _SplashScreenState extends State<SplashScreen>
     }
 
     final session = Supabase.instance.client.auth.currentSession;
-    final hasLoggedInManually = prefs.getBool('has_logged_in_manually') ?? false;
+    final hasLoggedInManually =
+        prefs.getBool('has_logged_in_manually') ?? false;
 
     if (session != null && hasLoggedInManually) {
       final user = session.user;
@@ -120,37 +124,43 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.gradientPrimary,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            isDark
-                                ? AppColors.shadowCardDark
-                                : AppColors.shadowCardLight,
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.work_outline,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+                      AppLogo(width: 80, height: 80),
+
+                      // Container(
+                      //   width: 100,
+                      //   height: 100,
+                      //   decoration: BoxDecoration(
+                      //     gradient: AppColors.gradientPrimary,
+                      //     borderRadius: BorderRadius.circular(24),
+                      //     boxShadow: [
+                      //       isDark
+                      //           ? AppColors.shadowCardDark
+                      //           : AppColors.shadowCardLight,
+                      //     ],
+                      //   ),
+                      //   child: const Icon(
+                      //     Icons.work_outline,
+                      //     color: Colors.white,
+                      //     size: 50,
+                      //   ),
+                      // ),
+                      24.h,
                       Text(
-                        'Jooblie',
+                        AppStrings.appName,
                         style: theme.textTheme.displaySmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.lightForeground,
+                          color: isDark
+                              ? Colors.white
+                              : AppColors.lightForeground,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Find your next adventure',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isDark ? Colors.white70 : AppColors.lightMutedForeground,
+                          color: isDark
+                              ? Colors.white70
+                              : AppColors.lightMutedForeground,
                         ),
                       ),
                     ],

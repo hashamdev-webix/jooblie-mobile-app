@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/views/main_dashboard_screen.dart';
 import 'package:jooblie_app/widgets/app_bar_widget.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
 import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -100,21 +101,8 @@ class SignupScreenView extends StatelessWidget {
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Container(
-                                                width: 64,
-                                                height: 64,
-                                                decoration: BoxDecoration(
-                                                  gradient:
-                                                      AppColors.gradientPrimary,
-                                                  borderRadius:
-                                                      BorderRadius.circular(16),
-                                                ),
-                                                child: const Icon(
-                                                  Icons.work_outline,
-                                                  color: Colors.white,
-                                                  size: 32,
-                                                ),
-                                              ),
+                                              AppLogo(width: 64, height: 64),
+
                                               24.h,
                                               Text(
                                                 'Create Account',
