@@ -20,7 +20,7 @@ class HeaderAppBarWidget extends StatelessWidget {
     super.key,
     required this.theme,
     required this.isDark,
-    this.blackTitle = "Job",
+    this.blackTitle = "Joob",
     this.blueTitle = "lie",
     this.showSetting = true,
     this.showLeadingIcon = false,
