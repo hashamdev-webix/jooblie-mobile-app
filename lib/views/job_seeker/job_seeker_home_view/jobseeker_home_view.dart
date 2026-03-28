@@ -177,18 +177,20 @@ class _JobseekerHomeViewState extends State<JobseekerHomeView> {
                                         context,
                                         RoutesName.profileInsights,
                                       );
-                                    } else if (stat.label == 'Job Views') {
-                                      vm.navigateToJobInsights(context);
-                                    } else if (stat.label == 'Applications' ||
+                                    }
+                                    // else if (stat.label == 'Job Views') {
+                                    //   vm.navigateToJobInsights(context);
+                                    // }
+                                    else if (stat.label == 'Applications' ||
                                         stat.label == 'Interviews') {
-                                      Navigator.pushNamed(
-                                        context,
-                                        RoutesName.dashboard,
-                                        arguments: {
-                                          'isJobSeeker': true,
-                                          'initialIndex': 3,
-                                        },
-                                      );
+                                      // Navigator.pushNamed(
+                                      //   context,
+                                      //   RoutesName.dashboard,
+                                      //   arguments: {
+                                      //     'isJobSeeker': true,
+                                      //     'initialIndex': 3,
+                                      //   },
+                                      // );
                                     }
                                   },
                                 ),

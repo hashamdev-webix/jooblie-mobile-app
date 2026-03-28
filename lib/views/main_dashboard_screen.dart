@@ -25,6 +25,7 @@ class _TabItem {
   final String label;
   final IconData selectedIcon;
   final IconData unselectedIcon;
+
   const _TabItem({
     required this.label,
     required this.selectedIcon,

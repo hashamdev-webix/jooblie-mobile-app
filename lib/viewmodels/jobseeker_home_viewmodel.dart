@@ -179,12 +179,7 @@ class JobseekerHomeViewModel extends ChangeNotifier {
           badge: 'Bookmarked',
           iconAsset: 'saved',
         ),
-        HomeStatModel(
-          label: 'Job Views',
-          count: appliedJobViewsCount,
-          badge: 'Of your applied jobs',
-          iconAsset: 'jobs_views', // New icon asset name
-        ),
+
         HomeStatModel(
           label: 'Profile Views',
           count: pViewsCount,
@@ -213,30 +208,30 @@ class JobseekerHomeViewModel extends ChangeNotifier {
     }
   }
 
-  void navigateToJobInsights(BuildContext context) async {
-    final user = Supabase.instance.client.auth.currentUser;
-    if (user == null) return;
-    
-    // For a JobSeeker, we'll show insights for their LATEST application
-    // or a summary. For now, let's find the most recent job they applied to.
-    try {
-      final lastApp = await _repository.getApplications(user.id);
-      if (lastApp.isNotEmpty) {
-        final jobId = lastApp.first['job_id'];
-        final jobTitle = lastApp.first['jobs']['title'];
-        
-        Navigator.pushNamed(
-          context,
-          RoutesName.jobInsights,
-          arguments: {'jobId': jobId, 'jobTitle': jobTitle},
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Apply to jobs to see their view insights!')),
-        );
-      }
-    } catch (e) {
-      debugPrint('Error navigating to job insights: $e');
-    }
-  }
+  // void navigateToJobInsights(BuildContext context) async {
+  //   final user = Supabase.instance.client.auth.currentUser;
+  //   if (user == null) return;
+  //
+  //   // For a JobSeeker, we'll show insights for their LATEST application
+  //   // or a summary. For now, let's find the most recent job they applied to.
+  //   try {
+  //     final lastApp = await _repository.getApplications(user.id);
+  //     if (lastApp.isNotEmpty) {
+  //       final jobId = lastApp.first['job_id'];
+  //       final jobTitle = lastApp.first['jobs']['title'];
+  //
+  //       Navigator.pushNamed(
+  //         context,
+  //         RoutesName.jobInsights,
+  //         arguments: {'jobId': jobId, 'jobTitle': jobTitle},
+  //       );
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Apply to jobs to see their view insights!')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     debugPrint('Error navigating to job insights: $e');
+  //   }
+  // }
 }
