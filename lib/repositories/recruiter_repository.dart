@@ -3,25 +3,65 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class RecruiterRepository {
   final SupabaseClient _client = Supabase.instance.client;
 
-  /// Fetches detailed view history for a specific job.
-  Future<List<Map<String, dynamic>>> getDetailedJobViews(String jobId) async {
+  /// Fetches detailed view history for a specific job or all jobs of the current recruiter.
+  Future<List<Map<String, dynamic>>> getDetailedJobViews(String? jobId) async {
     try {
-      final response = await _client
-          .from('views')
-          .select('*, profiles:viewer_id(full_name, avatar_url, role, company_name, location, industry)')
-          .eq('job_id', jobId)
-          .order('last_viewed_at', ascending: false);
+      final userId = _client.auth.currentUser?.id;
+      if (userId == null) return [];
 
+      var query = _client
+          .from('views')
+          .select('*, profiles:viewer_id(full_name, avatar_url, role, company_name, location, industry)');
+
+      if (jobId != null && jobId != 'all') {
+        query = query.eq('job_id', jobId);
+      } else {
+        // Fetch all jobs for this recruiter to filter views
+        final jobsResponse = await _client
+            .from('jobs')
+            .select('id')
+            .eq('recruiter_id', userId);
+        
+        final List<String> recruiterJobIds = (jobsResponse as List)
+            .map((j) => j['id'].toString())
+            .toList();
+            
+        if (recruiterJobIds.isEmpty) return [];
+        
+        query = query.inFilter('job_id', recruiterJobIds);
+      }
+
+      final response = await query.order('last_viewed_at', ascending: false);
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
       print('Relationship join failed, falling back to manual fetch: $e');
       
+      final userId = _client.auth.currentUser?.id;
+      if (userId == null) return [];
+
       // Fallback: Fetch views first, then profiles separately
-      final viewsResponse = await _client
+      var viewsQuery = _client
           .from('views')
-          .select('*')
-          .eq('job_id', jobId)
-          .order('last_viewed_at', ascending: false);
+          .select('*');
+
+      if (jobId != null && jobId != 'all') {
+        viewsQuery = viewsQuery.eq('job_id', jobId);
+      } else {
+        final jobsResponse = await _client
+            .from('jobs')
+            .select('id')
+            .eq('recruiter_id', userId);
+        
+        final List<String> recruiterJobIds = (jobsResponse as List)
+            .map((j) => j['id'].toString())
+            .toList();
+            
+        if (recruiterJobIds.isEmpty) return [];
+        
+        viewsQuery = viewsQuery.inFilter('job_id', recruiterJobIds);
+      }
+      
+      final viewsResponse = await viewsQuery.order('last_viewed_at', ascending: false);
       
       final List<Map<String, dynamic>> views = List<Map<String, dynamic>>.from(viewsResponse);
       if (views.isEmpty) return [];
