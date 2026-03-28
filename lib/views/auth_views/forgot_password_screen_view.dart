@@ -12,8 +12,8 @@ import 'package:jooblie_app/widgets/fade_slide_up.dart';
 import 'package:provider/provider.dart';
 import 'package:jooblie_app/core/utils/custom_flushbar.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
+class ForgotPasswordScreenView extends StatelessWidget {
+  const ForgotPasswordScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {

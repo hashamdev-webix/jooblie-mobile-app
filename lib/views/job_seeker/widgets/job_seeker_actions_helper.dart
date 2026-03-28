@@ -4,7 +4,7 @@ import 'package:jooblie_app/services/views_service.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_applications_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_details_bottom_sheet.dart';
 import 'package:jooblie_app/views/job_seeker/widgets/apply_job_dialog.dart';
 
 class JobseekerActionsHelper {

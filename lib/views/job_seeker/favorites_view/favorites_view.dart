@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/app_colors.dart';
 import '../../../viewmodels/favorites_viewmodel.dart';
 import '../job_seeker_jobs_view/widgets/job_card_widget.dart';
-import '../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import '../job_seeker_jobs_view/widgets/job_details_bottom_sheet.dart';
 
 class FavoritesView extends StatelessWidget {
   const FavoritesView({super.key});

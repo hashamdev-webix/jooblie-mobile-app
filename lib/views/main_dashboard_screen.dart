@@ -7,7 +7,7 @@ import 'package:jooblie_app/viewmodels/job_seeker_jobs_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/favorites_viewmodel.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_recommendations_viewmodel.dart';
-import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_details_bottom_sheet.dart';
 import '../core/app_colors.dart';
 import '../core/utils/routes_name.dart';
 import 'recruiter/recruiter_dashboard_view/recruiter_dashboard_view.dart';
@@ -185,13 +185,14 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
 
   void _handleInitialJob(String jobId) {
     final jobsVM = Provider.of<JobSeekerJobsViewModel>(context, listen: false);
-    final recVM = Provider.of<JobseekerRecommendationsViewModel>(
-      context,
-      listen: false,
-    );
+    // final recVM = Provider.of<JobseekerRecommendationsViewModel>(
+    //   context,
+    //   listen: false,
+    // );
 
     // Combine all available job lists to search for the ID
-    final allJobs = [...jobsVM.jobs, ...recVM.recommendations];
+    final allJobs = [...jobsVM.jobs];
+    // final allJobs = [...jobsVM.jobs, ...recVM.recommendations];
 
     final job = allJobs.cast<JobRecommendationModel?>().firstWhere(
       (j) => j?.id == jobId,
@@ -208,7 +209,7 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
     const CompaniesView(),
     const JobSeekerJobsView(),
     const JobseekerApplicationsView(),
-    const JobseekerRecommendationsView(),
+    // const JobseekerRecommendationsView(),
     const JobseekerResumeView(),
   ];
 
@@ -246,11 +247,11 @@ class _MainDashboardScreenState extends State<MainDashboardScreen> {
       selectedIcon: Icons.list_alt_rounded,
       unselectedIcon: Icons.list_alt_outlined,
     ),
-    _TabItem(
-      label: 'Matches',
-      selectedIcon: Icons.auto_awesome_rounded,
-      unselectedIcon: Icons.auto_awesome_outlined,
-    ),
+    // _TabItem(
+    //   label: 'Matches',
+    //   selectedIcon: Icons.auto_awesome_rounded,
+    //   unselectedIcon: Icons.auto_awesome_outlined,
+    // ),
     _TabItem(
       label: 'Resume',
       selectedIcon: Icons.description_rounded,

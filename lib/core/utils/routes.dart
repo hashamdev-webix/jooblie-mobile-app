@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_applications_view/jobseeker_applications_view.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_profile_view/jobseeker_profile_view.dart';
-import 'package:jooblie_app/views/login_screen.dart';
+import 'package:jooblie_app/views/auth_views/login_screen_view.dart';
 import 'package:jooblie_app/views/main_dashboard_screen.dart';
 import 'package:jooblie_app/views/recruiter/recruiter_company_view.dart';
-import 'package:jooblie_app/views/signup_screen.dart';
+import 'package:jooblie_app/views/auth_views/signup_screen_view.dart';
 import 'package:jooblie_app/views/splash_screen.dart';
 import 'package:jooblie_app/views/settings/settings_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/search_view.dart';
-import 'package:jooblie_app/views/forgot_password_screen.dart';
+import 'package:jooblie_app/views/auth_views/forgot_password_screen_view.dart';
 import 'package:jooblie_app/views/job_seeker/search_view/location_search_view.dart';
 import 'package:jooblie_app/views/onboarding/onboarding_view.dart';
 import 'package:jooblie_app/views/job_seeker/favorites_view/favorites_view.dart';
@@ -52,10 +52,10 @@ class Routes {
         return MaterialPageRoute(builder: (_) => const OnboardingView());
 
       case RoutesName.login:
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return MaterialPageRoute(builder: (_) => const LoginScreenView());
 
       case RoutesName.signup:
-        return MaterialPageRoute(builder: (_) => const SignupScreen());
+        return MaterialPageRoute(builder: (_) => const SignupScreenView());
 
       case RoutesName.dashboard:
         final args = settings.arguments as Map<String, dynamic>?;
@@ -85,7 +85,7 @@ class Routes {
         return MaterialPageRoute(builder: (_) => RecruiterCompanyView());
       case RoutesName.forgotPassword:
         return MaterialPageRoute(
-          builder: (BuildContext context) => const ForgotPasswordScreen(),
+          builder: (BuildContext context) => const ForgotPasswordScreenView(),
         );
 
       case RoutesName.verifyEmail:

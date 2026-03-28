@@ -9,7 +9,7 @@ import '../../../../core/app_colors.dart';
 import '../../../../viewmodels/job_seeker_jobs_viewmodel.dart';
 import '../../../../core/sized.dart';
 import '../../../../widgets/header_appbar_widget.dart';
-import '../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import 'widgets/job_details_bottom_sheet.dart';
 import 'widgets/job_card_widget.dart';
 import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_filter_bottom_sheet.dart';
 

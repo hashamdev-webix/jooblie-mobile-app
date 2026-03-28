@@ -8,7 +8,7 @@ import '../../../core/sized.dart';
 import '../../../models/company_model.dart';
 import '../../../models/job_recommendation_model.dart';
 import '../../../viewmodels/companies_viewmodel.dart';
-import '../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import '../job_seeker_jobs_view/widgets/job_details_bottom_sheet.dart';
 
 class CompanyDetailsView extends StatefulWidget {
   final CompanyModel company;

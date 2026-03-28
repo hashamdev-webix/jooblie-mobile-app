@@ -4,19 +4,18 @@ import 'package:jooblie_app/widgets/app_bar_widget.dart';
 import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jooblie_app/core/utils/custom_flushbar.dart';
-import '../core/app_colors.dart';
-import '../core/sized.dart';
-import '../core/utils/responsive.dart';
-import '../viewmodels/login_viewmodel.dart';
-import '../core/utils/routes_name.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/primary_button.dart';
-import '../widgets/fade_slide_up.dart';
+import '../../core/app_colors.dart';
+import '../../core/sized.dart';
+import '../../core/utils/responsive.dart';
+import '../../viewmodels/login_viewmodel.dart';
+import '../../core/utils/routes_name.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/primary_button.dart';
+import '../../widgets/fade_slide_up.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginScreenView extends StatelessWidget {
+  const LoginScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {

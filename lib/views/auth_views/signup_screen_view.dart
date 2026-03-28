@@ -8,17 +8,17 @@ import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jooblie_app/core/utils/routes_name.dart';
 import 'package:jooblie_app/core/utils/custom_flushbar.dart';
-import '../core/app_colors.dart';
-import '../core/sized.dart';
-import '../core/utils/responsive.dart';
-import '../viewmodels/signup_viewmodel.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/primary_button.dart';
-import '../widgets/segmented_control.dart';
-import '../widgets/fade_slide_up.dart';
+import '../../core/app_colors.dart';
+import '../../core/sized.dart';
+import '../../core/utils/responsive.dart';
+import '../../viewmodels/signup_viewmodel.dart';
+import '../../widgets/custom_text_field.dart';
+import '../../widgets/primary_button.dart';
+import '../../widgets/segmented_control.dart';
+import '../../widgets/fade_slide_up.dart';
 
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
+class SignupScreenView extends StatelessWidget {
+  const SignupScreenView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,6 @@ class SignupScreen extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBarWidget(title: "", showAppLogo: false),
-        // appBar: const AppBarWidget(title: "Jooblie", showLeadingIcon: false),
         body: Stack(
           children: [
             Container(
@@ -292,19 +291,6 @@ class SignupScreen extends StatelessWidget {
                                                           title: "Sign in",
                                                           fontSize: 13,
                                                         ),
-                                                    // child: Text(
-                                                    //   'Sign in',
-                                                    //   style: TextStyle(
-                                                    //     color: AppColors
-                                                    //         .lightPrimary,
-                                                    //     fontWeight:
-                                                    //         FontWeight.w600,
-                                                    //     fontSize: theme
-                                                    //         .textTheme
-                                                    //         .bodyMedium
-                                                    //         ?.fontSize,
-                                                    //   ),
-                                                    // ),
                                                   ),
                                                 ],
                                               ),

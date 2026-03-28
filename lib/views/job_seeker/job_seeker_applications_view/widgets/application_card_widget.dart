@@ -4,7 +4,7 @@ import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
 import '../../../../core/app_colors.dart';
 import '../../../../core/utils/my_slide_animation.dart';
 import '../../../../models/job_application_model.dart';
-import '../../job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import '../../job_seeker_jobs_view/widgets/job_details_bottom_sheet.dart';
 
 class ApplicationCard extends StatelessWidget {
   final JobApplicationModel application;

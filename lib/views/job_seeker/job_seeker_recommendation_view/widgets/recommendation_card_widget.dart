@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jooblie_app/models/job_recommendation_model.dart';
 import 'package:jooblie_app/viewmodels/jobseeker_home_viewmodel.dart';
-import 'package:jooblie_app/views/job_seeker/job_seeker_recommendation_view/widgets/job_details_bottom_sheet.dart';
+import 'package:jooblie_app/views/job_seeker/job_seeker_jobs_view/widgets/job_details_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import '../../../../core/app_colors.dart';
