@@ -13,7 +13,9 @@ import '../../../core/sized.dart';
 import '../../../viewmodels/recruiter_dashboard_viewmodel.dart';
 
 class RecruiterJobsView extends StatelessWidget {
-  const RecruiterJobsView({super.key});
+  final bool showLeadingBackButton;
+  
+  const RecruiterJobsView({super.key,this.showLeadingBackButton=false});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class RecruiterJobsView extends StatelessWidget {
               isDark: isDark,
               showSetting: false,
               showProfileIcon: true,
-              showLeadingIcon: false,
+              showLeadingIcon: showLeadingBackButton,
             ),
 
             Expanded(
