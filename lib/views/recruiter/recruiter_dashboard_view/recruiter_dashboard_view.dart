@@ -149,7 +149,7 @@ class _RecruiterDashboardViewState extends State<RecruiterDashboardView> {
                                           "jobTitle": "All Job Views",
                                         },
                                       );
-                                    } 
+                                    }
                                     // else if (stat["label"] == "Active Jobs") {
                                     //   Navigator.pushNamed(
                                     //     context,
