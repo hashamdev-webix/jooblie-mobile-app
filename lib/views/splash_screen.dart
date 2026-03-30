@@ -1,7 +1,14 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:jooblie_app/core/sized.dart';
+import 'package:jooblie_app/core/utils/app_strings.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
+
 import '../core/app_colors.dart';
-import 'login_screen.dart';
+import '../core/utils/routes_name.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,32 +31,67 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(milliseconds: 1500),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
-    // Navigate to Login Screen after 3 seconds
-    Timer(const Duration(seconds: 3), () {
+    delayedNavigate();
+  }
+
+  // Navigate after 3 seconds with session and onboarding logic
+  Future<void> delayedNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+
+    // Guard: If another route (like ResetPassword) has already been pushed, don't navigate.
+    if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+
+    final prefs = await SharedPreferences.getInstance();
+
+    final hasSeenOnboarding = prefs.getBool('has_seen_onboarding') ?? false;
+    if (!hasSeenOnboarding) {
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const LoginScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 800),
-          ),
-        );
+        Navigator.pushReplacementNamed(context, RoutesName.onboarding);
       }
-    });
+      return;
+    }
+
+    final session = Supabase.instance.client.auth.currentSession;
+    final hasLoggedInManually =
+        prefs.getBool('has_logged_in_manually') ?? false;
+
+    if (session != null && hasLoggedInManually) {
+      final user = session.user;
+      // Verify email is confirmed if required by your Supabase setup.
+      // It's normally filled via checking emailConfirmedAt
+      if (user.emailConfirmedAt != null) {
+        final userType = user.userMetadata?['role'];
+        final isJobSeeker = userType != null
+            ? (userType == 'job_seeker')
+            : (prefs.getBool('is_job_seeker') ?? true);
+
+        if (mounted) {
+          Navigator.pushReplacementNamed(
+            context,
+            RoutesName.dashboard,
+            arguments: {'isJobSeeker': isJobSeeker},
+          );
+        }
+        return;
+      }
+    }
+
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, RoutesName.login);
+    }
   }
 
   @override
@@ -82,37 +124,43 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          gradient: AppColors.gradientPrimary,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            isDark
-                                ? AppColors.shadowCardDark
-                                : AppColors.shadowCardLight,
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.work_outline,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
+                      AppLogo(width: 80, height: 80),
+
+                      // Container(
+                      //   width: 100,
+                      //   height: 100,
+                      //   decoration: BoxDecoration(
+                      //     gradient: AppColors.gradientPrimary,
+                      //     borderRadius: BorderRadius.circular(24),
+                      //     boxShadow: [
+                      //       isDark
+                      //           ? AppColors.shadowCardDark
+                      //           : AppColors.shadowCardLight,
+                      //     ],
+                      //   ),
+                      //   child: const Icon(
+                      //     Icons.work_outline,
+                      //     color: Colors.white,
+                      //     size: 50,
+                      //   ),
+                      // ),
+                      24.h,
                       Text(
-                        'Jooblie',
+                        AppStrings.appName,
                         style: theme.textTheme.displaySmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.lightForeground,
+                          color: isDark
+                              ? Colors.white
+                              : AppColors.lightForeground,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Find your next adventure',
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isDark ? Colors.white70 : AppColors.lightMutedForeground,
+                          color: isDark
+                              ? Colors.white70
+                              : AppColors.lightMutedForeground,
                         ),
                       ),
                     ],

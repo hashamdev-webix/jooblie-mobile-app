@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:jooblie_app/core/app_colors.dart';
+import 'package:jooblie_app/widgets/app_logo_widget.dart';
+import 'package:jooblie_app/widgets/gradient_style_text_widget.dart';
 
 import '../core/sized.dart';
+import '../views/onboarding/onboarding_view.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -12,8 +15,11 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final Color backGroundColor;
   final Color leadingIconColor;
   final Color textColor;
-  final  PreferredSizeWidget? bottom;
+  final PreferredSizeWidget? bottom;
   final SystemUiOverlayStyle? systemOverlayStyle;
+  final bool showAppLogo;
+  final Widget? leading;
+
   const AppBarWidget({
     super.key,
     required this.title,
@@ -25,7 +31,9 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
     this.textColor = Colors.black,
     this.bottom,
-    this.systemOverlayStyle
+    this.systemOverlayStyle,
+    this.showAppLogo = true,
+    this.leading,
   });
 
   @override
@@ -34,27 +42,25 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       scrolledUnderElevation: 0.0,
-      // backgroundColor: Colors.transparent,
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1), // height of the line
+        preferredSize: const Size.fromHeight(1),
         child: Container(
-          color: isDark
-              ? Color(0xff20293C)
-              : Colors.grey.shade300,          height: 0.5,
+          color: isDark ? Color(0xff20293C) : Colors.grey.shade300,
+          height: 0.5,
         ),
       ),
       automaticallyImplyLeading: false,
       systemOverlayStyle: systemOverlayStyle,
-      leading: showLeadingIcon
+      leading: leading ?? (showLeadingIcon
           ? IconButton(
-        onPressed: () => Navigator.pop(context),
-        icon: Icon(
-          Icons.arrow_back_ios_new_sharp,
-          color: leadingIconColor,
-        ),
-        // color: AppColors.primary,
-      )
-          : null,
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(
+                Icons.arrow_back_ios_new_sharp,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+              // color: AppColors.primary,
+            )
+          : null),
       backgroundColor: backGroundColor,
       // backgroundColor: isDark
       //     ? AppColors.darkBackground
@@ -71,27 +77,16 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black87),
       title: Row(
         children: [
-          Container(
-            width: 40, // rectangle width
-            height: 34, // rectangle height
-            decoration: BoxDecoration(
-              gradient: AppColors.gradientPrimary,
-              borderRadius: BorderRadius.circular(8), // chhota radius → rectangle with rounded corners
-            ),
-            child: const Icon(
-              Icons.work_outline,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
+          showAppLogo ? AppLogo() : SizedBox.shrink(),
           10.w,
-          Text(
-            title,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-              color:isDark ? Colors.white : AppColors.lightPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          GradientStyleTextWidget(title: title, fontSize: 20),
+          // Text(
+          //   title,
+          //   style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          //     color: isDark ? Colors.white : Colors.black,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
         ],
       ),
       actions: action,

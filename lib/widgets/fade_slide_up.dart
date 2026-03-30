@@ -18,7 +18,8 @@ class FadeSlideUp extends StatefulWidget {
   State<FadeSlideUp> createState() => _FadeSlideUpState();
 }
 
-class _FadeSlideUpState extends State<FadeSlideUp> with SingleTickerProviderStateMixin {
+class _FadeSlideUpState extends State<FadeSlideUp>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<Offset> _slide;
@@ -26,21 +27,17 @@ class _FadeSlideUpState extends State<FadeSlideUp> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    _opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _opacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _slide = Tween<Offset>(
       begin: Offset(0, widget.yOffset / 100), // Relative offset usually smaller
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     Future.delayed(widget.delay, () {
       if (mounted) _controller.forward();
@@ -57,10 +54,7 @@ class _FadeSlideUpState extends State<FadeSlideUp> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _opacity,
-      child: SlideTransition(
-        position: _slide,
-        child: widget.child,
-      ),
+      child: SlideTransition(position: _slide, child: widget.child),
     );
   }
 }

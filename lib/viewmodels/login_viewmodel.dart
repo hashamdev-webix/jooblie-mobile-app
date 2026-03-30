@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginViewModel extends ChangeNotifier {
+  final AuthViewModel authViewModel;
+
+  LoginViewModel({required this.authViewModel});
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   String _email = '';
   String _password = '';
   bool _isLoading = false;
+
+  bool isJobSeeker = true;
 
   bool get isLoading => _isLoading;
   String get email => _email;
@@ -41,20 +50,43 @@ class LoginViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<bool> login() async {
+  Future<String?> login() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      
+
       _isLoading = true;
       notifyListeners();
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final result = await authViewModel.signIn(_email, _password);
+
+      if (result == null && authViewModel.currentUser != null) {
+        try {
+          final profile = await Supabase.instance.client
+              .from('profiles')
+              .select('role')
+              .eq('id', authViewModel.currentUser!.id)
+              .maybeSingle();
+
+          final userType =
+              profile?['role'] ??
+              authViewModel.currentUser!.userMetadata?['role'] ??
+              'job_seeker';
+          isJobSeeker = (userType == 'job_seeker');
+        } catch (e) {
+          final userType =
+              authViewModel.currentUser!.userMetadata?['role'] ?? 'job_seeker';
+          isJobSeeker = (userType == 'job_seeker');
+        }
+
+        // Save role to SharedPreferences as backup
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('is_job_seeker', isJobSeeker);
+      }
 
       _isLoading = false;
       notifyListeners();
-      return true; // Login success
+      return result; // null means success, otherwise error message
     }
-    return false; // Login failed/validation failed
+    return 'Please fix the errors in the form.';
   }
 }

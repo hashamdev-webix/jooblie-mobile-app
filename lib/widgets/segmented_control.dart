@@ -15,11 +15,13 @@ class SegmentedControl extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Using mapping from Tailwind mappings
     final backgroundColor = isDark ? AppColors.darkInput : AppColors.lightInput;
-    final activeGradient = AppColors.gradientPrimary; 
-    final inactiveTextColor = isDark ? AppColors.darkMutedForeground : AppColors.lightMutedForeground;
+    final activeGradient = AppColors.gradientPrimary;
+    final inactiveTextColor = isDark
+        ? AppColors.darkMutedForeground
+        : AppColors.lightMutedForeground;
 
     return Container(
       height: 48.0,
@@ -31,7 +33,9 @@ class SegmentedControl extends StatelessWidget {
         children: [
           // Animated Sliding Background for active indicator
           AnimatedAlign(
-            alignment: isJobSeeker ? Alignment.centerLeft : Alignment.centerRight,
+            alignment: isJobSeeker
+                ? Alignment.centerLeft
+                : Alignment.centerRight,
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOutCubic,
             child: FractionallySizedBox(
@@ -43,7 +47,11 @@ class SegmentedControl extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: (isDark ? AppColors.darkPrimary : AppColors.lightPrimary).withValues(alpha: 0.3),
+                      color:
+                          (isDark
+                                  ? AppColors.darkPrimary
+                                  : AppColors.lightPrimary)
+                              .withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -52,7 +60,7 @@ class SegmentedControl extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Buttons
           Row(
             children: [

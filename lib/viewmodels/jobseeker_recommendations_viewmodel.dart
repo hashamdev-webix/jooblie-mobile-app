@@ -1,0 +1,95 @@
+import 'package:flutter/material.dart';
+import '../models/job_recommendation_model.dart';
+
+class JobseekerRecommendationsViewModel extends ChangeNotifier {
+  final List<JobRecommendationModel> recommendations = const [
+    JobRecommendationModel(
+      id: 'rec_001',
+      title: 'Senior React Developer',
+      company: 'TechCorp',
+      location: 'Remote',
+      salaryRange: '\$120K - \$160K',
+      matchPercent: 95,
+      postedTime: '2 days ago',
+      jobType: 'Full-time',
+      tags: ['React', 'TypeScript', 'Node.js'],
+      description:
+          "We're looking for a Senior React Developer to join our growing engineering team. You'll build cutting-edge web applications using React, TypeScript, and modern tools.",
+      requirements: [
+        '5+ years React experience',
+        'Strong TypeScript skills',
+        'Experience with state management (Redux, Zustand)',
+        'Node.js backend experience',
+        'Excellent communication skills',
+      ],
+      benefits: [
+        'Remote-first culture',
+        'Health & dental insurance',
+        '401(k) matching',
+        'Unlimited PTO',
+        'Learning budget',
+      ],
+    ),
+    JobRecommendationModel(
+      id: 'rec_002',
+      title: 'Full Stack Engineer',
+      company: 'DataFlow',
+      location: 'Austin, TX',
+      salaryRange: '\$115K-\$155K',
+      matchPercent: 90,
+      postedTime: '1 day ago',
+      jobType: 'Full-time',
+      tags: ['React', 'Node.js', 'PostgreSQL'],
+      description:
+          "Join DataFlow to build the next generation of data streaming services.",
+      requirements: ['3+ years Full Stack experience', 'Strong SQL knowledge'],
+      benefits: ['Health insurance', 'Equity', 'Flexible hours'],
+    ),
+    JobRecommendationModel(
+      id: 'rec_003',
+      title: 'Frontend Architect',
+      company: 'CloudNine',
+      location: 'Remote',
+      salaryRange: '\$140K-\$180K',
+      matchPercent: 87,
+      postedTime: '3 days ago',
+      jobType: 'Contract',
+      tags: ['Vue', 'AWS', 'Architecture'],
+      description: "Lead the frontend architecture for our cloud platform.",
+      requirements: [
+        '7+ years experience',
+        'Experience with large-scale applications',
+      ],
+      benefits: ['Fully remote', 'Top tier compensation', 'Quarterly retreats'],
+    ),
+    JobRecommendationModel(
+      id: 'rec_004',
+      title: 'Product Designer',
+      company: 'DesignHub',
+      location: 'New York',
+      salaryRange: '\$90K-\$120K',
+      matchPercent: 82,
+      postedTime: '12 hours ago',
+      jobType: 'Full-time',
+      tags: ['Figma', 'UI/UX', 'Prototyping'],
+      description: "Shape the future of design tools by joining DesignHub.",
+      requirements: ['Portfolio demonstrating solid UI/UX', 'Figma expertise'],
+      benefits: ['Health, Vision, Dental', 'Commuter benefits'],
+    ),
+    JobRecommendationModel(
+      id: 'rec_005',
+      title: 'Flutter Developer',
+      company: 'MobileFirst',
+      location: 'Remote',
+      salaryRange: '\$100K-\$140K',
+      matchPercent: 78,
+      postedTime: '5 days ago',
+      jobType: 'Full-time',
+      tags: ['Flutter', 'Dart', 'Firebase'],
+      description:
+          "Help us build world-class cross-platform mobile applications.",
+      requirements: ['2+ years Flutter experience', 'Published apps on stores'],
+      benefits: ['Remote work', 'Equipment allowance', 'Health care'],
+    ),
+  ];
+}

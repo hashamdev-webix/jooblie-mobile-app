@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jooblie_app/viewmodels/auth_viewmodel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignupViewModel extends ChangeNotifier {
+  final AuthViewModel authViewModel;
+
+  SignupViewModel({required this.authViewModel});
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   bool _isJobSeeker = true; // true = Job Seeker, false = Recruiter
@@ -78,20 +84,40 @@ class SignupViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<bool> register() async {
+  Future<String?> register() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      
+
       _isLoading = true;
       notifyListeners();
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      Map<String, dynamic> data = {
+        'full_name': _fullName.trim(),
+        'role': _isJobSeeker ? 'job_seeker' : 'recruiter',
+      };
+
+      if (!_isJobSeeker) {
+        data['company_name'] = _companyName.trim();
+      } else {
+        data['company_name'] = null;
+      }
+
+      final result = await authViewModel.signUp(
+        _email.trim(),
+        _password.trim(),
+        data,
+      );
+
+      if (result == null || result == 'verify_email') {
+        // Save to SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('is_job_seeker', _isJobSeeker);
+      }
 
       _isLoading = false;
       notifyListeners();
-      return true; // Registration success
+      return result; // returning the message/flag
     }
-    return false; // Registration failed/validation failed
+    return 'Please fix the errors in the form.';
   }
 }
