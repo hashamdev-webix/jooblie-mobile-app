@@ -164,21 +164,21 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               ],
                             ),
                           ),
-                          32.h,
-                          Consumer<VerifyEmailViewModel>(
-                            builder: (context, viewModel, child) {
-                              return PrimaryButton(
-                                text: 'Resend Verification Email',
-                                onPressed: () {
-                                  viewModel.resendVerificationEmail(
-                                    context,
-                                    widget.email,
-                                    isFromForgotPassword: widget.isFromForgotPassword,
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                          // 32.h,
+                          // Consumer<VerifyEmailViewModel>(
+                          //   builder: (context, viewModel, child) {
+                          //     return PrimaryButton(
+                          //       text: 'Resend Verification Email',
+                          //       onPressed: () {
+                          //         viewModel.resendVerificationEmail(
+                          //           context,
+                          //           widget.email,
+                          //           isFromForgotPassword: widget.isFromForgotPassword,
+                          //         );
+                          //       },
+                          //     );
+                          //   },
+                          // ),
                           16.h,
                           TextButton(
                             onPressed: () {
