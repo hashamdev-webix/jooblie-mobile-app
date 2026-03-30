@@ -28,7 +28,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   @override
   void initState() {
     super.initState();
-    // Delay slightly to ensure provider is ready
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<VerifyEmailViewModel>(
         context,
