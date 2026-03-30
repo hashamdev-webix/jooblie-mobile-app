@@ -292,7 +292,6 @@ class RecruiterPostJobView extends StatelessWidget {
                               child: PrimaryButton(
                                 text: "Publish Job",
                                 icon: Icons.save,
-
                                 onPressed: vm.isLoading
                                     ? null
                                     : () async {
@@ -309,7 +308,7 @@ class RecruiterPostJobView extends StatelessWidget {
                                           );
                                         }
                                       },
-                                isLoading: vm.isLoading,
+                                isLoading: vm.isPublishing,
                               ),
                             ),
                             12.w,
@@ -318,8 +317,8 @@ class RecruiterPostJobView extends StatelessWidget {
                                 onPressed: vm.isLoading
                                     ? null
                                     : () async {
-                                        await vm.saveDraft();
-                                        if (context.mounted) {
+                                        final success = await vm.saveDraft();
+                                        if (success && context.mounted) {
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
@@ -342,12 +341,24 @@ class RecruiterPostJobView extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Text(
-                                  'Save Draft',
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                child: vm.isSavingDraft
+                                    ? SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: isDark
+                                              ? Colors.white
+                                              : AppColors.lightPrimary,
+                                        ),
+                                      )
+                                    : Text(
+                                        'Save Draft',
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
                               ),
                             ),
                           ],

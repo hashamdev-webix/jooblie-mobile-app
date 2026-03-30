@@ -572,7 +572,10 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
   String experienceLevel = 'Junior';
   String description = '';
   String skills = '';
-  bool isLoading = false;
+  bool isPublishing = false;
+  bool isSavingDraft = false;
+
+  bool get isLoading => isPublishing || isSavingDraft;
 
   final List<String> jobTypes = [
     'Full-time',
@@ -635,7 +638,7 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
   Future<bool> publishJob() async {
     if (formKey.currentState?.validate() ?? false) {
       formKey.currentState?.save();
-      isLoading = true;
+      isPublishing = true;
       notifyListeners();
 
       final user = Supabase.instance.client.auth.currentUser;
@@ -671,6 +674,7 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
           salaryMax: salaryMax.isNotEmpty ? salaryMax : null,
           salaryCurrency: salaryCurrency.isNotEmpty ? salaryCurrency : null,
           expiresAt: DateTime.now().add(const Duration(days: 30)),
+          status: 'active',
         );
 
         final userId = Supabase.instance.client.auth.currentUser?.id;
@@ -699,12 +703,12 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
         skills = '';
         formKey.currentState?.reset();
 
-        isLoading = false;
+        isPublishing = false;
         notifyListeners();
         return true;
       } catch (e) {
         debugPrint('Error publishing job: $e');
-        isLoading = false;
+        isPublishing = false;
         notifyListeners();
         return false;
       }
@@ -713,14 +717,76 @@ class RecruiterPostJobViewModel extends ChangeNotifier {
   }
 
   Future<bool> saveDraft() async {
-    formKey.currentState?.save();
-    isLoading = true;
-    notifyListeners();
-    await Future.delayed(const Duration(seconds: 1));
-    isLoading = false;
-    notifyListeners();
-    return true;
+    if (formKey.currentState?.validate() ?? false) {
+      formKey.currentState?.save();
+      isSavingDraft = true;
+      notifyListeners();
+
+      final user = Supabase.instance.client.auth.currentUser;
+      if (user != null) {
+        final profileData = await Supabase.instance.client
+            .from('profiles')
+            .select('company_name')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (profileData != null && profileData['company_name'] != null) {
+          companyName = profileData['company_name'].toString();
+        }
+      }
+
+      try {
+        final List<String> skillsList = skills
+            .split(',')
+            .map((s) => s.trim().replaceAll('"', '').replaceAll("'", ''))
+            .where((s) => s.isNotEmpty)
+            .toList();
+
+        final request = CreateJobRequest(
+          title: jobTitle,
+          companyName: companyName,
+          description: description,
+          requirements: requirements,
+          location: location,
+          jobType: jobType,
+          skills: skillsList,
+          experience: experienceLevel,
+          salaryMin: salaryMin.isNotEmpty ? salaryMin : null,
+          salaryMax: salaryMax.isNotEmpty ? salaryMax : null,
+          salaryCurrency: salaryCurrency.isNotEmpty ? salaryCurrency : null,
+          expiresAt: DateTime.now().add(const Duration(days: 30)),
+          status: 'Draft',
+        );
+
+        final userId = Supabase.instance.client.auth.currentUser?.id;
+        final jobData = request.toJson();
+        if (userId != null) {
+          jobData['recruiter_id'] = userId;
+        }
+
+        if (editingJobId != null) {
+          await Supabase.instance.client
+              .from('jobs')
+              .update(jobData)
+              .eq('id', editingJobId!);
+        } else {
+          await Supabase.instance.client.from('jobs').insert(jobData);
+        }
+
+        isSavingDraft = false;
+        notifyListeners();
+        return true;
+      } catch (e) {
+        debugPrint('Error saving draft: $e');
+        isSavingDraft = false;
+        notifyListeners();
+        return false;
+      }
+    }
+    return false;
   }
+
+
 }
 
 class RecruiterCompanyViewModel extends ChangeNotifier {

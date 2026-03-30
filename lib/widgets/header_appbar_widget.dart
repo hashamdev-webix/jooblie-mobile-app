@@ -75,13 +75,13 @@ class HeaderAppBarWidget extends StatelessWidget {
                     icon: Icon(Icons.settings_outlined),
                   )
                 : SizedBox.shrink(),
-            if (showNotificationIcon)
-              IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, RoutesName.notifications);
-                },
-                icon: Icon(Icons.notifications_none_rounded),
-              ),
+            // if (showNotificationIcon)
+            //   IconButton(
+            //     onPressed: () {
+            //       Navigator.pushNamed(context, RoutesName.notifications);
+            //     },
+            //     icon: Icon(Icons.notifications_none_rounded),
+            //   ),
             if (showProfileIcon)
               IconButton(
                 style: IconButton.styleFrom(

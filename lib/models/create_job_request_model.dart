@@ -11,6 +11,7 @@ class CreateJobRequest {
   final String? salaryMax;
   final String? salaryCurrency;
   final DateTime? expiresAt;
+  final String status;
 
   CreateJobRequest({
     required this.title,
@@ -25,12 +26,13 @@ class CreateJobRequest {
     this.salaryMax,
     this.salaryCurrency,
     this.expiresAt,
+    this.status = 'active',
   });
 
   Map<String, dynamic> toJson() => {
     'title': title,
     'company_name': companyName,
-    'status': 'active',
+    'status': status,
     'description': description,
     'requirements': requirements,
     'location': location,
@@ -43,3 +45,4 @@ class CreateJobRequest {
     if (expiresAt != null) 'expires_at': expiresAt!.toIso8601String(),
   };
 }
+
