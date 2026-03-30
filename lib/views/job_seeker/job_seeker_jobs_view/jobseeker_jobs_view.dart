@@ -202,7 +202,6 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
                               ),
                             ),
                         ],
-                        // Bottom padding for navigation bar
                         SizedBox(
                           height: MediaQuery.of(context).padding.bottom + 20,
                         ),
@@ -215,14 +214,7 @@ class _JobSeekerJobsViewState extends State<JobSeekerJobsView> {
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {},
-      //   backgroundColor: AppColors.lightPrimary,
-      //   child: const Icon(
-      //     Icons.chat_bubble_outline_rounded,
-      //     color: Colors.white,
-      //   ),
-      // ),
+
     );
   }
 
